@@ -4,27 +4,27 @@ import Link from "next/link";
 
 function Navbar() {
   return (
-    <div>
+    <div className="bg-white">
       <nav>
-        <div className="container mx-auto my-[1rem]">
-          <div className="flex justify-between uppercase items-center">
+        <div className="container">
+          <div className="flex justify-between uppercase items-center  mt-0 pt-6 pb-6 ml-6 mr-6">
           
            <Link href="/" className="text-5xl font-bold">
               <Image
                 src='/assests/olopo-logo.png'
                 alt="Logo"
-                width={144}
+                width={120}
                 height={45}
               />
             </Link>
             <div className="gap-5 items-center md:flex hidden">
               <Link href="/" className="notification mr-10">
-                <div className="bg-[#2DDBA726] rounded-xl p-3.5">
+                <div className="bg-[#2DDBA726] rounded-3xl p-3.5">
                   <Image
                     src="/assests/icons/notifications.svg"
                     alt="notifications"
-                    width={25}
-                    height={26}
+                    width={20}
+                    height={23}
                   />
                 </div>
                 <div className="count">
@@ -32,10 +32,10 @@ function Navbar() {
                 </div>
               </Link>
               <div className="w-[2px] h-14 flex-shrink-0 rounded bg-[#dedfe3] mr-10"></div>
-              <div className="text-[#464255] text-[16px] font-normal leading-normal mr-4">
+              <div className="text-[#464255] text-lg font-normal leading-normal mr-4">
                 <p>
                   Hello,{" "}
-                  <span className="text-[#464255] text-[16px] font-semibold leading-normal">
+                  <span className="text-[#464255] text-lg font-semibold leading-normal">
                     MS Market
                   </span>
                 </p>
@@ -44,8 +44,8 @@ function Navbar() {
               <Image
                     src="/assests/header-icons.png"
                     alt="header-icon" 
-                    width={44}
-                    height={44}
+                    width={40}
+                    height={40}
                   />
               </div>
             </div>
