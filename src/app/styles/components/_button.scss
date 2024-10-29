@@ -1,8 +1,13 @@
-.primary__btn{
-    background: radial-gradient(70.75% 307.72% at 0% 0%, #FC8118 0%, #DE6803 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
-padding: 0.7rem 1.5rem;
-border-radius: 1.2rem;
-height: 3.8rem;
-color: white;
-font-size: 1.4rem;
+.primary__btn {
+  background: radial-gradient(70.75% 307.72% at 0% 0%, #fc8118 0%, #de6803 100%);
+    /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */
+  padding: 0.7rem 1.5rem;
+  border-radius: 1.2rem;
+  height: 3.8rem;
+  color: white;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }

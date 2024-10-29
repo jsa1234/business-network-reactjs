@@ -11,8 +11,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <main>
-          <Navbar></Navbar>
+      <main>
+          <Navbar></Navbar></main>
+        <main className="busntwrk__body">
           <Sidebar />
           {children}
         </main>
