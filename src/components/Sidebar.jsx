@@ -139,7 +139,8 @@ function Sidebar() {
             <h2>Purchase Request</h2></Link>
           </li>
           <span className="sub-head">Networks</span>
-          <li className=""><Link href="/">
+          <li className={pathName.includes('managenetwork')?"active":''}>
+          <Link href="/managenetwork">
             <svg
               width="34"
               height="34"
