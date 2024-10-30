@@ -27,3 +27,53 @@
   }
 }
 }
+.filter-group {
+  height: 60px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  flex-direction: row;
+  justify-content: flex-end;
+  label {
+    margin: 0 20px;
+  }
+
+  .form {
+    width: 35rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .form input {
+    background-color: #eceff5;
+    width: 100%;
+  }
+  .form .fa-search {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    color: #9ca3af;
+  }
+
+  .form span {
+    position: absolute;
+    right: 17px;
+    top: 8px;
+    padding: 0px;
+    border-left: 1px solid #d1d5db;
+  }
+
+
+  .form-input {
+    border: none;
+    height: 35px;
+    text-indent: 33px;
+    border-radius: 6px;
+  }
+
+  .form-input:focus {
+    box-shadow: none;
+    border: none;
+  }
+}
