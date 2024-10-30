@@ -1,22 +1,40 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
+import Buttons from "./Buttons/Buttons";
 
-
-function Navbar() {
+const Navbar = () => {
   return (
     <div className="bg-white">
       <nav>
         <div className="container">
           <div className="flex justify-between uppercase items-center  mt-0 pt-6 pb-6 ml-6 mr-6">
-          
-           <Link href="/" className="text-5xl font-bold">
+            <Link href="/" className="flex items-center text-5xl font-bold">
+              <div className="mr-[40px] ">
+                <svg
+                  width="8"
+                  height="14"
+                  viewBox="0 0 8 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M7 1L0.999999 7L7 13"
+                    stroke="#262626"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
               <Image
-                src='/assests/olopo-logo.png'
+                src="/assests/olopo-logo.png"
                 alt="Logo"
                 width={120}
                 height={45}
               />
             </Link>
+
             <div className="gap-5 items-center md:flex hidden">
               <Link href="/" className="notification mr-10">
                 <div className="bg-[#2DDBA726] rounded-3xl p-3.5">
@@ -41,17 +59,18 @@ function Navbar() {
                 </p>
               </div>
               <div className="">
-              <Image
-                    src="/assests/header-icons.png"
-                    alt="header-icon" 
-                    width={40}
-                    height={40}
-                  />
+                <Image
+                  src="/assests/header-icons.png"
+                  alt="header-icon"
+                  width={40}
+                  height={40}
+                />
               </div>
             </div>
           </div>
         </div>
       </nav>
+     
     </div>
   );
 }

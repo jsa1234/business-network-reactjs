@@ -1,5 +1,5 @@
 .primary__btn {
-  background: radial-gradient(70.75% 307.72% at 0% 0%, #fc8118 0%, #de6803 100%);
+  background: radial-gradient(70.75% 307.72% at 0% 0%, #FC8118 0%, #DE6803 100%);
     /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */
   padding: 0.7rem 1.5rem;
   border-radius: 1.2rem;
@@ -10,4 +10,51 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+.check__btn {
+  background: radial-gradient(
+    70.75% 307.72% at 0% 0%,
+    #fc8118 0%,
+    #de6803 100%
+  );
+  /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */
+  padding: 0.7rem 1.5rem;
+  border-radius: 1.2rem;
+  width: 126px;
+  height: 40px;
+  color: white;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+}
+.check__btn.clicked {
+  background: radial-gradient(
+    70.75% 307.72% at 0% 0%,
+    white 0%, 
+    #fafafa 100% 
+  );
+
+  
+}
+
+.iconTextContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center content inside */
+  width: 100%; /* Make it take full width */
+  
+}
+
+.buttonText {
+  margin-left: 8px;
+}
+.icon {
+  color: white; /* Default icon color */
+}
+
+.icon.clicked {
+  color: orange; /* Change icon color on click */
 }
