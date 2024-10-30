@@ -1,0 +1,29 @@
+.table-container {
+  width: 100%;
+  background-color: white;
+  border-top-left-radius: 2rem;
+  border-top-right-radius: 2rem;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  overflow: hidden;
+}
+.table {
+    font-size: 1.4rem;
+  thead {
+    background-color: rgba(248, 249, 253, 1);
+    tr th {
+      padding: 2rem;
+      font-weight: 600;
+    }
+  }
+  tr td {
+    text-align: center;
+    padding: 1.7rem;
+    font-weight: 400;
+  }
+  tr {
+    border-bottom: 1px solid rgba(222, 223, 227, 1);
+  &:hover{
+    background-color: rgba(245, 247, 250, 1);
+  }
+}
+}
