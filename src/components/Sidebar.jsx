@@ -36,8 +36,8 @@ function Sidebar() {
             </svg>
             <h2>Business Board</h2></Link>
           </li>
-          <li className={pathName.includes('dashboard')?"active":''}>
-          <Link href="/dashboard">
+          <li className={pathName.includes('businessnetwork')?"active":''}>
+          <Link href="/businessnetwork">
             <svg
               width="34"
               height="34"

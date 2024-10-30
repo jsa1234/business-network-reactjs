@@ -12,4 +12,8 @@ background-color: rgba(244, 247, 254, 1);
     display: flex;
     flex-direction: row;
  }
+ .bus__body{
+    max-height: calc(100vh - 90px);
+    overflow-y: scroll;
+ }
 }
