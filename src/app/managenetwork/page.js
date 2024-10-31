@@ -2,6 +2,8 @@
 import Buttons from "@/components/Buttons/Buttons";
 import Pagenavigation from "@/components/Pagenavigation";
 import { useState } from "react";
+import Mynetwork from "./mynetwork/Mynetwork";
+import Link from "next/link";
 
 function Page() {
   const breadcrumbItems = ["Dashboard", "Manage Networks"];
@@ -89,6 +91,8 @@ function Page() {
           />
         </div>
         <div className="w-full md:w-1/2 flex justify-end">
+        <Link href='/managenetwork/mynetwork'>
+        
           <button className="primary__btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -114,6 +118,7 @@ function Page() {
             </svg>
             View My Networks
           </button>
+          </Link>
         </div>
       </div>
 
