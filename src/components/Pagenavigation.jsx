@@ -1,6 +1,7 @@
 "use client"
 import { useRouter } from "next/navigation";
 import React from "react";
+import  ChevronRight from "../../public/assests/icons/chevron-right.svg";
 
 function Pagenavigation(props) {
     const router=useRouter();
@@ -19,32 +20,7 @@ function Pagenavigation(props) {
             <React.Fragment key={index}>
               {index > 0 && (
                 <span className="mx-2">
-                  <svg
-                    width="16"
-                    height="17"
-                    viewBox="0 0 16 17"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g clipPath="url(#clip0_1_4859)">
-                      <path
-                        d="M6 4.5L10 8.5L6 12.5"
-                        stroke="#4A4A4A"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_1_4859">
-                        <rect
-                          width="16"
-                          height="16"
-                          fill="white"
-                          transform="translate(0 0.5)"
-                        />
-                      </clipPath>
-                    </defs>
-                  </svg>
+                  <ChevronRight/>
                 </span>
               )}{" "}
               {/* Show '>' separator */}

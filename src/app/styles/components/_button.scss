@@ -1,6 +1,10 @@
 .primary__btn {
-  background: radial-gradient(70.75% 307.72% at 0% 0%, #FC8118 0%, #DE6803 100%);
-    /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */
+  background: radial-gradient(
+    70.75% 307.72% at 0% 0%,
+    #fc8118 0%,
+    #de6803 100%
+  );
+  /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */
   padding: 0.7rem 1.5rem;
   border-radius: 1.2rem;
   height: 3.8rem;
@@ -10,6 +14,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  }
+  &:active {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+      rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+      rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  }
 }
 .check__btn {
   background: radial-gradient(
@@ -28,16 +40,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-
 }
 .check__btn.clicked {
-  background: radial-gradient(
-    70.75% 307.72% at 0% 0%,
-    white 0%, 
-    #fafafa 100% 
-  );
-
-  
+  background: radial-gradient(70.75% 307.72% at 0% 0%, white 0%, #fafafa 100%);
 }
 
 .iconTextContainer {
@@ -45,7 +50,6 @@
   align-items: center;
   justify-content: center; /* Center content inside */
   width: 100%; /* Make it take full width */
-  
 }
 
 .buttonText {
@@ -57,4 +61,25 @@
 
 .icon.clicked {
   color: orange; /* Change icon color on click */
+}
+
+.cancel_btn {
+  border: 1px solid black;
+  width: 14.2rem;
+  height: 5rem;
+  padding: 1.5rem 3.5rem;
+  gap: 0.4rem;
+  border-radius: 0.8rem;
+  opacity: 0px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-family: Inter;
+  &:hover {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+  &:active {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+      rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+      rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  }
 }
