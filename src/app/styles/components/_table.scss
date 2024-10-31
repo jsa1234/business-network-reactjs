@@ -7,7 +7,8 @@
   overflow: hidden;
 }
 .table {
-    font-size: 1.4rem;
+  font-size: 1.4rem;
+  text-align: justify;
   thead {
     background-color: rgba(248, 249, 253, 1);
     tr th {
@@ -22,8 +23,93 @@
   }
   tr {
     border-bottom: 1px solid rgba(222, 223, 227, 1);
-  &:hover{
-    background-color: rgba(245, 247, 250, 1);
+    &:hover {
+      background-color: rgba(245, 247, 250, 1);
+    }
   }
 }
+.filter-group {
+  height: 60px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  flex-direction: row;
+  justify-content: flex-end;
+  label {
+    margin: 0 20px;
+  }
+
+  .form {
+    width: 35rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .form input {
+    background-color: #eceff5;
+    width: 100%;
+  }
+  .form .fa-search {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    color: #9ca3af;
+  }
+
+  .form span {
+    position: absolute;
+    right: 17px;
+    top: 8px;
+    padding: 0px;
+    border-left: 1px solid #d1d5db;
+  }
+
+  .form-input {
+    border: none;
+    height: 35px;
+    text-indent: 33px;
+    border-radius: 6px;
+  }
+
+  .form-input:focus {
+    box-shadow: none;
+    border: none;
+  }
+}
+
+.dropdown-list {
+  position: relative;
+  display: inline-block;
+  list-style: none;
+  font-size: 14px !important;
+  color: #778294;
+
+  // Button styling
+}
+.dropdownSelect {
+  width: 234px;
+  padding: 10px;
+  border-radius: 5px;
+  background: #eceff5;
+  color: #4a4a4a;
+  font-family: "DM Sans";
+  font-size: 14px;
+  height: 35px;
+  border-radius: 6px;
+}
+.background {
+  background: white;
+  width: 380px;
+  height: 80px;
+  border-radius: 20px 20px 0px 0px;
+  background: #DEDFE3;
+  box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.05);
+  font-size: 18px;
+
+  button{
+    width:50%;
+    border-radius:20px 20px 0px 0px;
+    
+  }
 }
