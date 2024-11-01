@@ -6,6 +6,14 @@
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   overflow: hidden;
 }
+.table-container2 {
+  width: 100%;
+  background-color: white;
+ 
+  border-top-right-radius: 2rem;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  overflow: hidden;
+}
 .table {
   font-family: Inter;
   thead {
@@ -116,7 +124,7 @@
 }
 .background {
   background: white;
-  width: 380px;
+  width: 500px;
   height: 80px;
   border-radius: 20px 20px 0px 0px;
   background: #DEDFE3;
@@ -178,4 +186,18 @@
     box-shadow: none;
     border: none;
   }
+}
+.status-approvel{
+  padding: 0.7rem 1.5rem;
+  border-radius: 1.2rem;
+  height: 3.8rem;
+  color: white;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+color: var(--p-b1, #BD6112);
+background: #FDF1E8;
+
 }
