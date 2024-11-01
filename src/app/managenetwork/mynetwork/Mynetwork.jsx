@@ -10,12 +10,14 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TableHead from '@mui/material/TableHead';
 import TablePaginationActions from '@/components/TablePagination';
+import ChevronRight from "../../../../public/assests/icons/chevron-right.svg"
 
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import Link from 'next/link';
 
 function Mynetwork() {
   const [page, setPage] = React.useState(0);
@@ -129,6 +131,7 @@ function Mynetwork() {
           <TableCell align="right">Carbs&nbsp;(g)</TableCell>
           <TableCell align="right">Protein&nbsp;(g)</TableCell>
           <TableCell />
+          <TableCell />
         </TableRow>
       </TableHead>
       <TableBody>
@@ -185,6 +188,12 @@ function Row(props) {
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
+        </TableCell>
+        <TableCell>
+          <Link href='/managenetwork/trading'>
+          
+          <ChevronRight/>
+          </Link>
         </TableCell>
       </TableRow>
       <TableRow className={open?'highlight__row':''}>

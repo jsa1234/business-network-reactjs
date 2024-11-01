@@ -23,7 +23,10 @@ function Page() {
     setShowModal(false);
   };
   const handleModalSearch = () => {
-    if(searchField.trim()=='')return;
+    if(searchField.trim()==''){
+      alert("Enter a value");
+      return;
+    }
     console.log("Search Data",searchField);
     router.push(`/managenetwork/search?myProp=${btoa(searchField)}`);
   };
