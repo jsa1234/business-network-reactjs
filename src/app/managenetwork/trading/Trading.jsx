@@ -4,7 +4,7 @@ import { useState } from "react";
 function Trading(props) {
     const [selectedOption, setSelectedOption] = useState("");
     const [activeTab, setActiveTab] = useState("approval");
-    console.log(props,props2);
+    console.log(props);
     const handleChange = (event) => {
         setSelectedOption(event.target.value);
       };
@@ -73,7 +73,7 @@ function Trading(props) {
       };
     return (
         <>
-         <div className="w-full table-container">
+         <div className="w-full table-container2">
          <div className="filter-group">
          <div className="form">
               <input

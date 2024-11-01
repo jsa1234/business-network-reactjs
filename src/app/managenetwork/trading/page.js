@@ -13,7 +13,7 @@ function Page() {
     const handleChange = (event) => {
       setSelectedOption(event.target.value);
     };
-    const renderTableData = () => {
+  /*   const renderTableData = () => {
       const theadContent =
         activeTab === "request" ? (
           <thead>
@@ -76,7 +76,7 @@ function Page() {
           {tableBodyContent}
         </table>
       );
-    };
+    }; */
   return (
     <>
       <div className="bus__body w-full pl-9 mt-6 pr-3 pb-9">
@@ -210,38 +210,14 @@ function Page() {
           pendingstatus="Request Pending"
         /> */}
 
-        <div className="w-full table-container">
-          <div className="filter-group">
-            <div className="form">
-              <input
-                type="text"
-                className="form-control form-input"
-                placeholder="Search Product Name..."
-              />
-            </div>
-            <div>
-              <label className="dropdown-list">Sort by</label>
-              <select
-                id="dropdown"
-                className="dropdownSelect"
-                value={selectedOption}
-                onChange={handleChange}
-              >
-                <option value="" className="font-bold text-black">
-                  Choose
-                </option>
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-              </select>
-              {selectedOption && <p>You selected: {selectedOption}</p>}
-            </div>
-          </div>
-
-          {renderTableData()}
+        
+        {/*   {renderTableData()} */}
+        <Trading
+        activeTab={activeTab}
+        />
         </div>
       </div> 
-      </div>
+     
     </>
   );
 }
