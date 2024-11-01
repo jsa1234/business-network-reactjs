@@ -7,20 +7,32 @@
   overflow: hidden;
 }
 .table {
+  font-family: Inter;
   thead {
     background-color: rgba(248, 249, 253, 1);
     tr th {
       font-size: 1.4rem;
       padding: 2rem;
       font-weight: 600;
-      text-align: center;
+      font-family: Inter;
+      // text-align: center;
     }
   }
   tr td {
     font-size: 1.4rem;
-    text-align: center;
+    // text-align: center;
     padding: 1.7rem;
     font-weight: 400;
+    font-family: Inter;
+  }
+  tr.highlight__row{
+    border-left: 4px solid rgba(253, 179, 116, 1);
+    background-color: rgba(245, 247, 250, 1);
+    h1{
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+    font-size: 1.4rem;
   }
   p{
     font-size: 1.4rem;

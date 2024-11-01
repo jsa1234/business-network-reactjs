@@ -7,6 +7,7 @@ import Searchvisual from "../../../../public/assests/icons/search-visual.svg";
 import Search from "../../../../public/assests/icons/search.svg";
 import SaturnLarge from "../../../../public/assests/icons/saturn-large.svg";
 import SearchBtn from "../../../../public/assests/icons/search_btn.svg";
+import Cancel from "../../../../public/assests/icons/cancel.svg";
 import { useRouter } from "next/navigation";
 function Page() {
   const router=useRouter();
@@ -24,7 +25,7 @@ function Page() {
   const handleModalSearch = () => {
     if(searchField.trim()=='')return;
     console.log("Search Data",searchField);
-    router.push(`/managenetwork/search?myProp=${searchField}`);
+    router.push(`/managenetwork/search?myProp=${btoa(searchField)}`);
   };
   return (
     <>
@@ -60,7 +61,7 @@ function Page() {
      {showModal && (
         <div className="bus-modal">
           <div className="bus-modal-content">
-            <span className="close" onClick={handleCloseModal}>&times;</span>
+            <span className="close" onClick={handleCloseModal}><Cancel/></span>
 
             <div className="ellipse">
                 <SaturnLarge/>

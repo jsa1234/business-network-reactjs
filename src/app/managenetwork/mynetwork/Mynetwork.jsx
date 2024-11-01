@@ -187,7 +187,7 @@ function Row(props) {
           </IconButton>
         </TableCell>
       </TableRow>
-      <TableRow>
+      <TableRow className={open?'highlight__row':''}>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>

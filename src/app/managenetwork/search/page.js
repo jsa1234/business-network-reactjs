@@ -2,20 +2,20 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Pagenavigation from "@/components/Pagenavigation";
-import CustomPaginationActionsTable from "@/components/Test";
+import SearchTable from "./SearchTable";
+import Search from "../../../../public/assests/icons/search.svg";
 function Page() {
   const [param,setParam]=useState('');
   const searchParams = useSearchParams();
-  const breadcrumbItems = ["Dashboard", "", "My Networks"];
   useEffect(() => {
     
     const myProp = searchParams.get("myProp");
-    setParam(myProp);
+    setParam(atob(myProp));
     console.log(myProp)
   }, []);
 
   return <div className="bus__body w-full pl-9 mt-6 pr-3 pb-9">
-    {/* {param} */}
+
     <div className="flex justify-between">
         <div className="w-full">
           <Pagenavigation
@@ -30,7 +30,21 @@ function Page() {
           />
         </div>
       </div>
-       <CustomPaginationActionsTable></CustomPaginationActionsTable>
+      <div className="w-full table-container mt-6">
+{/* <CustomPaginationActionsTable/> */}
+<div className="filter-group">
+          <div className="form">
+            <Search className="fa fa-search"></Search>
+
+            <input
+              type="text"
+              className="form-control form-input"
+              placeholder="Search Product Name..."
+            />
+          </div>
+        </div>
+       <SearchTable searchValue={param}></SearchTable>
+      </div>
   </div>;
 }
 export default Page;

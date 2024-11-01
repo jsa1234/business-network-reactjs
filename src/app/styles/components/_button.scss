@@ -1,12 +1,18 @@
-.primary__btn {
+.primary__btn{
   background: radial-gradient(
     70.75% 307.72% at 0% 0%,
     #fc8118 0%,
     #de6803 100%
   );
+  border-radius: 1.2rem; 
+}
+.secondary__btn{
+  background: radial-gradient(70.75% 307.72% at 0% 0%, #FD9A46 0%, #FC8118 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+  border-radius: 0.8rem;
+}
+.primary__btn,.secondary__btn {  
   /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */
   padding: 0.7rem 1.5rem;
-  border-radius: 1.2rem;
   height: 3.8rem;
   color: white;
   font-size: 1.4rem;
@@ -43,6 +49,7 @@
 }
 .check__btn.clicked {
   background: radial-gradient(70.75% 307.72% at 0% 0%, white 0%, #fafafa 100%);
+  border: 1px solid #fc8118;
 }
 
 .iconTextContainer {
