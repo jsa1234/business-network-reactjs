@@ -1,0 +1,40 @@
+<svg
+    width="34"
+    height="34"
+    viewBox="0 0 36 36"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+>
+    <circle cx="17" cy="17" r="16.5" stroke="$color-text" />
+    <rect
+    x="1"
+    y="1"
+    width="10"
+    height="10"
+    rx="5"
+    fill="#1FB789"
+    stroke="white"
+    strokeWidth="2"
+    />
+    <path
+    d="M20 7.5V9C20 10.4142 20 11.1213 20.4393 11.5607C20.8787 12 21.5858 12 23 12H24.5"
+    stroke="$color-text"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    />
+    <path
+    d="M9 21V13C9 10.1716 9 8.75736 9.87868 7.87868C10.7574 7 12.1716 7 15 7H19.1716C19.5803 7 19.7847 7 19.9685 7.07612C20.1522 7.15224 20.2968 7.29676 20.5858 7.58579L24.4142 11.4142C24.7032 11.7032 24.8478 11.8478 24.9239 12.0315C25 12.2153 25 12.4197 25 12.8284V21C25 23.8284 25 25.2426 24.1213 26.1213C23.2426 27 21.8284 27 19 27H15C12.1716 27 10.7574 27 9.87868 26.1213C9 25.2426 9 23.8284 9 21Z"
+    stroke="$color-text"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    />
+    <path
+    d="M13 16H21M13 19H21M13 22H17.1708"
+    stroke="$color-text"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    />
+</svg>
