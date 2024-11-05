@@ -10,6 +10,7 @@
   background: radial-gradient(70.75% 307.72% at 0% 0%, #FD9A46 0%, #FC8118 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
   border-radius: 0.8rem;
 }
+
 .primary__btn,.secondary__btn {  
   /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */
   padding: 0.7rem 1.5rem;
@@ -20,6 +21,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  svg{
+    stroke: white ;
+  }
   &:hover {
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   }
@@ -88,5 +92,83 @@
     box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
       rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
       rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  }
+}
+.cancel_btn_secondary{
+  border: 1px solid #908582;
+  width: 10.2rem;
+  height: 4rem;
+  padding: 0rem 1.5rem;
+  // gap: 0.4rem;
+  border-radius: 0.8rem;
+  opacity: 0px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-family: Inter;
+  color: black;
+  &:hover {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+  &:active {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+      rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+      rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  }
+}
+.outer__btn{
+  width: 10.2rem;
+  height: 4rem;
+  padding: 0rem 1.5rem;
+  gap: 0.4rem;
+  border-radius: 0.8rem;
+  opacity: 0px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-family: Inter;
+  color: $color-icons;
+  border: 1px solid $color-icons;
+  display: flex;
+  align-items: center;
+  svg{
+    stroke: $color-icons;
+  }
+  &:hover {
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+  &:active {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+      rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+      rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  }
+}
+.secondary__btn__light {  
+  /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */
+  padding: 0.7rem 1.5rem;
+  height: 3.8rem;
+  min-width: 10rem;
+  color: white;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  // justify-content: space-between;
+  justify-content: center;
+  gap: 1rem;
+  svg{
+    stroke: white ;
+  }
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  }
+  &:active {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+      rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+      rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  }
+  border-radius: 0.8rem;
+  border:1px solid #FC8118;
+  color: #FC8118 !important;
+  svg{
+    stroke: $color-primary !important;
   }
 }
