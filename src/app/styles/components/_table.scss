@@ -9,7 +9,7 @@
 .table-container2 {
   width: 100%;
   background-color: white;
- 
+
   border-top-right-radius: 2rem;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   overflow: hidden;
@@ -33,16 +33,16 @@
     font-weight: 400;
     font-family: Inter;
   }
-  tr.highlight__row{
+  tr.highlight__row {
     border-left: 4px solid rgba(253, 179, 116, 1);
     background-color: rgba(245, 247, 250, 1);
-    h1{
+    h1 {
       font-size: 1.6rem;
       font-weight: 600;
     }
     font-size: 1.4rem;
   }
-  p{
+  p {
     font-size: 1.4rem;
   }
   tr {
@@ -79,24 +79,23 @@
   height: 60px;
   max-width: 90rem;
   border-radius: 20px 20px 0px 0px;
-  background: #DEDFE3;
+  background: #dedfe3;
   box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.05);
   font-size: 1.4rem;
   font-weight: 600;
 
-  button{
-    width:50%;
-    border-radius:20px 20px 0px 0px;
+  button {
+    width: 50%;
+    border-radius: 20px 20px 0px 0px;
     svg {
       stroke: $color-text;
     }
-    &.active{
+    &.active {
       color: $color-primary;
       svg {
         stroke: $color-icons;
       }
-    }    
-    
+    }
   }
 }
 .filter-group {
@@ -137,7 +136,6 @@
     border-left: 1px solid #d1d5db;
   }
 
-
   .form-input {
     border: none;
     height: 35px;
@@ -150,7 +148,7 @@
     border: none;
   }
 }
-.status-approvel{
+.status-approvel {
   padding: 0.7rem 1.5rem;
   border-radius: 1.2rem;
   height: 3.8rem;
@@ -160,22 +158,30 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-color: var(--p-b1, #BD6112);
-background: #FDF1E8;
-
+  color: var(--p-b1, #bd6112);
+  background: #fdf1e8;
 }
 .trading-box {
-  
   margin-top: 20px;
-width: 150px;
-height: 40px;
-padding: 10px 12px;
-justify-content: center;
-align-items: center;
-gap: 8px;
-flex-shrink: 0;
-border-radius: 8px;
-border: 1px solid #C5C6C9;
-background: var(--Neutral-Gray-Gray-25, #F9F9FC);
+  width: 150px;
+  height: 40px;
+  padding: 10px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid #c5c6c9;
+  background: var(--Neutral-Gray-Gray-25, #f9f9fc);
+}
 
+.info-container {
+  display: flex;
+  gap: 4rem;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.info-details{
+  color: #BD6612;
+  font-weight: 600;
 }
