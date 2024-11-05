@@ -185,3 +185,20 @@
   color: #BD6612;
   font-weight: 600;
 }
+.reason{
+ display: flex !important;
+align-items: center;
+height: 68px;
+background: var(--f5, #F8F9FD);
+padding: 20px;
+font-size: 12px;
+text-align: justify;
+gap:4rem;
+
+
+span{
+  font-weight: 600;
+
+}
+ 
+}

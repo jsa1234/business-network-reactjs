@@ -11,7 +11,7 @@ import Paper from "@mui/material/Paper";
 import TableHead from "@mui/material/TableHead";
 import TablePaginationActions from "@/components/TablePagination";
 
-function QuotationSend() {
+function Quotationreject() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [data, setData] = React.useState([]);
@@ -71,9 +71,12 @@ function QuotationSend() {
             Requested Date:<span className="info-details"> 18/10/2024</span>
           </p>
           <p>
-            Rejected Date:<span className="info-details"> 19/10/2024</span>
+            Submitted Date:<span className="info-details"> 19/10/2024</span>
           </p>
-          
+          <p>
+            Expected Delivery Date:{" "}
+            <span className="info-details"> 22/10/2024</span>
+          </p>
           <p>
             Total Items:<span className="info-details"> 10</span>
           </p>
@@ -146,4 +149,4 @@ function QuotationSend() {
     </div>
   );
 }
-export default QuotationSend;
+export default Quotationreject;
