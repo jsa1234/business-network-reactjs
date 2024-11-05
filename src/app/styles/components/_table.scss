@@ -164,3 +164,18 @@ color: var(--p-b1, #BD6112);
 background: #FDF1E8;
 
 }
+.trading-box {
+  
+  margin-top: 20px;
+width: 150px;
+height: 40px;
+padding: 10px 12px;
+justify-content: center;
+align-items: center;
+gap: 8px;
+flex-shrink: 0;
+border-radius: 8px;
+border: 1px solid #C5C6C9;
+background: var(--Neutral-Gray-Gray-25, #F9F9FC);
+
+}
