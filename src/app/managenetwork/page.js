@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Tabs } from "@mui/material";
 import Tabletabs from "@/components/Tabletabs";
 import Trading from "./trading/Trading";
+import Managework from "./managenetwork/Managework";
 
 function Page() {
   const breadcrumbItems = ["Dashboard", "Manage Networks"];
@@ -216,7 +217,7 @@ function Page() {
        
 
          {/*  {renderTableData()} */}
-         <Trading
+         <Managework
           activeTab={activeTab}
          />
         </div>
