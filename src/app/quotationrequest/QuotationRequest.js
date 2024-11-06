@@ -101,7 +101,7 @@ const QuotationRequest = () => {
         },
       ];
     }
-    if(reqData=='send'){
+    if(reqData=='send'||reqData=='hold'){
        rows = [
         {
           mode: "send",
