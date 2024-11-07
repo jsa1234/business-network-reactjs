@@ -1,5 +1,5 @@
-import Pagenavigation from '@/components/Pagenavigation'
-import React from 'react'
+import Pagenavigation from '@/components/Pagenavigation';
+import React from 'react';
 import QuotationRequest from './QuotationRequest';
 
 const Page = () => {
@@ -23,4 +23,4 @@ const Page = () => {
   )
 }
 
-export default Page
+export default Page;

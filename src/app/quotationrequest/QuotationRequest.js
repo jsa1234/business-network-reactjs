@@ -220,7 +220,7 @@ const QuotationRequest = () => {
           <Table>
             <TableBody>
               <TableRow>
-                <TableCell colSpan={6} className="quotationwraper">
+                <TableCell colSpan={6} className="quotationwraper grid grid-cols-12 gap-4">
                   {data.map((row) => (
                     <Qrcard
                       key={row.name}

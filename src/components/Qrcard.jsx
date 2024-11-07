@@ -10,7 +10,7 @@ const Qrcard = ({ mode,name, date, status, qritems, qrId ,navPath}) => {
     router.push(navPath);
   }
   return (
-    <div className={`qrcard ${mode=='request'?'qr_request':mode=='send'?'qr_send':mode=='hold'?'qr_hold':'qr_reject'}`}onClick={handleClick}>
+    <div className={`qrcard ${mode=='request'?'qr_request':mode=='send'?'qr_send':mode=='hold'?'qr_hold':'qr_reject'} col-span-4`}onClick={handleClick}>
       <div className="qrcard__img">
         <Image
           src="/assests/trading.png"
