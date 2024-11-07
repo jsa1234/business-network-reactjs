@@ -4,8 +4,9 @@ import Link from 'next/link';
 import HomeIcon from '../../public/assests/icons/home.svg';
 import QuotationIcon from '../../public/assests/icons/quotation.svg';
 import PurchaseIcon from '../../public/assests/icons/purchase.svg';
-import ManageNetIcon from '../../public/assests/icons/managenetwork.svg';
+import BusNeticon from '../../public/assests/icons/managenetwork.svg';
 import SaturnSmIcon from '../../public/assests/icons/saturn-sm.svg';
+import ManageNetIcon from '../../public/assests/icons/network-icon.svg';
 function Sidebar() {
   // const router=useRouter();
   const pathName=usePathname();
@@ -30,6 +31,11 @@ function Sidebar() {
             <h2>Purchase Request</h2></Link>
           </li>
           <span className="sub-head">Networks</span>
+          <li className={pathName.includes('businessnetwork')?"active":''}>
+          <Link href="/businessnetwork">
+            <BusNeticon/>
+            <h2>Business Network</h2></Link>
+          </li>
           <li className={pathName.includes('managenetwork')?"active":''}>
           <Link href="/managenetwork">
             <ManageNetIcon/>
