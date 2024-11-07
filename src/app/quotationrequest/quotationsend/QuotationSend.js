@@ -43,7 +43,6 @@ function QuotationSend() {
       // Handle error, e.g., display error message to the user
     }
   };
-
   React.useEffect(() => {
     fetchData(page, rowsPerPage);
   }, [page, rowsPerPage]);
@@ -73,7 +72,7 @@ function QuotationSend() {
           <p>
             Rejected Date:<span className="info-details"> 19/10/2024</span>
           </p>
-          
+
           <p>
             Total Items:<span className="info-details"> 10</span>
           </p>
@@ -89,6 +88,7 @@ function QuotationSend() {
               <TableCell align="right">Unit Price</TableCell>
               <TableCell align="right">Total Price</TableCell>
               <TableCell align="right"></TableCell>
+
               <TableCell align="right"></TableCell>
               <TableCell align="right"></TableCell>
             </TableRow>
@@ -134,7 +134,9 @@ function QuotationSend() {
         </Table>
 
         <div className="reason">
-          <p><span>Reason:</span></p>
+          <p>
+            <span>Reason:</span>
+          </p>
           <p>
             All products meet our high standards of quality and safety before
             they are shipped. We want to make sure you receive the best possible

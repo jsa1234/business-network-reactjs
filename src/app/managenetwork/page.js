@@ -8,6 +8,7 @@ import Managework from "./managenetwork/Managework";
 import Approvalpending from "../../../public/assests/icons/approvalpending.svg";
 import Requestpending from "../../../public/assests/icons/requestpending.svg";
 import Viewnetwork from "../../../public/assests/icons/viewnetwork.svg";
+import Network from "../../../public/assests/icons/network.svg"
 function Page() {
   const breadcrumbItems = ["Dashboard", "Manage Networks"];
   const urlList = ["/", "/dashboard", ""];
@@ -40,6 +41,17 @@ function Page() {
       {/* Tabs */}
       <div>
         <div className="flex space-x-4 mt-6 background">
+        <button
+            className={`tab flex items-center justify-center gap-2 p-2 rounded-md ${
+              activeTab === "network"
+                ? "bg-white text-orange-500 border-b-2 border-b-orange-500 active"
+                : ""
+            }`}
+            onClick={() => setActiveTab("network")}
+          >
+            <Network />
+            <span>My Network</span>
+          </button>
           <button
             className={`tab flex items-center justify-center gap-2 p-2 rounded-md ${
               activeTab === "approval"
