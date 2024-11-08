@@ -1,14 +1,13 @@
-"use client"
+"use client";
 import React from "react";
 import StockCard from "./StockCard";
 import DashBoardTable from "./DashBoardTable";
 import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
-  const router =useRouter();
+  const router = useRouter();
   const handleBtnCLick = () => {
-    // alert("sss");
-    router.push('/stockdetails');
+    router.push("/stockdetails");
   };
   return (
     <>

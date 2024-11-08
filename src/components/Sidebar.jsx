@@ -1,45 +1,53 @@
-"use client"
+"use client";
 import { usePathname } from "next/navigation";
-import Link from 'next/link';
-import HomeIcon from '../../public/assests/icons/home.svg';
-import QuotationIcon from '../../public/assests/icons/quotation.svg';
-import PurchaseIcon from '../../public/assests/icons/purchase.svg';
-import BusNeticon from '../../public/assests/icons/managenetwork.svg';
-import SaturnSmIcon from '../../public/assests/icons/saturn-sm.svg';
-import ManageNetIcon from '../../public/assests/icons/network-icon.svg';
+import Link from "next/link";
+import HomeIcon from "../../public/assests/icons/home.svg";
+import QuotationIcon from "../../public/assests/icons/quotation.svg";
+import PurchaseIcon from "../../public/assests/icons/purchase.svg";
+import BusNeticon from "../../public/assests/icons/managenetwork.svg";
+import ManageNetIcon from "../../public/assests/icons/network-icon.svg";
 function Sidebar() {
   // const router=useRouter();
-  const pathName=usePathname();
+  const pathName = usePathname();
   console.log(pathName);
   return (
     <div>
       <nav className="left__navbar">
         <ul>
-          <li className={pathName=='/'?"active":''}>
-          <Link href="/">            
-            <HomeIcon/>
-            <h2>Business Board</h2></Link>
+          <li
+            className={
+              pathName == "/" || pathName == "/stockdetails" ? "active" : ""
+            }
+          >
+            <Link href="/">
+              <HomeIcon />
+              <h2>Business Board</h2>
+            </Link>
           </li>
-          <li className={pathName.includes('quotationrequest')?"active":''}>
-          <Link href="/quotationrequest">
-            <QuotationIcon/>
-            <h2>Quotation Request</h2></Link>
+          <li className={pathName.includes("quotationrequest") ? "active" : ""}>
+            <Link href="/quotationrequest">
+              <QuotationIcon />
+              <h2>Quotation Request</h2>
+            </Link>
           </li>
-          <li className={pathName.includes('purchaserequest')?"active":''}>
-          <Link href="/purchaserequest">
-            <PurchaseIcon/>
-            <h2>Purchase Request</h2></Link>
+          <li className={pathName.includes("purchaserequest") ? "active" : ""}>
+            <Link href="/purchaserequest">
+              <PurchaseIcon />
+              <h2>Purchase Request</h2>
+            </Link>
           </li>
           <span className="sub-head">Networks</span>
-          <li className={pathName.includes('businessnetwork')?"active":''}>
-          <Link href="/businessnetwork">
-            <BusNeticon/>
-            <h2>Business Network</h2></Link>
+          <li className={pathName.includes("businessnetwork") ? "active" : ""}>
+            <Link href="/businessnetwork">
+              <BusNeticon />
+              <h2>Business Network</h2>
+            </Link>
           </li>
-          <li className={pathName.includes('managenetwork')?"active":''}>
-          <Link href="/managenetwork">
-            <ManageNetIcon/>
-            <h2>Manage Networks</h2></Link>
+          <li className={pathName.includes("managenetwork") ? "active" : ""}>
+            <Link href="/managenetwork">
+              <ManageNetIcon />
+              <h2>Manage Networks</h2>
+            </Link>
           </li>
           <br></br>
           <li>
@@ -101,15 +109,38 @@ function Sidebar() {
                   </defs>
                 </svg>
               </div>
-              
+
               <h2>Find in Business Network</h2>
-              <hr/>
-              <p>You can find the current supply chain by using GST/ Name / Phone number</p>
+              <hr />
+              <p>
+                You can find the current supply chain by using GST/ Name / Phone
+                number
+              </p>
               <input placeholder="Enter Here"></input>
-              <button className='primary__btn'>Search Now <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13.125 13.125L16.5 16.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M15 8.25C15 4.52208 11.978 1.5 8.25 1.5C4.52208 1.5 1.5 4.52208 1.5 8.25C1.5 11.978 4.52208 15 8.25 15C11.978 15 15 11.978 15 8.25Z" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
-</svg></button>
+              <button className="primary__btn">
+                Search Now{" "}
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M13.125 13.125L16.5 16.5"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M15 8.25C15 4.52208 11.978 1.5 8.25 1.5C4.52208 1.5 1.5 4.52208 1.5 8.25C1.5 11.978 4.52208 15 8.25 15C11.978 15 15 11.978 15 8.25Z"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
             </div>
           </li>
         </ul>
