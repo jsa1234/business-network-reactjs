@@ -1,9 +1,9 @@
 import React from "react";
 import Package from "../../public/assests/icons/package.svg";
 import ArrowRight from "../../public/assests/icons/arrow-right.svg";
-const StockCard = ({mode}) => {
+const StockCard = ({mode,btnClick}) => {
   return (
-    <div className={`stock ${mode=='low'?'stock_low':mode=='medium'?"stock_med":'stock_high'} col-span-4`}>
+    <div className={`stock ${mode=='low'?'stock_low':mode=='medium'?"stock_med":'stock_high'} col-span-4`} onClick={btnClick}>
       <div className="stock__content">
         <p>STOCK STATUS</p>
         <Package/>

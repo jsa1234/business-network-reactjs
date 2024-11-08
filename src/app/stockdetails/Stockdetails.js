@@ -132,11 +132,7 @@ function Stockdetails() {
               <TableCell>Product Name</TableCell>
               <TableCell align="right">Total Stock</TableCell>
               <TableCell align="right">Total Suppliers</TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell />
-              <TableCell />
+              <TableCell/>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -148,7 +144,7 @@ function Stockdetails() {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                colSpan={6}
+                colSpan={4}
                 count={totalCount}
                 rowsPerPage={rowsPerPage}
                 page={page}
@@ -200,9 +196,6 @@ function Row(props) {
         </TableCell>
         <TableCell align="right">{row.stock}</TableCell>
         <TableCell align="right">{row.supplier}</TableCell>
-        <TableCell align="right"></TableCell>
-        <TableCell align="right"></TableCell>
-        <TableCell align="right"></TableCell>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -214,7 +207,7 @@ function Row(props) {
         </TableCell>
       </TableRow>
       <TableRow className={open ? "highlight__row" : ""}>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <div className="flex items-center justify-between p-2 border-b border-gray-200">
