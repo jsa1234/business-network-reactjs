@@ -1,0 +1,117 @@
+.stock_low{
+
+    border: 2px solid rgba(249, 184, 179, 1);
+    background: radial-gradient(
+      28.63% 113.79% at 8.85% -13.79%,
+      #ffffff 0%,
+      #fef6f6 100%
+    );
+    .stock__content{
+        border-right: 2px solid rgba(249, 184, 179, 1);
+        svg{
+            stroke: #D01D1D;
+        }
+        .stock_total_user {
+           
+            h1 {
+              color: #D01D1D;
+            }
+          }
+    }
+}
+.stock_med{
+
+    border: 2px solid #FECDA3;
+    background: radial-gradient(28.63% 113.79% at 8.85% -13.79%, #FFFFFF 0%, #FFFFF0 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+
+    .stock__content{
+        border-right: 2px solid #FECDA3;
+        svg{
+            stroke: #FC8118;
+        }
+        .stock_total_user {
+           
+            h1 {
+              color: #FC8118;
+            }
+          }
+    }
+}
+.stock_high{
+
+    border: 2px solid #9DF6CC;
+    background: radial-gradient(28.63% 113.79% at 8.85% -13.79%, #FFFFFF 0%, #F1FEF8 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+
+    .stock__content{
+        border-right: 2px solid #9DF6CC;
+        svg{
+            stroke: #1FB789;
+        }
+        .stock_total_user {
+           
+            h1 {
+              color: #1FB789;
+            }
+          }
+    }
+}
+.stock {
+
+  height: 12rem;
+  width: 100%;
+  border-radius: 2rem;
+//   background: radial-gradient(
+//       28.63% 113.79% at 8.85% -13.79%,
+//       #ffffff 0%,
+//       #fef6f6 100%
+//     )
+    /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 3rem;
+  .stock__content {
+    padding-right: 1rem;
+    // border-right: 2px solid rgba(249, 184, 179, 1);
+    border-radius: 2rem;
+    height: 100%;
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    svg {
+      margin-left: -3rem;
+    }
+    p {
+      transform: rotate(270deg);
+      width: auto;
+      white-space: nowrap;
+      display: block;
+      margin-left: -2rem;
+      color: #8e95a9;
+      font-family: DM Sans, sans-serif;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+    .vl {
+      border-left: 1px solid #dedfe3;
+      height: 7rem;
+      margin: 0 1rem;
+    }
+    .stock_total_user {
+      display: flex;
+      flex-direction: column;
+      h4 {
+        font-size: 1.4rem;
+        font-weight: 500;
+        color: #8e95a9;
+      }
+      h1 {
+        font-size: 2.4rem;
+        font-weight: 600;
+        // color: #d01d1d;
+      }
+    }
+  }
+}
