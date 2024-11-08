@@ -28,7 +28,7 @@ const Networkcard = ({ name, gst, contact, address, vender }) => {
         </div>
       </div>
       <hr></hr>
-      <div class="container mt-4 text-lg font-normal flex flex-col">
+      <div className="container mt-4 text-lg font-normal flex flex-col">
   <div className="flex justify-between">
     <div className="text-left w-[150px] text-[#777777]">GST No.:</div>
     <div className="text-left flex-1">{gst}</div>
