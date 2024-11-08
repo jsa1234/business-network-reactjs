@@ -4,7 +4,7 @@ import QuotationRequest from './QuotationRequest';
 
 const Page = () => {
     const breadcrumbItems = ["Dashboard", "Quotation Request"];
-    const urlList = ["/", "/quotationrequest"];
+    const urlList = ["/", "/quotationrequest/qrrecieved"];
   return (
     <div className="bus__body w-full pl-9 mt-6 pr-3 pb-9">
       <div className="flex justify-between">

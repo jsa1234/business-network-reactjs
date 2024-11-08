@@ -1,0 +1,63 @@
+.total_container {
+  width: calc(100% - 255px - 4.5rem);
+  height: 6rem;
+  position: absolute;
+  bottom: 3rem;
+  padding: 0 3rem;
+  border: 2px solid rgba(142, 143, 147, 1);
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.4rem;
+  font-weight: 400;
+  background: radial-gradient(
+      28.63% 113.79% at 8.85% -13.79%,
+      #ffffff 0%,
+      #fffff0 100%
+    )
+    /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+  h1 {
+    span {
+      font-weight: 600;
+    }
+  }
+  input {
+    width: 150px;
+    height: 40px;
+    padding: 10px 12px 10px 12px;
+    // gap: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(197, 198, 201, 1);
+    position: relative;
+    background-color: #f0fcff;
+    &::before {
+      content:"Discount";
+      color: black;
+      position: absolute;
+      left:-10px;
+    }
+  }
+  
+  button {
+    position: relative;
+    &::after {
+      content: "2";
+      position: absolute;
+      color: #ffffff;
+      right: -5px;
+      top: -2px;
+      background-color: $color-primary-light;
+      padding: 3px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(243, 242, 247, 1);
+    }
+  }
+}

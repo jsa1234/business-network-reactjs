@@ -1,100 +1,112 @@
-.qr_request,.qr_hold{
-    background: radial-gradient(73.24% 117.34% at 8.85% -13.79%, #FFF 0%, #FFF7F0 100%);
-    border: 1px solid #FECDA3;
+.qr_request,
+.qr_hold {
+  background: radial-gradient(
+    73.24% 117.34% at 8.85% -13.79%,
+    #fff 0%,
+    #fff7f0 100%
+  );
+  border: 1px solid #fecda3;
 }
-.qr_send{
-    background: radial-gradient(73.24% 117.34% at 8.85% -13.79%, #FFF 0%, #F1FEF8 100%);
-    border: 1px solid #9DF6CC;
+.qr_send {
+  background: radial-gradient(
+    73.24% 117.34% at 8.85% -13.79%,
+    #fff 0%,
+    #f1fef8 100%
+  );
+  border: 1px solid #9df6cc;
 }
-.qr_reject{
-    background: var(--hold, radial-gradient(73.24% 117.34% at 8.85% -13.79%, #FFF 0%, #FEF6F6 100%));
-border: 1px solid #F9B8B3;
+.qr_reject {
+  background: var(
+    --hold,
+    radial-gradient(73.24% 117.34% at 8.85% -13.79%, #fff 0%, #fef6f6 100%)
+  );
+  border: 1px solid #f9b8b3;
 }
-.qrcard{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 40rem;
-    // background: radial-gradient(73.24% 117.34% at 8.85% -13.79%, #FFF 0%, #FFF7F0 100%);
+.qrcard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 37rem;
+  // background: radial-gradient(73.24% 117.34% at 8.85% -13.79%, #FFF 0%, #FFF7F0 100%);
 
-    // border: 1px solid #FECDA3;
-    height: 10rem;
-    padding: 1.9rem 2rem;
-    border-radius: 1.8rem;
-    margin: 2rem 0 0 3rem;
-    cursor: pointer;
-    &:last-child{
-        margin-bottom: 2rem;
-    }
-    &:hover{
-        background:white;
-        border: 1px solid #1D1D1D;
-        .qrcard__details{
-            border: 1px solid rgba(128, 128, 128, 0);
-            background-color: #6d6d6d;
-            svg{
-                stroke: white;
-            }
-        }
-    }
-    h1{
-        font-size: 1.4rem;
-        font-weight: 600;
-    }
-    font-size: 1.2rem;
-    .qrcard__content{
-        display: inherit;
-        flex-direction: column;
-        align-items: left;
-        width: 100%;
-        &__body table{
-            width: 100%;
-        }
-    }
-    .qrcard__details{
-        border: 1px solid #FC8118;
-        padding: 1.5rem;
-        border-radius: 2.2rem;
-        svg{
-            stroke: $color-icons;
-        }
-    }
-    .vl {
-        border-left: 1px solid #DEDFE3;
-        height: 7rem;
-        margin: 0 1rem;
+  // border: 1px solid #FECDA3;
+  height: 10rem;
+  padding: 1.9rem 2rem;
+  border-radius: 1.8rem;
+  margin: 2rem 0 0 3rem;
+  cursor: pointer;
+  &:last-child {
+    margin-bottom: 2rem;
+  }
+  &:hover {
+    background: white;
+    border: 1px solid #1d1d1d;
+    .qrcard__details {
+      border: 1px solid rgba(128, 128, 128, 0);
+      background-color: #6d6d6d;
+      svg {
+        stroke: white;
       }
-      table{
-        color: #777777;
-        font-weight: 600;
-        span.bold{
-            color: #1D1D1D;
-        }
-        span.red{
-            color: #D01D1D;
-        }
-        span.orange{
-            color: $color-primary;
-        }
-        tr td{
+    }
+  }
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+  font-size: 1.2rem;
+  .qrcard__content {
+    display: inherit;
+    flex-direction: column;
+    align-items: left;
+    width: 100%;
+    &__body table {
+      width: 100%;
+    }
+  }
+  .qrcard__details {
+    border: 1px solid #fc8118;
+    padding: 1.5rem;
+    border-radius: 2.2rem;
+    svg {
+      stroke: $color-icons;
+    }
+  }
+  .vl {
+    border-left: 1px solid #dedfe3;
+    height: 7rem;
+    margin: 0 1rem;
+  }
+  table {
+    color: #777777;
+    font-weight: 600;
+    span.bold {
+      color: #1d1d1d;
+    }
+    span.red {
+      color: #d01d1d;
+    }
+    span.orange {
+      color: $color-primary;
+    }
+    tr td {
+      border-spacing: 2rem;
+    }
+  }
+}
+.quotationwraper {
+  background-color: white;
+  // margin-top: -2rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  border-top: 2px solid #dedfe3;
+}
+.filter-group {
+  border-top-right-radius: 2rem;
+}
 
-            border-spacing: 2rem;
-        }
-      }
-}
-.quotationwraper{
-    background-color: white;
-    // margin-top: -2rem;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    border-top: 2px solid #DEDFE3;
-}
-.filter-group{
-    border-top-right-radius: 2rem;
 
-}
 
 //new//
 .qr_network{
@@ -177,4 +189,7 @@ border: 1px solid #F9B8B3;
             border-spacing: 2rem;
         }
       }
+}
+.qrtable {
+  margin-bottom: 7rem;
 }
