@@ -49,6 +49,7 @@
         stroke: white;
       }
     }
+    
   }
   h1 {
     font-size: 1.4rem;
@@ -193,3 +194,12 @@
 .qrtable {
   margin-bottom: 7rem;
 }
+.qrcard__details_2 {
+   margin-left: 4rem;
+    border: 1px solid #FC8118;
+        padding: 1.5rem;
+        border-radius: 2.2rem;
+        svg{
+            stroke: $color-icons;
+        }
+    }

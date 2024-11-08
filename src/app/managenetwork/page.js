@@ -29,12 +29,12 @@ function Page() {
           />
         </div>
         <div className="w-full md:w-1/2 flex justify-end">
-          <Link href="/managenetwork/mynetwork">
+         {/*  <Link href="/managenetwork/mynetwork">
             <button className="primary__btn">
               <Viewnetwork />
               View My Networks
             </button>
-          </Link>
+          </Link> */}
         </div>
       </div>
 

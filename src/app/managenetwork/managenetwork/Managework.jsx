@@ -5,7 +5,7 @@ import Networkcard from "@/components/Networkcard";
 import { useState } from "react";
 function Managework(props) {
   const [selectedOption, setSelectedOption] = useState("");
-  const [activeTab, setActiveTab] = useState("approval");
+  const [activeTab, setActiveTab] = useState("network");
   console.log(props);
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
@@ -35,13 +35,26 @@ function Managework(props) {
           <tr>
             <th>
               <div className="quotationwraper">
-                <Networkcard
+                {/* <Networkcard
                   name="Earthly Delights Trading"
                   gst="#29GGGGG1314R400"
                   contact="123 456 0101"
                   address="1234 Greenway Lane, Suite 567, Springfield, ST 12345"
                   vender="Seller"
-                />
+                /> */}
+
+<div className="filter__results__body grid grid-cols-12 gap-4">
+          <Networkcard 
+          name="Earthly Delights Trading"
+          gst="#29GGGGG1314R400"
+          contact="123 456 0101"
+          address="1234 Greenway Lane, Suite 567, Springfield, ST 12345"
+          vender="Seller"
+          className="col-span-4" />
+         
+          
+        </div>
+                
               </div>
             </th>
           </tr>

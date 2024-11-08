@@ -1,12 +1,9 @@
 "use client";
-import Prcard from "@/components/Prcard";
-import Search from "../../../public/assests/icons/search.svg";
-
-import DatePicker from "@/components/datepicker";
-const PurchaseRequest = () => {
-  return (
-    <>
-      <div className="filter-group">
+import Search from "../../../public/assests/icons/search.svg"
+const Stockdetails = () => {
+    return (
+        <>
+           <div className="filter-group">
         <div className="form">
           <Search className="fa fa-search"></Search>
           <input
@@ -24,23 +21,11 @@ const PurchaseRequest = () => {
             <option value="option3">Option 3</option>
           </select>
 
-          <DatePicker />
+         
         </div>
       </div>
-      <DatePicker />
-      <div className="quotationwraper">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((row) => (
-          <Prcard
-            key={row}
-            name="Earthly Delights Trading"
-            deliverydate="04/11/2024"
-            prdate="04/11/2024"
-            status="Urgent"
-          />
-        ))}
-      </div>
-    </>
-  );
+        </>
+    );
 };
 
-export default PurchaseRequest;
+export default Stockdetails;
