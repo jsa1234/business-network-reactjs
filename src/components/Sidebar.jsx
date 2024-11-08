@@ -25,8 +25,8 @@ function Sidebar() {
             <QuotationIcon/>
             <h2>Quotation Request</h2></Link>
           </li>
-          <li className="">
-          <Link href="/">
+          <li className={pathName.includes('purchaserequest')?"active":''}>
+          <Link href="/purchaserequest">
             <PurchaseIcon/>
             <h2>Purchase Request</h2></Link>
           </li>

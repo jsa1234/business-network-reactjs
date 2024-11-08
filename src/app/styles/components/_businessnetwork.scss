@@ -106,3 +106,43 @@
     }
   }
 }
+
+.netcard {
+  background: radial-gradient(73.24% 117.34% at 8.85% -13.79%, #FFF 0%, #F1FEF8 100%);
+  border: 1px solid #9DF6CC;
+  border-radius: 2rem;
+  width: 100%;
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  h1{
+    font-size: 1.6rem;
+    font-weight: 600;
+    font-family: DM Sans;
+  }
+  .bncard__header {
+    display: flex;
+  }
+  .vll {
+    border-left: 1px solid #dedfe3;
+    height: 4rem;
+    margin: 0 1rem;
+  }
+  hr{
+    border-left: 1px solid #dedfe3;
+  }
+  table {
+    tr td:last-child{
+        padding-left: 20px;
+        font-size: 1.1rem;
+        font-weight: 500;
+    } /* Adjust this value to set the space between columns */
+    .table__hdr{
+        font-family: DM Sans;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: rgba(119, 119, 119, 1);
+    }
+  }
+}

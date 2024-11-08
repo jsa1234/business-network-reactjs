@@ -114,9 +114,9 @@ function CustomPaginationActionsTable() {
 
   return (
     <TableContainer component={Paper}>
-      <Table className="table" aria-label="collapsible table">
+      <Table  className="text-xs" aria-label="collapsible table">
         <TableHead>
-          <TableRow>
+          <TableRow >
             <TableCell>Dessert (100g serving)</TableCell>
             <TableCell align="left">Calories</TableCell>
             <TableCell align="right">Fat&nbsp;(g)</TableCell>
