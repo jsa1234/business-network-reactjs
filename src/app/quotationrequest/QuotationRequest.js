@@ -18,9 +18,9 @@ import TableRow from "@mui/material/TableRow";
 const QuotationRequest = () => {
   let routingList={
     "request":"/quotationrequest/qrrecieved",
-    "send":"/quotationrequest/qrsend",
+    "send":"/quotationrequest/quotationsend",
     "hold":"/quotationrequest/qrhold",
-    "reject":"/quotationrequest/qrreject",
+    "reject":"/quotationrequest/quotationrejected",
   }
   const [page, setPage] = useState(0);
   const [activeTab, setActiveTab] = useState("request");
@@ -52,7 +52,7 @@ const QuotationRequest = () => {
       //     throw new Error('Network response was not ok');
       //   }
       let rows=[];
-      if(reqData=='request'){ 
+      if(reqData=='request'||reqData=='reject'){ 
         rows = [
         {
           mode: "request",

@@ -13,7 +13,7 @@ const Prcard = ({ mode, name, deliverydate, status, prdate }) => {
           : mode == "hold"
           ? "qr_hold"
           : "qr_reject"
-      }`}
+      } col-span-4`}
     >
       <div className="qrcard__img">
         <Image
