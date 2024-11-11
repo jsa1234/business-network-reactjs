@@ -109,3 +109,20 @@
     }
   }
 }
+
+.charts{
+  height: 32rem;
+  padding: 0;
+  .charts-item{
+    background-color: white;
+    padding: 1rem;
+    border-radius: 2rem;
+    position: relative;
+    .dropdownSelect{
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 15rem;
+    }
+  }
+}
