@@ -2,7 +2,10 @@ import Image from "next/image";
 import React from "react";
 import ChevronIcon from "../../public/assests/icons/chevron-right-icon.svg";
 
-const Prcard = ({ mode, name, deliverydate, status, prdate }) => {
+const Prcard = ({ mode, name, deliverydate, status, prdate,cardClick }) => {
+const handlCardClick=()=>{
+  cardClick();
+}
   return (
     <div
       className={`qrcard ${
@@ -14,6 +17,7 @@ const Prcard = ({ mode, name, deliverydate, status, prdate }) => {
           ? "qr_hold"
           : "qr_reject"
       } col-span-4`}
+      onClick={()=>handlCardClick()}
     >
       <div className="qrcard__img">
         <Image

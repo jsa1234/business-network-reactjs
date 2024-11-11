@@ -3,7 +3,12 @@ import Prcard from "@/components/Prcard";
 import Search from "../../../public/assests/icons/search.svg";
 
 import DatePicker from "@/components/datepicker";
+import { useRouter } from "next/navigation";
 const PurchaseRequest = () => {
+  const router=useRouter();
+  const handleClick=()=>{
+    router.push("/purchaserequest/purchasedetails");
+  }
   return (
     <>
       <div className="filter-group">
@@ -24,7 +29,7 @@ const PurchaseRequest = () => {
             <option value="option3">Option 3</option>
           </select>
 
-          <DatePicker />
+          {/* <DatePicker /> */}
         </div>
       </div>
       {/* <DatePicker /> */}
@@ -36,6 +41,7 @@ const PurchaseRequest = () => {
             deliverydate="04/11/2024"
             prdate="04/11/2024"
             status="Urgent"
+            cardClick={handleClick}
           />
         ))}
       </div>
