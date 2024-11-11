@@ -11,7 +11,6 @@ import Paper from "@mui/material/Paper";
 import TableHead from "@mui/material/TableHead";
 import TablePaginationActions from "@/components/TablePagination";
 import Connect from "../../../../public/assests/icons/connect.svg";
-import Buttons from "@/components/Buttons/Buttons";
 import Popup from "@/components/Popup";
 
 const SearchTable = (props) => {
