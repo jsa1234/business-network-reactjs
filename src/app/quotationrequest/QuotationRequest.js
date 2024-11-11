@@ -195,6 +195,7 @@ const QuotationRequest = () => {
           <CancelIcon />
           <span>QR Reject</span>
         </button>
+
       </div>
       <div className="filter-group">
         <div className="form">

@@ -27,7 +27,7 @@ const PurchaseRequest = () => {
           <DatePicker />
         </div>
       </div>
-      <DatePicker />
+      {/* <DatePicker /> */}
       <div className="quotationwraper grid grid-cols-12 gap-4 p-5 mt-0">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((row) => (
           <Prcard

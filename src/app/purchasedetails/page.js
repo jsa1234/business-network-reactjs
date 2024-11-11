@@ -1,11 +1,11 @@
 import Pagenavigation from '@/components/Pagenavigation'
 import React from 'react'
-import PurchaseRequest from './PurchaseRequest';
+import Purchasedetails from './Purchasedetails';
 
 
 const Page = () => {
     const breadcrumbItems = ["Dashboard", "Purchase Request"];
-    const urlList = ["/", "/purchaserequest"];
+    const urlList = ["/", "/purchasedetails"];
   return (
     <div className="bus__body w-full pl-9 mt-6 pr-3 pb-9">
       <div className="flex justify-between">
@@ -19,7 +19,7 @@ const Page = () => {
       </div>
       <div className="w-full mt-6">
         
-       <PurchaseRequest/>
+       <Purchasedetails/>
       </div>
     </div>
   )
