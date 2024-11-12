@@ -209,6 +209,7 @@ const QrRecieved = () => {
         total={1200}
         submitClick={handleSubmitClick}
         discountChange={handleDiscountChange}
+        selectedCount={checkList.length}
       />
     </>
   );

@@ -74,7 +74,6 @@
   border-radius: 6px;
 }
 .background {
-  background: white;
   min-width: 500px;
   height: 60px;
   max-width: 90rem;
@@ -87,6 +86,7 @@
   button {
     width: 50%;
     border-radius: 20px 20px 0px 0px;
+    border-right: 2px solid white;
     svg {
       stroke: $color-text;
     }

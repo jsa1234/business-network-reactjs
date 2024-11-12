@@ -21,6 +21,7 @@
   h1 {
     span {
       font-weight: 600;
+      color:rgba(189, 97, 18, 1);
     }
   }
   input {
@@ -43,7 +44,7 @@
   button {
     position: relative;
     &::after {
-      content: "2";
+      content: attr(data-count);
       position: absolute;
       color: #ffffff;
       right: -5px;
