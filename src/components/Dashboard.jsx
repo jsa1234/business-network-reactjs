@@ -1,15 +1,23 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import StockCard from "./StockCard";
 import DashBoardTable from "./DashBoardTable";
 import { useRouter } from "next/navigation";
 import DashBoardChart from "./DashBoardChart";
+import CommonApi from "@/api/CommonApi";
 
 const Dashboard = () => {
   const router = useRouter();
   const handleBtnCLick = () => {
     router.push("/stockdetails");
   };
+  useEffect(() => {
+    callAPi();
+  }, []);
+
+  async function callAPi() {
+    let data = await CommonApi.getData("products");
+  }
   return (
     <>
       <div className="grid grid-cols-12 gap-4 mb-6">
@@ -17,7 +25,7 @@ const Dashboard = () => {
         <StockCard mode="medium" btnClick={handleBtnCLick} />
         <StockCard mode="high" btnClick={handleBtnCLick} />
       </div>
-      <DashBoardChart/>
+      <DashBoardChart />
       <div className="table-container mt-6">
         <DashBoardTable />
       </div>

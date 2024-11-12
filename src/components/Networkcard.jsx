@@ -21,7 +21,7 @@ const Networkcard = ({ name, gst, contact, address, vender }) => {
         <div className="flex items-center gap-3">
           <h1>{name}</h1>
           <div className="qrcard__details_2">
-            <Link href="/managenetwork/mynetwork">
+            <Link href="/managenetwork/trading">
               <ChevronIcon />
             </Link>
           </div>

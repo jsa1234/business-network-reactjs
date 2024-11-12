@@ -7,7 +7,7 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Grid from "@mui/material/Grid";
-import Update from "../../../public/assests/icons/update.svg";
+import Update from "../../../../public/assests/icons/update.svg";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";

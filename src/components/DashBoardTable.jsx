@@ -180,7 +180,7 @@ function Row(props) {
         <TableCell align="right">
           <div className="flex items-center flex-row-reverse">
             <FiveStar /> <FiveStar /> <FiveStar /> <FiveStar /> <FiveStar />
-          {row.protein}/5 &nbsp;&nbsp;
+            {row.protein}/5 &nbsp;&nbsp;
           </div>
         </TableCell>
         <TableCell>
@@ -197,9 +197,13 @@ function Row(props) {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <h1>Customer Name</h1>
-              <div className="flex items-center">
-                <FiveStar /> <FiveStar /> <FiveStar /> <FiveStar /> <FiveStar />
+              <div className="flex items-center content-between gap-7">
+                <h1>Customer Name</h1>
+                <span> 4/5</span>
+                <div className="flex items-center">
+                  <FiveStar /> <FiveStar /> <FiveStar /> <FiveStar />{" "}
+                  <FiveStar />
+                </div>
               </div>
               <p>
                 The Organic Mixed Vegetables pack is a convenient option for
@@ -209,9 +213,13 @@ function Row(props) {
               </p>
             </Box>
             <Box sx={{ margin: 1 }}>
-              <h1>Customer Name</h1>
-              <div className="flex items-center">
-                <FiveStar /> <FiveStar /> <FiveStar /> <FiveStar /> <FiveStar />
+              <div className="flex items-center content-between gap-7">
+                <h1>Customer Name</h1>
+                <span> 4/5</span>
+                <div className="flex items-center">
+                  <FiveStar /> <FiveStar /> <FiveStar /> <FiveStar />{" "}
+                  <FiveStar />
+                </div>
               </div>
               <p>
                 The Organic Mixed Vegetables pack is a convenient option for
