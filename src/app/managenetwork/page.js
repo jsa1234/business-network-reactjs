@@ -40,7 +40,7 @@ function Page() {
 
       {/* Tabs */}
       <div>
-        <div className="flex space-x-4 mt-6 background">
+        <div className="flex  mt-6 background">
         <button
             className={`tab flex items-center justify-center gap-2 p-2 rounded-md ${
               activeTab === "network"

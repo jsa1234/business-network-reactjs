@@ -6,23 +6,71 @@ import CommonApi from "@/api/CommonApi";
 import { useEffect, useState } from "react";
 function Managework(props) {
   const [selectedOption, setSelectedOption] = useState("");
-  const [approvalData,setApprovalData]=useState([]);
+  const [approvalData, setApprovalData] = useState([]);
+  const [networkData, setNetworkData] = useState([]);
+  const [requestPending, setRequestPending] = useState([]);
   const [activeTab, setActiveTab] = useState("network");
   console.log(props);
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
-  useEffect(()=>{
+  useEffect(() => {
     console.log(process.env.API_URL);
     getApprovalPending();
-  },[])
+  }, []);
   async function getApprovalPending() {
-   let data =await CommonApi.getData("ManageNetwork/vendors/SearchApprovalPendingNetworks",{},{
-      VendorUUId: '21C7586F-9F29-457B-8E3D-4C75213183DF',
-      Status: 2})
-    console.log("MG.jsx",data);
+    let data = await CommonApi.getData(
+      "ManageNetwork/vendors/SearchApprovalPendingNetworks",
+      {},
+      {
+        VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+        Status: 2,
+      }
+    );
+    console.log("MG.jsx", data);
     setApprovalData(data);
   }
+
+  useEffect(() => {
+    getNetworks();
+  }, []);
+
+  async function getNetworks() {
+    try {
+      const data = await CommonApi.getData(
+        "ManageNetwork/vendors/networks",
+        {},
+        {
+          VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+          Status: 2,
+        }
+      );
+      setNetworkData(data || []); 
+    } catch (error) {
+      console.error("Error fetching network data:", error);
+    }
+  }
+
+  useEffect(() => {
+    getRequestPending();
+  }, []);
+
+  async function  getRequestPending() {
+    try {
+      const data = await CommonApi.getData(
+        "ManageNetwork/vendors/networks",
+        {},
+        {
+          VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+          Status: 1,
+        }
+      );
+      setRequestPending(data || []); 
+    } catch (error) {
+      console.error("Error fetching network data:", error);
+    }
+  }
+
   const renderTableData = () => {
     const theadContent = (
       <thead>
@@ -56,18 +104,23 @@ function Managework(props) {
                   vender="Seller"
                 /> */}
 
-<div className="filter__results__body grid grid-cols-12 gap-4">
-          <Networkcard 
-          name="Earthly Delights Trading"
-          gst="#29GGGGG1314R400"
-          contact="123 456 0101"
-          address="1234 Greenway Lane, Suite 567, Springfield, ST 12345"
-          vender="Seller"
-          className="col-span-4" />
-         
-          
-        </div>
-                
+                <div className="grid grid-cols-12 gap-4">
+                  {networkData.length > 0 ? (
+                    networkData.map((network, index) => (
+                      <Networkcard
+                        key={index}
+                        name={network.vendorName || "--"}
+                        gst={network.gstNo || "--"}
+                        contact={network.contactNo || "--"}
+                        address={network.address || "--"}
+                        vender={network.vendorType || "--"}
+                        className="col-span-4"
+                      />
+                    ))
+                  ) : (
+                    <p>No networks available</p>
+                  )}
+                </div>
               </div>
             </th>
           </tr>
@@ -77,35 +130,54 @@ function Managework(props) {
 
     const tableBodyContent = (
       <tbody className="text-left">
-        {props.activeTab === "approval" ? (
+        
+        {props.activeTab === "approval" &&
           approvalData.map((row, index) => (
-            <tr key={`key_`+index}> {/* Add a unique key here */}
-              <td>{row.gstNo||'--'}</td>
-              <td>{row.vendorName||'--'}</td>
-              <td>{row.contactNo||'--'}</td>
-              <td>{row.address||'--'}</td>
-              <td>{row.vendorType||'--'}</td>
+            <tr key={`approval_${index}`}>
+              <td>{row.gstNo || "--"}</td>
+              <td>{row.vendorName || "--"}</td>
+              <td>{row.contactNo || "--"}</td>
+              <td>{row.address || "--"}</td>
+              <td>{row.vendorType || "--"}</td>
               <td>
                 <Buttons />
               </td>
             </tr>
-          ))
-        ) : props.activeTab === "request" ? (
+          ))}
+    
+        {props.activeTab === "request" &&
+          (requestPending.length > 0 ? (
+            requestPending.map((row, index) => (
+              <tr key={`request_${index}`}>
+                <td>{row.gstNo || "--"}</td>
+                <td>{row.vendorName || "--"}</td>
+                <td>{row.contactNo || "--"}</td>
+                <td>{row.address || "--"}</td>
+                <td>{row.vendorType || "--"}</td>
+                <td>
+                  <button className="status-approvel">Waiting for approval</button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            // Show a message when there are no pending requests
+            <tr>
+              <td colSpan="6" className="text-center">
+                No pending requests available
+              </td>
+            </tr>
+          ))}
+    
+        {props.activeTab === "network" && networkData.length === 0 && (
           <tr>
-            <td>#88HHHHH2222X8Y7</td>
-            <td>Sunshine Goods Ltd.</td>
-            <td>987 654 3210</td>
-            <td>5678 Sunshine St., Apt 123, Brookfield, ST 54321</td>
-            <td>Distributor</td>
-            <td>
-              <button className="status-approvel">Waiting for approval</button>
+            <td colSpan="6" className="text-center">
+              No networks available
             </td>
           </tr>
-        ) : props.activeTab === "network" ? (
-          <tr></tr>
-        ) : null}
+        )}
       </tbody>
     );
+    
 
     return (
       <table className="table w-full rounded-tr-lg">
@@ -119,7 +191,7 @@ function Managework(props) {
       <div className="w-full table-container2">
         <div className="filter-group">
           <div className="form">
-          <Search className="fa fa-search"></Search>
+            <Search className="fa fa-search"></Search>
             <input
               type="text"
               className="form-control form-input"
