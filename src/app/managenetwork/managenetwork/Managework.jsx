@@ -1,6 +1,7 @@
 "use client";
 import Buttons from "@/components/Buttons/Buttons";
 import Networkcard from "@/components/Networkcard";
+import { Search } from "@mui/icons-material";
 
 import { useState } from "react";
 function Managework(props) {
@@ -104,6 +105,7 @@ function Managework(props) {
       <div className="w-full table-container2">
         <div className="filter-group">
           <div className="form">
+          <Search className="fa fa-search"></Search>
             <input
               type="text"
               className="form-control form-input"

@@ -16,6 +16,7 @@
 }
 .table {
   font-family: Inter;
+  text-align: left;
   thead {
     background-color: rgba(248, 249, 253, 1);
     tr th {
@@ -103,10 +104,11 @@
   background-color: white;
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  // padding: 0 20px;
   flex-direction: row;
   justify-content: flex-end;
   width: 100%;
+  font-size: 14px;
   label {
     margin: 0 20px;
   }

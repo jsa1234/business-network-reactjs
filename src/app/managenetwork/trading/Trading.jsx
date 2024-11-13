@@ -87,6 +87,7 @@ function Trading(props) {
               <div className="trading-box">120</div>
             </td>
             <td>
+
               <div className="trading-box">120</div>
             </td>
             <td>
@@ -100,7 +101,7 @@ function Trading(props) {
             <h1 className="text-xl w-[100px]">
              <Businessname/>
             </h1>
-            <h2 className="text-lg  w-[100px] text-lg font-semibold">
+            <h2 className="  w-[100px] text-lg font-semibold">
               Business Name
             </h2>
             <h3 className="text-md  w-[400px] text-lg">
@@ -112,7 +113,7 @@ function Trading(props) {
             <h1 className="text-xl w-[100px]">
              <Address/>
             </h1>
-            <h2 className="text-lg  w-[100px] text-lg font-semibold pr-4">
+            <h2 className="  w-[100px] text-lg font-semibold pr-4">
               Address:{" "}
             </h2>
             <h3 className="text-md  w-[400px] text-lg">123 457 2587</h3>
@@ -121,7 +122,7 @@ function Trading(props) {
             <h1 className="text-xl w-[100px]">
             <Contact/>
             </h1>
-            <h2 className="text-lg  w-[100px] text-lg font-semibold pr-4">
+            <h2 className="  w-[100px] text-lg font-semibold pr-4">
               Contact No:{" "}
             </h2>
             <h3 className="text-md  w-[400px] text-lg">123 457 2587</h3>
@@ -131,7 +132,7 @@ function Trading(props) {
               
               <Contactperson/>
             </h1>
-            <h2 className="text-lg  w-[100px] text-lg font-semibold pr-4">
+            <h2 className="  w-[100px] text-lg font-semibold pr-4">
               Contact Person:{" "}
             </h2>
             <h3 className="text-md  w-[400px] text-lg">Zubin basher</h3>
@@ -140,7 +141,8 @@ function Trading(props) {
             <h1 className="text-xl w-[100px]">
              <Email/>
             </h1>
-            <h2 className="text-lg  w-[100px] text-lg font-semibold pr-4">
+            
+            <h2 className="  w-[100px] text-lg font-semibold pr-4">
             Email ID:{" "}
             </h2>
             <h3 className="text-md  w-[400px] text-lg">supplier@mail.com</h3>
@@ -158,7 +160,7 @@ function Trading(props) {
   return (
     <>
       <div className="w-full table-container2">
-        <div className="filter-group">
+       {/*  <div className="filter-group">
           <div className="form">
             <input
               type="text"
@@ -184,7 +186,7 @@ function Trading(props) {
             </select>
             {selectedOption && <p>You selected: {selectedOption}</p>}
           </div>
-        </div>
+        </div> */}
         {renderTableData()}
       </div>
     </>
