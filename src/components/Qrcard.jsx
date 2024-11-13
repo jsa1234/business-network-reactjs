@@ -1,13 +1,10 @@
 import Image from "next/image";
 import React from "react";
 import ChevronIcon from "../../public/assests/icons/chevron-right-icon.svg";
-import { useRouter } from "next/navigation";
 
-const Qrcard = ({ mode,name, date, status, qritems, qrId ,navPath}) => {
-  console.log("navpath",navPath)
-  const router=useRouter();
+const Qrcard = ({ mode,name, date, status, qritems, qrId ,cardClick,qrUUID}) => {
   const handleClick=()=>{
-    router.push(navPath);
+    cardClick(qrUUID);
   }
   return (
     <div className={`qrcard ${mode=='request'?'qr_request':mode=='send'?'qr_send':mode=='hold'?'qr_hold':'qr_reject'} col-span-4`}onClick={handleClick}>

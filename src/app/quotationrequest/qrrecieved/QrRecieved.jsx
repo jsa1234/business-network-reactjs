@@ -14,96 +14,40 @@ import TickIcon from "../../../../public/assests/icons/tick-double.svg";
 import HoldIcon from "../../../../public/assests/icons/hold.svg";
 import { useEffect, useState } from "react";
 import TotalRate from "@/components/TotalRate";
-const QrRecieved = () => {
+import CommonApi from "@/api/CommonApi";
+import { useSearchParams } from "next/navigation";
+const QrRecieved = (props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [checkList, setCheckList] = useState([]);
   const [discount, setDiscount] = useState(0);
-  const fetchData = async (currentPage, rowsPerPage) => {
+  const searchParams = useSearchParams();
+  const [qrUuid, setQrUuid] = useState('');
+  useEffect(() => {
+    const myProp = searchParams.get("uuid");
+    setQrUuid(myProp);
+    fetchData(myProp);
+  }, []);
+  const fetchData = async (qrUuid) => {
     try {
-      //below code need to integrated when api are ready
-      //   const response = await fetch(
-      //     // Replace with your server endpoint URL
-      //     `your-api-endpoint?page=${currentPage + 1}&rowsPerPage=${rowsPerPage}`
-      //   );
+      let data = await CommonApi.getData(
+        `Quotation/vendor/${qrUuid}/details`,
+        {},
+        { status: 1 }
+      );
+      if(data.length>0){
 
-      //   if (!response.ok) {
-      //     throw new Error('Network response was not ok');
-      //   }
-      const rows = [
-        {
-          name: "Frozen yoghurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          price: 3.99,
-          history: [
-            { date: "2020-01-05", customerId: "11091700", amount: 3 },
-            { date: "2020-01-02", customerId: "Anonymou5", amount: 1 },
-          ],
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          price: 4.99,
-          history: [
-            { date: "2020-01-05", customerId: "11091700", amount: 3 },
-            { date: "2020-01-02", customerId: "Anonymous4", amount: 1 },
-          ],
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 24,
-          protein: 6.0,
-          price: 3.79,
-          history: [
-            { date: "2020-01-05", customerId: "11091700", amount: 3 },
-            { date: "2020-01-02", customerId: "Anonymous3", amount: 1 },
-          ],
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          price: 2.5,
-          history: [
-            { date: "2020-01-05", customerId: "11091700", amount: 3 },
-            { date: "2020-01-02", customerId: "Anonymous2", amount: 1 },
-          ],
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          price: 1.5,
-          history: [
-            { date: "2020-01-05", customerId: "11091700", amount: 3 },
-            { date: "2020-01-02", customerId: "Anonymous1", amount: 1 },
-          ],
-        },
-      ];
-      setData(rows);
-      setTotalCount(5); //value need to be set from api
+        setData(data);
+        setTotalCount(data.length); //value need to be set from api
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
     }
   };
-  useEffect(() => {
-    fetchData(page, rowsPerPage);
-  }, [page, rowsPerPage]);
+ 
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -139,9 +83,9 @@ const QrRecieved = () => {
             <TableRow>
               <TableCell>Product Name</TableCell>
               <TableCell align="left">Req Qty</TableCell>
-              <TableCell align="right">GST %</TableCell>
-              <TableCell align="right">Unit Price</TableCell>
-              <TableCell align="right">Total Price</TableCell>
+              <TableCell align="left">GST %</TableCell>
+              <TableCell align="left">Unit Price</TableCell>
+              <TableCell align="left">Total Price</TableCell>
               <TableCell align="left">Action</TableCell>
             </TableRow>
           </TableHead>
@@ -149,16 +93,16 @@ const QrRecieved = () => {
             {data.map((row) => (
               <TableRow
                 sx={{ "& > *": { borderBottom: "unset" } }}
-                key={row.name}
+                key={row.productName}
               >
                 <TableCell component="td" scope="row">
-                  {row.name}
+                  {row.productName}
                 </TableCell>
-                <TableCell align="left">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
-                <TableCell align="right flex">
+                <TableCell align="left">{row.quantity}</TableCell>
+                <TableCell align="left">{row.gst}</TableCell>
+                <TableCell align="left">{row.unitPrice}</TableCell>
+                <TableCell align="left">{row.totalPrice}</TableCell>
+                <TableCell align="left flex">
                   <button
                     className={
                       checkList.includes(row.name)

@@ -4,9 +4,7 @@ import DocIcon from "../../../public/assests/icons/google-doc.svg";
 import NavIcon from "../../../public/assests/icons/navigation.svg";
 import HoldIcon from "../../../public/assests/icons/hold.svg";
 import CancelIcon from "../../../public/assests/icons/cancel-icon.svg";
-import TableCell from "@mui/material/TableCell";
 import TablePaginationActions from "@/components/TablePagination";
-import TableBody from "@mui/material/TableBody";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
 import Qrcard from "@/components/Qrcard";
@@ -14,6 +12,9 @@ import Search from "../../../public/assests/icons/search.svg";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import CommonApi from "@/api/CommonApi";
+import { useRouter } from "next/navigation";
+import { format } from 'date-fns';
 
 const QuotationRequest = () => {
   let routingList = {
@@ -22,14 +23,28 @@ const QuotationRequest = () => {
     hold: "/quotationrequest/qrhold",
     reject: "/quotationrequest/quotationrejected",
   };
+  const router=useRouter();
   const [page, setPage] = useState(0);
   const [activeTab, setActiveTab] = useState("request");
+  const [reqCount, setreqCount] = useState({
+    requestCount: 0,
+    sendCount: 0,
+    holdCount: 0,
+    rejectCount: 0,
+  });
+  const reqDataStatus = {
+    request: 1,
+    send: 2,
+    hold: 4,
+    reject: 5,
+  };
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = React.useState(0);
   useEffect(() => {
-    fetchData(activeTab, page, rowsPerPage);
-  }, [activeTab, page, rowsPerPage]);
+    fetchData(activeTab);
+    fetchReqCount();
+  }, [activeTab]);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -37,116 +52,35 @@ const QuotationRequest = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  // const handleQuotationTypeSwitch = (tabname) => {
-  //   setActiveTab(tabname);
-  // };
-  const fetchData = async (reqData, currentPage, rowsPerPage) => {
+  const fetchReqCount = async () => {
+    let data = await CommonApi.getData(
+      `Quotation/vendor/9E405931-7756-4A02-96D4-CB03C1BE6D6E/quotation-count`,
+      {},
+      {}
+    );
+    setreqCount(data);
+  };
+  const fetchData = async (reqData) => {
     try {
-      //below code need to integrated when api are ready
-      //   const response = await fetch(
-      //     // Replace with your server endpoint URL
-      //     `your-api-endpoint?page=${currentPage + 1}&rowsPerPage=${rowsPerPage}`
-      //   );
+      let data = await CommonApi.getData(
+        `Quotation/vendor/requests`,
+        {},
+        {
+          VendorUUId: "9E405931-7756-4A02-96D4-CB03C1BE6D6E",
+          Status: reqDataStatus[reqData],
+        }
+      );
 
-      //   if (!response.ok) {
-      //     throw new Error('Network response was not ok');
-      //   }
-      let rows = [];
-      if (reqData == "request" || reqData == "reject") {
-        rows = [
-          {
-            mode: "request",
-            name: "Frozen yoghurt",
-            date: "05/11/2024",
-            fat: 6.0,
-            carbs: 24,
-            status: "Urgent",
-            qrId: 3.99,
-          },
-          {
-            mode: "request",
-            name: "Ice cream sandwich",
-            date: "05/11/2024",
-            fat: 9.0,
-            carbs: 37,
-            status: "Urgent",
-            qrId: 4.99,
-          },
-          {
-            mode: "request",
-            name: "Eclair",
-            date: "05/11/2024",
-            fat: 16.0,
-            carbs: 24,
-            status: "Urgent",
-            qrId: 3.79,
-          },
-          {
-            mode: "request",
-            name: "Cupcake",
-            date: "05/11/2024",
-            fat: 3.7,
-            carbs: 67,
-            status: "Urgent",
-            qrId: 2.5,
-          },
-          {
-            mode: "request",
-            name: "Gingerbread",
-            date: "05/11/2024",
-            fat: 16.0,
-            carbs: 49,
-            status: "Urgent",
-            qrId: 1.5,
-          },
-        ];
-      }
-      if (reqData == "send" || reqData == "hold") {
-        rows = [
-          {
-            mode: "send",
-            name: "Brownie",
-            date: "06/11/2024",
-            fat: 12.0,
-            carbs: 45,
-          },
-          {
-            mode: "send",
-            name: "Donut",
-            date: "06/11/2024",
-            fat: 14.0,
-            carbs: 32,
-          },
-          {
-            mode: "send",
-            name: "Muffin",
-            date: "06/11/2024",
-            fat: 10.0,
-            carbs: 50,
-          },
-          {
-            mode: "send",
-            name: "Macaron",
-            date: "06/11/2024",
-            fat: 5.0,
-            carbs: 28,
-          },
-          {
-            mode: "send",
-            name: "Cheesecake",
-            date: "06/11/2024",
-            fat: 22.0,
-            carbs: 36,
-          },
-        ];
-      }
-      setData(rows);
-      setTotalCount(5);
+      setData(data);
+      setTotalCount(data.length);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
     }
   };
+  const handleCardClick=(uuid)=>{
+    router.push(`${routingList[activeTab]}?uuid=${uuid}`);
+  }
   return (
     <div>
       <div className="flex mt-6 background">
@@ -160,7 +94,8 @@ const QuotationRequest = () => {
         >
           <DocIcon />
           <span className="relative">
-            QR Recived <span className="badge-count">2</span>
+            QR Recived{" "}
+            <span className="badge-count">{reqCount.requestCount}</span>
           </span>
         </button>
         <button
@@ -175,7 +110,7 @@ const QuotationRequest = () => {
           <span className="relative">
             QR Send
             {/* Badge Count */}
-            <span className="badge-count">2</span>
+            <span className="badge-count">{reqCount.sendCount}</span>
           </span>
         </button>
 
@@ -189,7 +124,7 @@ const QuotationRequest = () => {
         >
           <HoldIcon />
           <span className="relative">
-            QR Hold <span className="badge-count">30</span>
+            QR Hold <span className="badge-count">{reqCount.holdCount}</span>
           </span>
         </button>
         <button
@@ -202,7 +137,8 @@ const QuotationRequest = () => {
         >
           <CancelIcon />
           <span className="relative">
-            QR Reject <span className="badge-count">50</span>
+            QR Reject{" "}
+            <span className="badge-count">{reqCount.rejectCount}</span>
           </span>
         </button>
       </div>
@@ -214,11 +150,10 @@ const QuotationRequest = () => {
             className="form-control form-input"
             placeholder="Search Product Name..."
           />
-          <label className="dropdown-list">Sort by</label>
+          <label className="dropdown-list" htmlFor="dropdown">Sort by</label>
           <select id="dropdown" className="dropdownSelect">
             <option value="" className="font-bold text-black">
               Choose
-              
             </option>
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
@@ -228,44 +163,22 @@ const QuotationRequest = () => {
       </div>
       <div>
         <div className="quotationwraper grid grid-cols-12 gap-4 p-6">
-
-        
-      {data.map((row) => (
-                    <Qrcard
-                      key={row.name}
-                      mode={row.mode}
-                      name={row.name}
-                      date={row.date}
-                      qritems={row.fat}
-                      status={row.status}
-                      qrId={row.qrId}
-                      navPath={routingList[activeTab]}
-                    />
-                  ))}
-                  </div>
+          {data.map((row) => (
+            <Qrcard
+              key={row.companyName}
+              mode={row.mode}
+              name={row.companyName}
+              date={format(new Date(row.requestDate), 'dd-MM-yyyy')}
+              qritems={row.totalItems}
+              status={row.status ? "Urgent" : ""}
+              qrId={row.quotationRequestId}
+              cardClick={handleCardClick}
+              qrUUID={row.quotationRequestUUId}
+            />
+          ))}
+        </div>
         <TableContainer>
           <Table>
-            {/* <TableBody>
-              <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className="quotationwraper grid grid-cols-12 gap-4"
-                >
-                   {data.map((row) => (
-                    <Qrcard
-                      key={row.name}
-                      mode={row.mode}
-                      name={row.name}
-                      date={row.date}
-                      qritems={row.fat}
-                      status={row.status}
-                      qrId={row.qrId}
-                      navPath={routingList[activeTab]}
-                    />
-                  ))} 
-                </TableCell>
-              </TableRow>
-            </TableBody> */}
             <TableFooter>
               <TableRow>
                 <TablePagination
