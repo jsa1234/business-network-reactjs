@@ -1,7 +1,7 @@
 import React from "react";
 import Navigation from "../../public/assests/icons/navigation.svg";
 
-const TotalRate = ({ subTotal, totalGst, total,submitClick,discountChange }) => {
+const TotalRate = ({ subTotal, totalGst, total,submitClick,discountChange,selectedCount=0 }) => {
     const handleChange=(e)=>{
         discountChange(e.target.value);
     }
@@ -22,7 +22,7 @@ const TotalRate = ({ subTotal, totalGst, total,submitClick,discountChange }) => 
       <h1>
         Total:<span>{total}</span>
       </h1>
-      <button className="green__btn" onClick={(e)=>submitClick(e.target.value)}>
+      <button className="green__btn" onClick={(e)=>submitClick(e.target.value)} data-count={selectedCount}>
         <Navigation />
         Submit Quotation
       </button>

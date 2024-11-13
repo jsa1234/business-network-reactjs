@@ -90,7 +90,7 @@ const BusinessNetwork = () => {
   const [vendorCategory, setVendorCategory] = useState("");
   const [location, setLocation] = useState("");
   const [rating, setRating] = useState("");
-
+  const [showModal, setshowModal] = useState(true);
   // Handle input changes
   const handleInputChange = (e, setterFunction) => {
     setterFunction(e.target.value);
@@ -110,15 +110,18 @@ const BusinessNetwork = () => {
     });
     // Add your search logic here
   };
+  const handleMinimize=()=>{
+    setshowModal(!showModal);
+  }
   return (
     <div>
       <div className="advance__filter">
         <div className="advance__filter__header">
           <h1>Advance Filter</h1>
-          <ChevronIcon />
+          <ChevronIcon onClick={()=>handleMinimize()} className={!showModal?"rotate":""}/>
         </div>
         <hr></hr>
-        <div className="advance__filter__body grid grid-cols-12 gap-4">
+        {showModal?<div className="advance__filter__body grid grid-cols-12 gap-4">
           <div className="input__group col-span-3">
             <label htmlFor="gstSrchInpt">By GST No.</label>
             <input
@@ -202,7 +205,7 @@ const BusinessNetwork = () => {
               <SearchIcon />
             </button>
           </div>
-        </div>
+        </div>:''}
       </div>
       <div className="filter__results">
         <div className="filter__results__header">

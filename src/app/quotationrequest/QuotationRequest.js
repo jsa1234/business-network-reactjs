@@ -149,7 +149,7 @@ const QuotationRequest = () => {
   };
   return (
     <div>
-      <div className="flex space-x-4 mt-6 background">
+      <div className="flex mt-6 background">
         <button
           className={`tab flex items-center justify-center gap-2 p-2 rounded-md relative ${
             activeTab === "request"
@@ -227,15 +227,10 @@ const QuotationRequest = () => {
         </div>
       </div>
       <div>
-        <TableContainer>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className="quotationwraper grid grid-cols-12 gap-4"
-                >
-                  {data.map((row) => (
+        <div className="quotationwraper grid grid-cols-12 gap-4 p-6">
+
+        
+      {data.map((row) => (
                     <Qrcard
                       key={row.name}
                       mode={row.mode}
@@ -247,9 +242,30 @@ const QuotationRequest = () => {
                       navPath={routingList[activeTab]}
                     />
                   ))}
+                  </div>
+        <TableContainer>
+          <Table>
+            {/* <TableBody>
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="quotationwraper grid grid-cols-12 gap-4"
+                >
+                   {data.map((row) => (
+                    <Qrcard
+                      key={row.name}
+                      mode={row.mode}
+                      name={row.name}
+                      date={row.date}
+                      qritems={row.fat}
+                      status={row.status}
+                      qrId={row.qrId}
+                      navPath={routingList[activeTab]}
+                    />
+                  ))} 
                 </TableCell>
               </TableRow>
-            </TableBody>
+            </TableBody> */}
             <TableFooter>
               <TableRow>
                 <TablePagination

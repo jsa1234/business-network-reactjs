@@ -9,6 +9,7 @@ import Address from"../../../../public/assests/icons/address.svg"
 import Contact from"../../../../public/assests/icons/contact.svg"
 import Contactperson from"../../../../public/assests/icons/contactperson.svg"
 import Email from"../../../../public/assests/icons/email.svg"
+import TotalRate from "@/components/TotalRate";
 function Trading(props) {
   const [selectedOption, setSelectedOption] = useState("");
   const [activeTab, setActiveTab] = useState("approval");
@@ -56,6 +57,7 @@ function Trading(props) {
 
     const tableBodyContent =
       props.activeTab === "approval" ? (
+        <>
         <tbody className="text-left">
           <tr>
             <td>Onion</td>
@@ -95,6 +97,8 @@ function Trading(props) {
             </td>
           </tr>
         </tbody>
+        <TotalRate/>
+        </>
       ) : (
         <div className="flex flex-col ml-[4rem]  mr-[4rem]">
           <div className="flex flex-row border-b border-gray-300 p-4 ">

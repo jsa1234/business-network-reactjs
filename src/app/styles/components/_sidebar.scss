@@ -15,7 +15,14 @@
     align-items: center;
     border-left: 4px solid white;
     &:hover:not(:last-child) {
-      background-color: wheat;
+      border-left: 4px solid $color-primary;
+      color: $color-primary;
+      h2 {
+        color: $color-primary;
+      }
+      svg {
+        stroke: $color-primary;
+      }
     }
     a {
       width: 100%;

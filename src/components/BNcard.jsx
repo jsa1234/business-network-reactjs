@@ -5,7 +5,7 @@ const BNcard = ({name,gst_number,contact,address,vendor,buttonClick}) => {
   return (
     <div className="bncard col-span-4">
       <div className="bncard__header">
-        <div className="qrcard__img">
+        <div className="bncard__img">
           <Image
             src="/assests/trading.png"
             alt="trading"
