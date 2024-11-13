@@ -1,15 +1,27 @@
 "use client";
 import Buttons from "@/components/Buttons/Buttons";
 import Networkcard from "@/components/Networkcard";
-
-import { useState } from "react";
+import CommonApi from "@/api/CommonApi";
+import { useEffect, useState } from "react";
 function Managework(props) {
   const [selectedOption, setSelectedOption] = useState("");
+  const [approvalData,setApprovalData]=useState([]);
   const [activeTab, setActiveTab] = useState("network");
   console.log(props);
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
+  useEffect(()=>{
+    console.log(process.env.API_URL);
+    getApprovalPending();
+  },[])
+  async function getApprovalPending() {
+   let data =await CommonApi.getData("ManageNetwork/vendors/SearchApprovalPendingNetworks",{},{
+      VendorUUId: '21C7586F-9F29-457B-8E3D-4C75213183DF',
+      Status: 2})
+    console.log("MG.jsx",data);
+    setApprovalData(data);
+  }
   const renderTableData = () => {
     const theadContent = (
       <thead>
@@ -65,16 +77,18 @@ function Managework(props) {
     const tableBodyContent = (
       <tbody className="text-left">
         {props.activeTab === "approval" ? (
-          <tr>
-            <td>#29GGGGG1314R9Z6</td>
-            <td>Earthly Delights Trading</td>
-            <td>123 456 7895</td>
-            <td>1234 Greenway Lane, Suite 567, Springfield, ST 12345</td>
-            <td>Supplier</td>
-            <td>
-              <Buttons />
-            </td>
-          </tr>
+          approvalData.map((row, index) => (
+            <tr key={`key_`+index}> {/* Add a unique key here */}
+              <td>{row.gstNo||'--'}</td>
+              <td>{row.vendorName||'--'}</td>
+              <td>{row.contactNo||'--'}</td>
+              <td>{row.address||'--'}</td>
+              <td>{row.vendorType||'--'}</td>
+              <td>
+                <Buttons />
+              </td>
+            </tr>
+          ))
         ) : props.activeTab === "request" ? (
           <tr>
             <td>#88HHHHH2222X8Y7</td>

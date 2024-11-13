@@ -6,12 +6,11 @@ class CommonAPI {
     // You can add other common headers here
     Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`, // If you need an Authorization token
   };
-  getData(url, headers = {}) {
+  getData(url, headers = {},params = {}) {
     console.log(process.env.NEXT_PUBLIC_API_URL);
     const combinedHeaders = { ...this.defaultHeaders, ...headers };
     return axios
-      .get(`https://fakestoreapi.com/${url}`, { headers: combinedHeaders })
-      .then((response) => {
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/${url}`, { headers: combinedHeaders,  params: params}).then((response) => {
         console.log("MN.js", response.data);
         return response.data;
       })
