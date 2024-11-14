@@ -14,13 +14,13 @@ function Managework(props) {
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
-  // useEffect(() => {
-  //   console.log(process.env.API_URL);
-  //   getApprovalPending();
-  // }, []);
+  useEffect(() => {
+    console.log(process.env.API_URL);
+    getApprovalPending();
+  }, []);
   async function getApprovalPending() {
     let data = await CommonApi.getData(
-      "ManageNetwork/vendors/SearchApprovalPendingNetworks",
+      "ManageNetwork/vendor/search-approval-pending-networks",
       {},
       {
         VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
@@ -38,7 +38,7 @@ function Managework(props) {
   async function getNetworks() {
     try {
       const data = await CommonApi.getData(
-        "ManageNetwork/vendors/networks",
+        "ManageNetwork/vendor/search-networks",
         {},
         {
           VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
@@ -58,7 +58,7 @@ function Managework(props) {
   async function  getRequestPending() {
     try {
       const data = await CommonApi.getData(
-        "ManageNetwork/vendors/networks",
+        "ManageNetwork/vendor/search-networks",
         {},
         {
           VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",

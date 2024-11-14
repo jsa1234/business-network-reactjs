@@ -17,6 +17,11 @@ import TotalRate from "@/components/TotalRate";
 import CommonApi from "@/api/CommonApi";
 import { useSearchParams } from "next/navigation";
 import QrPopup from "@/components/QrPopup";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+
 const QrRecieved = (props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -25,13 +30,23 @@ const QrRecieved = (props) => {
   const [checkList, setCheckList] = useState([]);
   const [discount, setDiscount] = useState(0);
   const searchParams = useSearchParams();
-  const [qrUuid, setQrUuid] = useState('');
-  const [moodalShow,setMoodalShow]=useState(false);
+  const [qrUuid, setQrUuid] = useState("");
+  const [moodalShow, setMoodalShow] = useState(false);
+  const [deliveryDate, setDeliveryDate] = useState("");
+  const [state, setState] = useState({
+    open: false,
+    vertical: 'top',
+    horizontal: 'center',
+  });
+  const { vertical, horizontal, open } = state;
   useEffect(() => {
     const myProp = searchParams.get("uuid");
     setQrUuid(myProp);
     fetchData(myProp);
   }, []);
+  const handleClose = () => {
+    setState({ ...state, open: false });
+  };
   const fetchData = async (qrUuid) => {
     try {
       let data = await CommonApi.getData(
@@ -39,8 +54,7 @@ const QrRecieved = (props) => {
         {},
         { status: 1 }
       );
-      if(data.length>0){
-
+      if (data.length > 0) {
         setData(data);
         setTotalCount(data.length); //value need to be set from api
       }
@@ -49,7 +63,6 @@ const QrRecieved = (props) => {
       // Handle error, e.g., display error message to the user
     }
   };
- 
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -71,19 +84,62 @@ const QrRecieved = (props) => {
     });
   };
   const handleSubmitClick = (value) => {
-    handleModal()
+    handleModal();
   };
   const handleDiscountChange = (value) => {
     setDiscount(value);
   };
-  const handleRowEdit=(row,index,key,value)=>{
+  const handleRowEdit = (row, index, key, value) => {
     setData((prevData) =>
-      prevData.map((item, i) => (i === index ? { ...item, [key]: value } : item))
+      prevData.map((item, i) =>
+        i === index ? { ...item, [key]: value } : item
+      )
     );
-  }
-  const handleModal=()=>{
+  };
+  const handleModal = () => {
+    console.log(checkList);
     setMoodalShow(!moodalShow);
+  };
+
+
+
+  const handleDateChange=(dateValue)=>{
+    setDeliveryDate(dateValue);
+    console.log(dateValue);
   }
+  const handleCommentsChange=(dateValue)=>{
+    setDeliveryDate(dateValue);
+    console.log(dateValue);
+  }
+
+
+  const submitQuotation = async () => {
+    setMoodalShow(!moodalShow);
+    let inputData = [];
+    for (let i = 0; i < data.length; i++) {
+      if (checkList.includes(data[i].quotationRequestDetailUUId)) {
+        let mData = {
+          ...data[i],
+          status: 2,
+          reason: "no stock",
+          comments: "ok",
+        };
+        inputData.push(mData);
+      }
+    }
+    let response = await CommonApi.putData(
+      `Quotation/vendor/${qrUuid}/quotation`,
+      {},
+      inputData
+    );
+    if (response.status == "success") {
+      // alert("success");
+
+      setState({  open: true });
+    }
+    console.log(response.status);
+  };
+
   return (
     <>
       <TableContainer component={Paper} className="qrtable">
@@ -99,7 +155,7 @@ const QrRecieved = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row,index) => (
+            {data.map((row, index) => (
               <TableRow
                 sx={{ "& > *": { borderBottom: "unset" } }}
                 key={row.productName}
@@ -109,23 +165,39 @@ const QrRecieved = (props) => {
                 </TableCell>
                 <TableCell align="left">{row.quantity}</TableCell>
                 <TableCell align="left">
-                  <input className="table__input" value={row.gst} onChange={(e)=>handleRowEdit(row,index,'gst',e.target.value)}></input>
-                  </TableCell>
+                  <input
+                    className="table__input"
+                    value={row.gst}
+                    onChange={(e) =>
+                      handleRowEdit(row, index, "gst", e.target.value)
+                    }
+                  ></input>
+                </TableCell>
                 <TableCell align="left">
-                <input className="table__input" value={row.unitPrice} onChange={(e)=>handleRowEdit(row,index,'unitPrice',e.target.value)}></input>
-                 </TableCell>
+                  <input
+                    className="table__input"
+                    value={row.unitPrice}
+                    onChange={(e) =>
+                      handleRowEdit(row, index, "unitPrice", e.target.value)
+                    }
+                  ></input>
+                </TableCell>
                 <TableCell align="left">{row.totalPrice}</TableCell>
                 <TableCell align="left flex">
                   <button
                     className={
-                      checkList.includes(row.productName)
+                      checkList.includes(row.quotationRequestDetailUUId)
                         ? "secondary__btn__light"
                         : "secondary__btn"
                     }
-                    onClick={() => handleRowclick(row.productName)}
+                    onClick={() =>
+                      handleRowclick(row.quotationRequestDetailUUId)
+                    }
                   >
                     <TickIcon />
-                    {!checkList.includes(row.productName) ? "Select" : ""}
+                    {!checkList.includes(row.quotationRequestDetailUUId)
+                      ? "Select"
+                      : ""}
                   </button>
                   &nbsp;&nbsp;
                   <button className="secondary__btn__light">
@@ -168,7 +240,26 @@ const QrRecieved = (props) => {
         discountChange={handleDiscountChange}
         selectedCount={checkList.length}
       />
-      <QrPopup showModal={moodalShow} handleModalClose={handleModal}/>
+      <QrPopup
+        showModal={moodalShow}
+        handleModalClose={handleModal}
+        handleSubmit={submitQuotation}
+        dateChange={handleDateChange}
+      />
+      <Snackbar
+      autoHideDuration={5000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={open}
+        onClose={handleClose}
+        message="I love snacks"
+      ><Alert
+    onClose={handleClose}
+    severity="success"
+    variant="filled"
+    sx={{ width: '100%' }}
+  >
+    This is a success Alert inside a Snackbar!
+  </Alert></Snackbar>
     </>
   );
 };
