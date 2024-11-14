@@ -14,10 +14,10 @@ function Managework(props) {
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
-  useEffect(() => {
-    console.log(process.env.API_URL);
-    getApprovalPending();
-  }, []);
+  // useEffect(() => {
+  //   console.log(process.env.API_URL);
+  //   getApprovalPending();
+  // }, []);
   async function getApprovalPending() {
     let data = await CommonApi.getData(
       "ManageNetwork/vendors/SearchApprovalPendingNetworks",
