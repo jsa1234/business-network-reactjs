@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import TotalRate from "@/components/TotalRate";
 import CommonApi from "@/api/CommonApi";
 import { useSearchParams } from "next/navigation";
+import QrPopup from "@/components/QrPopup";
 const QrRecieved = (props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -25,6 +26,7 @@ const QrRecieved = (props) => {
   const [discount, setDiscount] = useState(0);
   const searchParams = useSearchParams();
   const [qrUuid, setQrUuid] = useState('');
+  const [moodalShow,setMoodalShow]=useState(false);
   useEffect(() => {
     const myProp = searchParams.get("uuid");
     setQrUuid(myProp);
@@ -69,12 +71,19 @@ const QrRecieved = (props) => {
     });
   };
   const handleSubmitClick = (value) => {
-    console.log(value);
-    alert(discount);
+    handleModal()
   };
   const handleDiscountChange = (value) => {
     setDiscount(value);
   };
+  const handleRowEdit=(row,index,key,value)=>{
+    setData((prevData) =>
+      prevData.map((item, i) => (i === index ? { ...item, [key]: value } : item))
+    );
+  }
+  const handleModal=()=>{
+    setMoodalShow(!moodalShow);
+  }
   return (
     <>
       <TableContainer component={Paper} className="qrtable">
@@ -90,7 +99,7 @@ const QrRecieved = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => (
+            {data.map((row,index) => (
               <TableRow
                 sx={{ "& > *": { borderBottom: "unset" } }}
                 key={row.productName}
@@ -99,20 +108,24 @@ const QrRecieved = (props) => {
                   {row.productName}
                 </TableCell>
                 <TableCell align="left">{row.quantity}</TableCell>
-                <TableCell align="left">{row.gst}</TableCell>
-                <TableCell align="left">{row.unitPrice}</TableCell>
+                <TableCell align="left">
+                  <input className="table__input" value={row.gst} onChange={(e)=>handleRowEdit(row,index,'gst',e.target.value)}></input>
+                  </TableCell>
+                <TableCell align="left">
+                <input className="table__input" value={row.unitPrice} onChange={(e)=>handleRowEdit(row,index,'unitPrice',e.target.value)}></input>
+                 </TableCell>
                 <TableCell align="left">{row.totalPrice}</TableCell>
                 <TableCell align="left flex">
                   <button
                     className={
-                      checkList.includes(row.name)
+                      checkList.includes(row.productName)
                         ? "secondary__btn__light"
                         : "secondary__btn"
                     }
-                    onClick={() => handleRowclick(row.name)}
+                    onClick={() => handleRowclick(row.productName)}
                   >
                     <TickIcon />
-                    {!checkList.includes(row.name) ? "Select" : ""}
+                    {!checkList.includes(row.productName) ? "Select" : ""}
                   </button>
                   &nbsp;&nbsp;
                   <button className="secondary__btn__light">
@@ -155,6 +168,7 @@ const QrRecieved = (props) => {
         discountChange={handleDiscountChange}
         selectedCount={checkList.length}
       />
+      <QrPopup showModal={moodalShow} handleModalClose={handleModal}/>
     </>
   );
 };
