@@ -9,44 +9,96 @@ import Address from "../../../../public/assests/icons/address.svg";
 import Contact from "../../../../public/assests/icons/contact.svg";
 import Contactperson from "../../../../public/assests/icons/contactperson.svg";
 import Email from "../../../../public/assests/icons/email.svg";
-import TotalRate from "@/components/TotalRate";
 import CommonApi from "@/api/CommonApi";
 
-function Trading(props) {
-  const [selectedOption, setSelectedOption] = useState("");
-  const [activeTab, setActiveTab] = useState("approval");
+function Trading({ activeTab }) {
   const [stock, setStock] = useState([]);
   const [details, setDetails] = useState([]);
 
-
   useEffect(() => {
     getStock();
+    getDetails();
   }, []);
 
   async function getStock() {
     let data = await CommonApi.getData(
-      "ManageNetwork/vendors/{0EA46866-1C70-4AF5-B3E1-F1F2A9E23CD3}/stock",
-      {},
-      {
-        VendorUUId: "0EA46866-1C70-4AF5-B3E1-F1F2A9E23CD3",
-      }
+      "ManageNetwork/vendor/0EA46866-1C70-4AF5-B3E1-F1F2A9E23CD3/stock",
+      {}
     );
-    console.log("MG.jsx", data);
-    // Ensure stock is always an array
     setStock(Array.isArray(data) ? data : []);
   }
 
-  const handleChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
+  async function getDetails() {
+    let data = await CommonApi.getData(
+      "ManageNetwork/supplier/9E405931-7756-4A02-96D4-CB03C1BE6D6E/details",
+      {
+        VendorUUId:"9E405931-7756-4A02-96D4-CB03C1BE6D6E"
+      }
+    );
+    setDetails(data);
+  }
 
   const renderTableData = () => {
-    const theadContent =
-      activeTab === "request" ? (
-        <thead>
-          <tr></tr>
-        </thead>
-      ) : (
+    if (activeTab === "request") {
+      return (
+        <div className="flex flex-col ml-[4rem] mr-[4rem] pt-4 pb-4">
+        {Object.keys(details).length > 0 ? (
+          <>
+            {/* Business Name */}
+            <div className="flex flex-row border-b border-gray-300 p-4">
+              <h1 className="text-xl w-[100px]">
+                <Businessname />
+              </h1>
+              <h2 className="w-[150px] text-lg font-semibold">Business Name:</h2>
+              <h3 className="text-md w-[400px] text-lg">{details.vendorName || "--"}</h3>
+            </div>
+      
+            {/* Address */}
+            <div className="flex flex-row border-b border-gray-300 p-4">
+              <h1 className="text-xl w-[100px]">
+                <Address />
+              </h1>
+              <h2 className="w-[150px] text-lg font-semibold">Address:</h2>
+              <h3 className="text-md w-[400px] text-lg">{details.address || "--"}</h3>
+            </div>
+      
+            {/* Contact Number */}
+            <div className="flex flex-row border-b border-gray-300 p-4">
+              <h1 className="text-xl w-[100px]">
+                <Contact />
+              </h1>
+              <h2 className="w-[150px] text-lg font-semibold">Contact No:</h2>
+              <h3 className="text-md w-[400px] text-lg">{details.contactNumber || "--"}</h3>
+            </div>
+      
+            {/* Contact Person */}
+            <div className="flex flex-row border-b border-gray-300 p-4">
+              <h1 className="text-xl w-[100px]">
+                <Contactperson />
+              </h1>
+              <h2 className="w-[150px] text-lg font-semibold">Contact Person:</h2>
+              <h3 className="text-md w-[400px] text-lg">{details.contactPerson || "--"}</h3>
+            </div>
+      
+            {/* Email ID */}
+            <div className="flex flex-row border-b border-gray-300 p-4">
+              <h1 className="text-xl w-[100px]">
+                <Email />
+              </h1>
+              <h2 className="w-[150px] text-lg font-semibold">Email ID:</h2>
+              <h3 className="text-md w-[400px] text-lg">{details.email || "--"}</h3>
+            </div>
+          </>
+        ) : (
+          <div className="p-4 text-center">No Details Available</div>
+        )}
+      </div>
+      
+      );
+    }
+
+    return (
+      <table className="table w-full rounded-tr-lg">
         <thead>
           <tr>
             <th>Product Name</th>
@@ -57,23 +109,16 @@ function Trading(props) {
             <th>Action</th>
           </tr>
         </thead>
-      );
-
-    const tableBodyContent =
-      activeTab === "approval" ? (
-        <tbody className="text-left">
-          {Array.isArray(stock) && stock.length > 0 ? (
+        <tbody>
+          {stock.length > 0 ? (
             stock.map((row, index) => (
               <tr key={`approval_${index}`}>
                 <td>{row.productName || "--"}</td>
                 <td>
                   <Typography variant="body2" sx={{ color: "orange" }}>
-                    {/* Calculate progress based on total and remaining quantity */}
                     {row.totalQuantity
                       ? `${Math.round(
-                          ((row.totalQuantity - row.remainingQuantity) /
-                            row.totalQuantity) *
-                            100
+                          ((row.totalQuantity - row.remainingQuantity) / row.totalQuantity) * 100
                         )}%`
                       : "0%"}
                   </Typography>
@@ -82,9 +127,7 @@ function Trading(props) {
                       variant="determinate"
                       value={
                         row.totalQuantity
-                          ? ((row.totalQuantity - row.remainingQuantity) /
-                              row.totalQuantity) *
-                            100
+                          ? ((row.totalQuantity - row.remainingQuantity) / row.totalQuantity) * 100
                           : 0
                       }
                       sx={{
@@ -101,83 +144,21 @@ function Trading(props) {
                 </td>
                 <td>{row.remainingQuantity || "--"}</td>
                 <td>{row.originalPrice || "--"}</td>
-                <td>
-                  <div className="trading-box">{row.offerPrice || "--"}</div>
-                </td>
-                <td>
-                  <Buttons />
-                </td>
+                <td>{row.offerPrice || "--"}</td>
+                <td><Buttons /></td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="7" style={{ textAlign: "center" }}>
-                No stock data available
-              </td>
+              <td colSpan="6" style={{ textAlign: "center" }}>No stock data available</td>
             </tr>
           )}
         </tbody>
-      ) : (
-        <div className="flex flex-col ml-[4rem] mr-[4rem]">
-          <div className="flex flex-row border-b border-gray-300 p-4">
-            <h1 className="text-xl w-[100px]">
-              <Businessname />
-            </h1>
-            <h2 className="w-[100px] text-lg font-semibold">Business Name</h2>
-            <h3 className="text-md w-[400px] text-lg">
-
-              Earthly Delights Trading
-            </h3>
-          </div>
-
-          <div className="flex flex-row border-b border-gray-300 p-4">
-            <h1 className="text-xl w-[100px]">
-              <Address />
-            </h1>
-            <h2 className="w-[100px] text-lg font-semibold pr-4">Address:</h2>
-            <h3 className="text-md w-[400px] text-lg">123 457 2587</h3>
-          </div>
-          <div className="flex flex-row border-b border-gray-300 p-4">
-            <h1 className="text-xl w-[100px]">
-              <Contact />
-            </h1>
-            <h2 className="w-[100px] text-lg font-semibold pr-4">
-              Contact No:
-            </h2>
-            <h3 className="text-md w-[400px] text-lg">123 457 2587</h3>
-          </div>
-          <div className="flex flex-row border-b border-gray-300 p-4">
-            <h1 className="text-xl w-[100px]">
-              <Contactperson />
-            </h1>
-            <h2 className="w-[100px] text-lg font-semibold pr-4">
-              Contact Person:
-            </h2>
-            <h3 className="text-md w-[400px] text-lg">Zubin Basher</h3>
-          </div>
-          <div className="flex flex-row border-b border-gray-300 p-4">
-            <h1 className="text-xl w-[100px]">
-              <Email />
-            </h1>
-            <h2 className="w-[100px] text-lg font-semibold pr-4">Email ID:</h2>
-            <h3 className="text-md w-[400px] text-lg">supplier@mail.com</h3>
-          </div>
-        </div>
-      );
-
-    return (
-      <table className="table w-full rounded-tr-lg">
-        {theadContent}
-        {tableBodyContent}
       </table>
     );
   };
 
-  return (
-    <>
-      <div className="w-full table-container2">{renderTableData()}</div>
-    </>
-  );
+  return <div className="w-full table-container2">{renderTableData()}</div>;
 }
 
 export default Trading;
