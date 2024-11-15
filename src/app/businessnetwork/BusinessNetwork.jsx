@@ -104,11 +104,11 @@ const BusinessNetwork = () => {
   // Handle form submission or search
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log({});
+
     // Add your search logic here
-    (async function() {
+    (async function () {
       try {
-        const data = await CommonApi.postData(
+        const res = await CommonApi.postData(
           "BusinessNetwork/vendor/search/networks",
           {},
           {
@@ -117,38 +117,38 @@ const BusinessNetwork = () => {
             mobileNo: "",
             businessName: "",
             productCategory: "",
-            vendorCategory: "1",
+            vendorCategory: "",
             location: "",
             rating: "",
           }
         );
-        setData((prevState) => [...prevState, ...data]);
+        setData((prevState) => [...prevState, ...res]);
         // console.log(productCategoryData);
       } catch (error) {
         console.error("Error fetching network data:", error);
       }
-    })()
+    })();
   };
   const handleMinimize = () => {
     setshowModal(!showModal);
   };
 
   useEffect(() => {
-    getCategories();
-    getVendors();
-    getLocations();
-    getRatings();
+    // getCategories();
+    // getVendors();
+    // getLocations();
+    // getRatings();
   }, []);
 
   // product category api
   async function getCategories() {
     try {
-      const data = await CommonApi.getData(
+      const res = await CommonApi.getData(
         "BusinessNetwork/vendor/product/categories",
         {},
         {}
       );
-      setProductCategoryData((prevState) => [...prevState, ...data]);
+      setProductCategoryData((prevState) => [...prevState, ...res]);
       // console.log(productCategoryData);
     } catch (error) {
       console.error("Error fetching network data:", error);
@@ -158,12 +158,12 @@ const BusinessNetwork = () => {
   // vendor category api
   async function getVendors() {
     try {
-      const data = await CommonApi.getData(
+      const res = await CommonApi.getData(
         "BusinessNetwork/vendor/categories",
         {},
         {}
       );
-      setVendorCategoryData((prevState) => [...prevState, ...data]);
+      setVendorCategoryData((prevState) => [...prevState, ...res]);
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -172,12 +172,12 @@ const BusinessNetwork = () => {
   // vendor location api
   async function getLocations() {
     try {
-      const data = await CommonApi.getData(
+      const res = await CommonApi.getData(
         "BusinessNetwork/vendor/locations",
         {},
         {}
       );
-      setLoationsData((prevState) => [...prevState, ...data]);
+      setLoationsData((prevState) => [...prevState, ...res]);
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -186,12 +186,12 @@ const BusinessNetwork = () => {
   // vendor ratings api
   async function getRatings() {
     try {
-      const data = await CommonApi.getData(
+      const res = await CommonApi.getData(
         "BusinessNetwork/vendor/ratings",
         {},
         {}
       );
-      setRatingsData((prevState) => [...prevState, ...data]);
+      setRatingsData((prevState) => [...prevState, ...res]);
     } catch (error) {
       console.error("Error fetching network data:", error);
     }

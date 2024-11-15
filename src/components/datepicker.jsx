@@ -110,20 +110,24 @@ export default function Datepicker() {
   }, []);
 
   const handleMonthChange = (direction) => {
-    setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + direction)));
+    setCurrentDate(
+      new Date(currentDate.setMonth(currentDate.getMonth() + direction))
+    );
   };
 
   const handleYearChange = (direction) => {
-    setCurrentDate(new Date(currentDate.setFullYear(currentDate.getFullYear() + direction)));
+    setCurrentDate(
+      new Date(currentDate.setFullYear(currentDate.getFullYear() + direction))
+    );
   };
 
   return (
     <div className="relative mx-auto max-w-fit text-black" ref={datepickerRef}>
-      <div className="relative mb-3">
+      <div className="relative">
         <input
           type="text"
           placeholder="Pick a date"
-          className="h-12 w-full appearance-none rounded-lg border border-stroke bg-white pl-12 pr-4 text-dark outline-none"
+          className="form-control form-input mx-6 cursor-pointer"
           value={updateInput()}
           onClick={toggleDatepicker}
           readOnly
@@ -133,7 +137,7 @@ export default function Datepicker() {
       {isOpen && (
         <div className="absolute z-10 mt-2 w-[280px] rounded-lg border border-stroke bg-white p-4 shadow-lg sm:p-6">
           <div className="flex items-center justify-between pb-2">
-            <p className="text-base font-medium text-dark">
+            <p className="text-base text-dark">
               {currentDate.toLocaleString("default", {
                 month: "long",
               })}{" "}
@@ -167,28 +171,31 @@ export default function Datepicker() {
             </div>
           </div>
 
-          <div className="grid grid-cols-7 pb-2 pt-4 text-sm font-normal text-gray-500">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <div className="grid grid-cols-7 pb-2 pt-4 font-normal text-gray-500">
+            {["S", "M", "T", "W", "T", "F", "F"].map((day) => (
               <div key={day} className="flex items-center justify-center">
                 {day}
               </div>
             ))}
           </div>
 
-          <div id="days-container" className="grid grid-cols-7 text-sm font-medium text-dark">
+          <div
+            id="days-container"
+            className="grid grid-cols-7 font-medium text-dark"
+          >
             {renderCalendar()}
           </div>
 
           <div className="flex items-center justify-center space-x-3 pt-4">
             <button
               onClick={handleApply}
-              className="h-8 w-20 rounded bg-[#FD9C49] text-white"
+              className="rounded bg-[#FD9C49] text-white py-2 px-4"
             >
               Apply
             </button>
             <button
               onClick={handleCancel}
-              className="h-8 w-20 rounded bg-gray-200 text-dark"
+              className=" py-2 px-4 rounded bg-gray-200 text-dark"
             >
               Cancel
             </button>
