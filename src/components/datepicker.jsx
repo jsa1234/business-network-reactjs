@@ -172,8 +172,11 @@ export default function Datepicker() {
           </div>
 
           <div className="grid grid-cols-7 pb-2 pt-4 font-normal text-gray-500">
-            {["S", "M", "T", "W", "T", "F", "F"].map((day) => (
-              <div key={day} className="flex items-center justify-center">
+            {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
+              <div
+                key={`${day}-${index}`}
+                className="flex items-center justify-center"
+              >
                 {day}
               </div>
             ))}
