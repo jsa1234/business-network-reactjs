@@ -84,6 +84,9 @@ const BusinessNetwork = () => {
       // Handle error, e.g., display error message to the user
     }
   };
+  const [vendorUUID, setVendorUUID] = useState(
+    "21C7586F-9F29-457B-8E3D-4C75213183DF"
+  );
   const [gstNo, setGstNo] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -112,18 +115,17 @@ const BusinessNetwork = () => {
           "BusinessNetwork/vendor/search/networks",
           {},
           {
-            VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
-            gstNo: "",
-            mobileNo: "",
-            businessName: "",
-            productCategory: "",
-            vendorCategory: "",
-            location: "",
-            rating: "",
+            VendorUUId: vendorUUID,
+            gstNo: gstNo,
+            mobileNo: mobileNo,
+            businessName: businessName,
+            productCategory: productCategory,
+            vendorCategory: vendorCategory,
+            location: location,
+            rating: rating,
           }
         );
-        setData((prevState) => [...prevState, ...res]);
-        // console.log(productCategoryData);
+        setData(res);
       } catch (error) {
         console.error("Error fetching network data:", error);
       }
@@ -134,10 +136,10 @@ const BusinessNetwork = () => {
   };
 
   useEffect(() => {
-    // getCategories();
-    // getVendors();
-    // getLocations();
-    // getRatings();
+    getCategories();
+    getVendors();
+    getLocations();
+    getRatings();
   }, []);
 
   // product category api
@@ -149,7 +151,6 @@ const BusinessNetwork = () => {
         {}
       );
       setProductCategoryData((prevState) => [...prevState, ...res]);
-      // console.log(productCategoryData);
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
