@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 
-export default function Datepicker() {
+export default function Datepicker(props) {
+  const {selectedStartDate, setSelectedStartDate,selectedEndDate, setSelectedEndDate}=props
+  
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedStartDate, setSelectedStartDate] = useState(null);
-  const [selectedEndDate, setSelectedEndDate] = useState(null);
+  // const [selectedStartDate, setSelectedStartDate] = useState(null);
+  // const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
   const datepickerRef = useRef(null);

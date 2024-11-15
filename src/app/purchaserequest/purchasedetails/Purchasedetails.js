@@ -23,6 +23,7 @@ const PurchaseDetails = () => {
   const steps = ["Order Requested", "Order Shipped", "Estimated Delivery"];
   const [data, setData] = React.useState([]);
   const [totalCount, setTotalCount] = React.useState(0);
+  const [purchasedetails,setPurchaseDetails] = useState([]);
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveStep((prevStep) => (prevStep + 1) % steps.length);
@@ -31,49 +32,26 @@ const PurchaseDetails = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const fetchData = async (currentPage, rowsPerPage) => {
-    try {
-      //below code need to integrated when api are ready
-      //   const response = await fetch(
-      //     // Replace with your server endpoint URL
-      //     `your-api-endpoint?page=${currentPage + 1}&rowsPerPage=${rowsPerPage}`
-      //   );
 
-      //   if (!response.ok) {
-      //     throw new Error('Network response was not ok');
-      //   }
-      const rows = [
+ const fetchData = async (currentPage, rowsPerPage) => {
+    try {
+      const response = await CommonApi.getData(
+        "Purchase/vendor/{purchaseRequestUUId}/request-details",
+        {},
         {
-          name: "Onionn",
-          qty: 700,
-          gst: 700,
-          price: 700,
-          totall: 700,
-        },
-        {
-            name: "Onionny",
-            qty: 700,
-            gst: 700,
-            price: 700,
-            totall: 700,
-          },
-          {
-            name: "Onionnn",
-            qty: 700,
-            gst: 700,
-            price: 700,
-            totall: 700,
-          },
-      ];
-      setData(rows);
-      setTotalCount(5); //value need to be set from api
+          VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+          Status: 2,
+        }
+      );
+      console.log("API Data:", response);
+      setPurchaseDetails(response || []);
+     /*  setTotalCount(response?.totalCount || 0); */
     } catch (error) {
       console.error("Error fetching data:", error);
-      // Handle error, e.g., display error message to the user
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchData(page, rowsPerPage);
   }, [page, rowsPerPage]);
 
@@ -144,7 +122,7 @@ const PurchaseDetails = () => {
           </Box>
         </Grid>
       </Grid>
-      <div className="w-full mt-6 table-container">
+      {/* <div className="w-full mt-6 table-container">
         <div className="filter-group-secondary">
           <h1>
             PR ID: <span>#2024ABC</span>
@@ -163,7 +141,7 @@ const PurchaseDetails = () => {
           </h1>
           <div className="btn_grp"></div>
         </div>
-      </div>
+      </div> */}
       <TableContainer component={Paper}>
         <Table className="table" aria-label="collapsible table">
           <TableHead>
@@ -179,20 +157,28 @@ const PurchaseDetails = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => (
-              <TableRow
-                sx={{ "& > *": { borderBottom: "unset" } }}
-                key={row.name}
+          {purchasedetails.length > 0 ? (
+              purchasedetails.map((row, index) => (
+              <TableRow key={index}
+               
+               
               >
                 <TableCell component="td" scope="row">
-                  {row.name}
+                  {row.productName || "--"}
                 </TableCell>
-                <TableCell align="left">{row.qty}</TableCell>
-                <TableCell align="right">{row.gst}</TableCell>
-                <TableCell align="right">{row.price}</TableCell>
-                <TableCell align="right">{row.totall}</TableCell>
+                <TableCell align="left">{row.quantity || "--"}</TableCell>
+                <TableCell align="right">{row.gst || "--"}</TableCell>
+                <TableCell align="right">{row.unitPrice || "--"}</TableCell>
+                <TableCell align="right">{row.totalPrice || "--"}</TableCell>
               </TableRow>
-            ))}
+             ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  No data available
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
           <TableFooter>
             {/* <TableRow>
