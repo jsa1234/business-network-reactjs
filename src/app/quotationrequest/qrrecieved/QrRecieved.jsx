@@ -17,11 +17,10 @@ import TotalRate from "@/components/TotalRate";
 import CommonApi from "@/api/CommonApi";
 import { useSearchParams } from "next/navigation";
 import QrPopup from "@/components/QrPopup";
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
-
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import { format } from "date-fns";
+import { constants } from "@/api/constants";
 const QrRecieved = (props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -31,21 +30,20 @@ const QrRecieved = (props) => {
   const [discount, setDiscount] = useState(0);
   const searchParams = useSearchParams();
   const [qrUuid, setQrUuid] = useState("");
-  const [moodalShow, setMoodalShow] = useState(false);
+  const [modalShow, setModalShow] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState("");
-  const [state, setState] = useState({
-    open: false,
-    vertical: 'top',
-    horizontal: 'center',
-  });
-  const { vertical, horizontal, open } = state;
+  const [comments, setComments] = useState("");
+  const [open, setOpen] = useState(false);
+  const [qrMode, setQrMode] = useState("");
+  const [headData, setHeadData] = useState({});
+  const [toastMsg, setToastMsg] = useState("");
   useEffect(() => {
     const myProp = searchParams.get("uuid");
     setQrUuid(myProp);
     fetchData(myProp);
   }, []);
   const handleClose = () => {
-    setState({ ...state, open: false });
+    setOpen(false);
   };
   const fetchData = async (qrUuid) => {
     try {
@@ -58,6 +56,13 @@ const QrRecieved = (props) => {
         setData(data);
         setTotalCount(data.length); //value need to be set from api
       }
+
+      let hData = await CommonApi.getData(
+        `Quotation/vendor/${qrUuid}/request`,
+        {},
+        { status: 1 }
+      );
+      setHeadData(hData);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
@@ -84,7 +89,7 @@ const QrRecieved = (props) => {
     });
   };
   const handleSubmitClick = (value) => {
-    handleModal();
+    handleModal(value);
   };
   const handleDiscountChange = (value) => {
     setDiscount(value);
@@ -96,52 +101,108 @@ const QrRecieved = (props) => {
       )
     );
   };
-  const handleModal = () => {
+  const handleModal = (value) => {
     console.log(checkList);
-    setMoodalShow(!moodalShow);
+    setModalShow(!modalShow);
+    setQrMode(value);
   };
 
-
-
-  const handleDateChange=(dateValue)=>{
+  const handleDateChange = (dateValue) => {
     setDeliveryDate(dateValue);
     console.log(dateValue);
-  }
-  const handleCommentsChange=(dateValue)=>{
-    setDeliveryDate(dateValue);
-    console.log(dateValue);
-  }
+  };
+  const handleCommentsChange = (comments) => {
+    setComments(comments);
+    console.log(comments);
+  };
 
-
-  const submitQuotation = async () => {
-    setMoodalShow(!moodalShow);
-    let inputData = [];
+  const submitQuotation = async (value) => {
+    setModalShow(!modalShow);
+    
+      let inputData = [];
     for (let i = 0; i < data.length; i++) {
-      if (checkList.includes(data[i].quotationRequestDetailUUId)) {
-        let mData = {
+      let mData ={};
+      if (checkList.length>0 && checkList.includes(data[i].quotationRequestDetailUUId)) {
+        mData = {
           ...data[i],
-          status: 2,
-          reason: "no stock",
-          comments: "ok",
+          'status': constants.quotationStatus[value],
+          'reason': comments,
+          'comments': comments,
+          'deliverydate':deliveryDate,
+          'discount':discount
         };
-        inputData.push(mData);
+        
+      }else if(checkList.length==0){
+         mData = {
+          ...data[i],
+          'status': constants.quotationStatus[value],
+          'reason': comments,
+          'comments': comments,
+          'deliverydate':deliveryDate,
+          'discount':discount
+        };
       }
+      inputData.push(mData);
     }
-    let response = await CommonApi.putData(
-      `Quotation/vendor/${qrUuid}/quotation`,
-      {},
-      inputData
-    );
-    if (response.status == "success") {
-      // alert("success");
-
-      setState({  open: true });
-    }
-    console.log(response.status);
+      let response = await CommonApi.putData(
+        `Quotation/vendor/${qrUuid}/quotation`,
+        {},
+        inputData
+      );
+      if (response.status == "success") {
+        // alert("success");
+        if (value == "send") {
+          setToastMsg("Quotation Request Submitted SuccessFully!");
+          setOpen(true);
+        } else if (value == "hold") {
+          setToastMsg("Quotation Hold Submitted SuccessFully!");
+          setOpen(true);
+        } else if (value == "reject") {
+          setToastMsg("Quotation Reject Submitted SuccessFully!");
+          setOpen(true);
+        }
+      } else {
+        setToastMsg("Quotation Request Failed!");
+        setOpen(true);
+      }
+      console.log(response.status);
+    
   };
 
   return (
     <>
+      <div className="filter-group-secondary">
+        <h1>
+          QR ID <span>{headData.quotationRequestId}</span>
+        </h1>
+        <h1>
+          Name: <span>{headData.companyName}</span>
+        </h1>
+        <h1>
+          Requested Date:{" "}
+          <span>
+            {format(new Date(headData.requestDate || Date()), "dd-MM-yyyy")}
+          </span>
+        </h1>
+        <h1>
+          Total Items:<span>{headData.totalItems}</span>
+        </h1>
+        <div className="btn_grp">
+          <button
+            className="outer__btn"
+            onClick={() => handleSubmitClick("hold")}
+          >
+            <HoldIcon />
+            Hold
+          </button>
+          <button
+            className="cancel_btn_secondary"
+            onClick={() => handleSubmitClick("reject")}
+          >
+            Reject
+          </button>
+        </div>
+      </div>
       <TableContainer component={Paper} className="qrtable">
         <Table className="table" aria-label="collapsible table">
           <TableHead>
@@ -241,25 +302,33 @@ const QrRecieved = (props) => {
         selectedCount={checkList.length}
       />
       <QrPopup
-        showModal={moodalShow}
+        mode={qrMode}
+        showModal={modalShow}
         handleModalClose={handleModal}
         handleSubmit={submitQuotation}
         dateChange={handleDateChange}
+        commentsChange={handleCommentsChange}
       />
       <Snackbar
-      autoHideDuration={5000}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={open}
         onClose={handleClose}
         message="I love snacks"
-      ><Alert
-    onClose={handleClose}
-    severity="success"
-    variant="filled"
-    sx={{ width: '100%' }}
-  >
-    This is a success Alert inside a Snackbar!
-  </Alert></Snackbar>
+      >
+        <Alert
+          onClose={handleClose}
+          severity="success"
+          variant="filled"
+          sx={{
+            width: "100%",
+            // Increase font size here
+            fontSize: "1.4rem",
+          }}
+        >
+          {toastMsg}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

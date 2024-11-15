@@ -14,16 +14,22 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import CommonApi from "@/api/CommonApi";
 import { useRouter } from "next/navigation";
-import { format } from 'date-fns';
-
+import { format } from "date-fns";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 const QuotationRequest = () => {
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   let routingList = {
     request: "/quotationrequest/qrrecieved",
     send: "/quotationrequest/quotationsend",
     hold: "/quotationrequest/qrhold",
     reject: "/quotationrequest/quotationrejected",
   };
-  const router=useRouter();
+  const router = useRouter();
   const [page, setPage] = useState(0);
   const [activeTab, setActiveTab] = useState("request");
   const [reqCount, setreqCount] = useState({
@@ -70,17 +76,20 @@ const QuotationRequest = () => {
           Status: reqDataStatus[reqData],
         }
       );
-
-      setData(data);
-      setTotalCount(data.length);
+      if (!data.error) {
+        setData(data);
+        setTotalCount(data.length);
+      } else {
+        setOpen(true)
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
     }
   };
-  const handleCardClick=(uuid)=>{
+  const handleCardClick = (uuid) => {
     router.push(`${routingList[activeTab]}?uuid=${uuid}`);
-  }
+  };
   return (
     <div>
       <div className="flex mt-6 background">
@@ -150,7 +159,9 @@ const QuotationRequest = () => {
             className="form-control form-input"
             placeholder="Search Product Name..."
           />
-          <label className="dropdown-list" htmlFor="dropdown">Sort by</label>
+          <label className="dropdown-list" htmlFor="dropdown">
+            Sort by
+          </label>
           <select id="dropdown" className="dropdownSelect">
             <option value="" className="font-bold text-black">
               Choose
@@ -168,7 +179,7 @@ const QuotationRequest = () => {
               key={row.companyName}
               mode={row.mode}
               name={row.companyName}
-              date={format(new Date(row.requestDate), 'dd-MM-yyyy')}
+              date={format(new Date(row.requestDate), "dd-MM-yyyy")}
               qritems={row.totalItems}
               status={row.status ? "Urgent" : ""}
               qrId={row.quotationRequestId}
@@ -204,6 +215,26 @@ const QuotationRequest = () => {
           </Table>
         </TableContainer>
       </div>
+      <Snackbar
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={open}
+        onClose={handleClose}
+        message="I love snacks"
+      >
+        <Alert
+          onClose={handleClose}
+          severity="error"
+          variant="filled"
+          sx={{
+            width: "100%",
+            // Increase font size here
+            fontSize: "1.2rem",
+          }}
+        >
+          Something Went Wrong. Try Again Later
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

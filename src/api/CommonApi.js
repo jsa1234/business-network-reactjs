@@ -51,7 +51,7 @@ class CommonAPI {
           }
         })
         .catch((error) => {
-          return this.handleError(error);
+          return { error: "An unexpected error occurred." };
         });
     }
 }

@@ -22,7 +22,7 @@ const TotalRate = ({ subTotal, totalGst, total,submitClick,discountChange,select
       <h1>
         Total:<span>{total}</span>
       </h1>
-      <button className="green__btn" onClick={(e)=>submitClick(e.target.value)} data-count={selectedCount}>
+      <button className="green__btn" onClick={()=>submitClick('accept')} data-count={selectedCount}>
         <Navigation />
         Submit Quotation
       </button>
