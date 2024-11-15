@@ -1,6 +1,6 @@
 "use client";
 import Pagenavigation from '@/components/Pagenavigation'
-import CommonApi from "@/api/CommonApi";
+
 import Purchasedetails from './Purchasedetails';
 import React, { useEffect, useState } from "react";
 
@@ -8,24 +8,9 @@ import React, { useEffect, useState } from "react";
 const Page = () => {
     const breadcrumbItems = ["Dashboard", "Purchase Request"];
     const urlList = ["/", "/purchasedetails"];
-    const [purchaseRequest, setPurchaseRequest] = useState([]);
+   
 
-    useEffect(() => {
-      console.log(process.env.API_URL);
-      getPurchaseRequest();
-    }, []);
-    async function getPurchaseRequest() {
-      let data = await CommonApi.getData(
-        "Purchase/vendor/{purchaseRequestUUId}/request",
-        {},
-        {
-          VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
-        }
-      );
-      console.log("MG.jsx", data);
-      setPurchaseRequest(data);
-
-    }
+   
   return (
     <div className="bus__body w-full pl-9 mt-6 pr-3 pb-9">
       <div className="flex justify-between">
@@ -38,7 +23,7 @@ const Page = () => {
        
       </div>
       <div className="w-full mt-6 table-container">
-      <div className="filter-group-secondary">
+     {/*  <div className="filter-group-secondary">
           {Object.keys(purchaseRequest).length > 0 ? (
             <>
               <h1>
@@ -78,7 +63,7 @@ const Page = () => {
           ) : (
             <p>No requests found</p>
           )}
-        </div> 
+        </div> */} 
        <Purchasedetails/>
       </div>
     </div>

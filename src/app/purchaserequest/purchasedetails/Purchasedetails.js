@@ -16,6 +16,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableFooter from "@mui/material/TableFooter";
+import CommonApi from "@/api/CommonApi";
 const PurchaseDetails = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -24,6 +25,26 @@ const PurchaseDetails = () => {
   const [data, setData] = React.useState([]);
   const [totalCount, setTotalCount] = React.useState(0);
   const [purchasedetails,setPurchaseDetails] = useState([]);
+  const [purchaseRequest, setPurchaseRequest] = useState([]);
+
+
+  useEffect(() => {
+    console.log(process.env.API_URL);
+    getPurchaseRequest();
+  }, []);
+  async function getPurchaseRequest() {
+    let data = await CommonApi
+    .getData(
+      "Purchase/vendor/{purchaseRequestUUId}/request",
+      {},
+      {
+        VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+      }
+    );
+    console.log("MG.jsx", data);
+    setPurchaseRequest(data);
+
+  }
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveStep((prevStep) => (prevStep + 1) % steps.length);
@@ -122,26 +143,48 @@ const PurchaseDetails = () => {
           </Box>
         </Grid>
       </Grid>
-      {/* <div className="w-full mt-6 table-container">
-        <div className="filter-group-secondary">
-          <h1>
-            PR ID: <span>#2024ABC</span>
-          </h1>
-          <h1>
-            Name: <span>Earthy Delights Trading</span>
-          </h1>
-          <h1>
-            Approved Date: <span>18/10/2024</span>
-          </h1>
-          <h1>
-            Expected Delivery Date:<span>10</span>
-          </h1>
-          <h1>
-            Total Items:<span>10</span>
-          </h1>
-          <div className="btn_grp"></div>
-        </div>
-      </div> */}
+      <div className="w-full mt-6 table-container">
+      <div className="filter-group-secondary">
+          {Object.keys(purchaseRequest).length > 0 ? (
+            <>
+              <h1>
+                QR ID: <span>{purchaseRequest.quotationRequestId || "--"}</span>
+              </h1>
+              <h1>
+                Name: <span>{purchaseRequest.companyName || "--"}</span>
+              </h1>
+              <h1>
+                Requested Date:{" "}
+                <span>
+                  {purchaseRequest.requestDate
+                    ? format(new Date(purchaseRequest.requestDate), "dd-MM-yyyy")
+                    : "--"}
+                </span>
+              </h1>
+              <h1>
+                Submitted Date:{" "}
+                <span>
+                  {purchaseRequest.submittedDate
+                    ? format(new Date(purchaseRequest.submittedDate), "dd-MM-yyyy")
+                    : "--"}
+                </span>
+              </h1>
+              <h1>
+                Expected Delivery Date:{" "}
+                <span>
+                  {purchaseRequest.expectedDeliveryDate
+                    ? format(
+                        new Date(purchaseRequest.expectedDeliveryDate),
+                        "dd-MM-yyyy"
+                      )
+                    : "--"}
+                </span>
+              </h1>
+            </>
+          ) : (
+            <p>No requests found</p>
+          )}
+        </div> 
       <TableContainer component={Paper}>
         <Table className="table" aria-label="collapsible table">
           <TableHead>
@@ -216,6 +259,8 @@ const PurchaseDetails = () => {
           </p>
         </div>
       </TableContainer>
+      </div>
+      
     </>
   );
 };
