@@ -104,17 +104,30 @@ const BusinessNetwork = () => {
   // Handle form submission or search
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log({
-      VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
-      gstNo: "",
-      mobileNo: "",
-      businessName: "",
-      productCategory: "",
-      vendorCategory: "1",
-      location: "",
-      rating: "",
-    });
+    console.log({});
     // Add your search logic here
+    (async function() {
+      try {
+        const data = await CommonApi.postData(
+          "BusinessNetwork/vendor/search/networks",
+          {},
+          {
+            VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+            gstNo: "",
+            mobileNo: "",
+            businessName: "",
+            productCategory: "",
+            vendorCategory: "1",
+            location: "",
+            rating: "",
+          }
+        );
+        setData((prevState) => [...prevState, ...data]);
+        // console.log(productCategoryData);
+      } catch (error) {
+        console.error("Error fetching network data:", error);
+      }
+    })()
   };
   const handleMinimize = () => {
     setshowModal(!showModal);

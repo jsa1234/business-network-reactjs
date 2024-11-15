@@ -1,58 +1,200 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
-const DatePicker = () => {
+export default function Datepicker() {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const datepickerRef = useRef(null);
+
+  const renderCalendar = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysArray = [];
+
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      daysArray.push(<div key={`empty-${i}`}></div>);
+    }
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      const day = new Date(year, month, i);
+      const dayString = day.toLocaleDateString("en-US");
+      let className =
+        "flex h-[36px] w-[36px] items-center justify-center rounded-full hover:bg-gray-200 mb-2";
+
+      if (selectedStartDate && dayString === selectedStartDate) {
+        className += " bg-[#FD9C49] text-white rounded-r-none";
+      }
+      if (selectedEndDate && dayString === selectedEndDate) {
+        className += " bg-[#FD9C49] text-white rounded-l-none";
+      }
+      if (
+        selectedStartDate &&
+        selectedEndDate &&
+        new Date(day) > new Date(selectedStartDate) &&
+        new Date(day) < new Date(selectedEndDate)
+      ) {
+        className += " bg-gray-300 rounded-none";
+      }
+
+      daysArray.push(
+        <div
+          key={i}
+          className={className}
+          data-date={dayString}
+          onClick={() => handleDayClick(dayString)}
+        >
+          {i}
+        </div>
+      );
+    }
+
+    return daysArray;
+  };
+
+  const handleDayClick = (selectedDay) => {
+    if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
+      setSelectedStartDate(selectedDay);
+      setSelectedEndDate(null);
+    } else {
+      if (new Date(selectedDay) < new Date(selectedStartDate)) {
+        setSelectedEndDate(selectedStartDate);
+        setSelectedStartDate(selectedDay);
+      } else {
+        setSelectedEndDate(selectedDay);
+      }
+    }
+  };
+
+  const updateInput = () => {
+    if (selectedStartDate && selectedEndDate) {
+      return `${selectedStartDate} - ${selectedEndDate}`;
+    } else if (selectedStartDate) {
+      return selectedStartDate;
+    } else {
+      return "";
+    }
+  };
+
+  const toggleDatepicker = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleApply = () => {
+    console.log("Applied:", selectedStartDate, selectedEndDate);
+    setIsOpen(false);
+  };
+
+  const handleCancel = () => {
+    setSelectedStartDate(null);
+    setSelectedEndDate(null);
+    setIsOpen(false);
+  };
+
+  const handleDocumentClick = (e) => {
+    if (datepickerRef.current && !datepickerRef.current.contains(e.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleDocumentClick);
+
+    return () => {
+      document.removeEventListener("click", handleDocumentClick);
+    };
+  }, []);
+
+  const handleMonthChange = (direction) => {
+    setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + direction)));
+  };
+
+  const handleYearChange = (direction) => {
+    setCurrentDate(new Date(currentDate.setFullYear(currentDate.getFullYear() + direction)));
+  };
+
   return (
-    <div>
-      <div id="date-range-picker" className="flex items-center">
-        {/* Start Date Picker */}
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg
-              className="w-4 h-4 text-gray-500 dark:text-gray-400"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-            </svg>
-          </div>
-          <input
-            id="datepicker-range-start"
-            name="start"
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Select start date"
-          />
-        </div>
-
-        <span className="mx-4 text-gray-500">to</span>
-
-        {/* End Date Picker */}
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg
-              className="w-4 h-4 text-gray-500 dark:text-gray-400"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-            </svg>
-            
-          </div>
-          <input
-            id="datepicker-range-end"
-            name="end"
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Select end date"
-          />
-        </div>
+    <div className="relative mx-auto max-w-fit text-black" ref={datepickerRef}>
+      <div className="relative mb-3">
+        <input
+          type="text"
+          placeholder="Pick a date"
+          className="h-12 w-full appearance-none rounded-lg border border-stroke bg-white pl-12 pr-4 text-dark outline-none"
+          value={updateInput()}
+          onClick={toggleDatepicker}
+          readOnly
+        />
       </div>
+
+      {isOpen && (
+        <div className="absolute z-10 mt-2 w-[280px] rounded-lg border border-stroke bg-white p-4 shadow-lg sm:p-6">
+          <div className="flex items-center justify-between pb-2">
+            <p className="text-base font-medium text-dark">
+              {currentDate.toLocaleString("default", {
+                month: "long",
+              })}{" "}
+              {currentDate.getFullYear()}
+            </p>
+            <div className="flex items-center space-x-1">
+              <button
+                onClick={() => handleYearChange(-1)}
+                className="flex items-center justify-center cursor-pointer rounded border border-stroke bg-gray-200 p-1 hover:bg-[#FD9C49] hover:text-white"
+              >
+                &lt;&lt;
+              </button>
+              <button
+                onClick={() => handleMonthChange(-1)}
+                className="flex items-center justify-center cursor-pointer rounded border border-stroke bg-gray-200 p-1 hover:bg-[#FD9C49] hover:text-white"
+              >
+                &lt;
+              </button>
+              <button
+                onClick={() => handleMonthChange(1)}
+                className="flex items-center justify-center cursor-pointer rounded border border-stroke bg-gray-200 p-1 hover:bg-[#FD9C49] hover:text-white"
+              >
+                &gt;
+              </button>
+              <button
+                onClick={() => handleYearChange(1)}
+                className="flex items-center justify-center cursor-pointer rounded border border-stroke bg-gray-200 p-1 hover:bg-[#FD9C49] hover:text-white"
+              >
+                &gt;&gt;
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-7 pb-2 pt-4 text-sm font-normal text-gray-500">
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+              <div key={day} className="flex items-center justify-center">
+                {day}
+              </div>
+            ))}
+          </div>
+
+          <div id="days-container" className="grid grid-cols-7 text-sm font-medium text-dark">
+            {renderCalendar()}
+          </div>
+
+          <div className="flex items-center justify-center space-x-3 pt-4">
+            <button
+              onClick={handleApply}
+              className="h-8 w-20 rounded bg-[#FD9C49] text-white"
+            >
+              Apply
+            </button>
+            <button
+              onClick={handleCancel}
+              className="h-8 w-20 rounded bg-gray-200 text-dark"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
-
-export default DatePicker;
+}

@@ -2,13 +2,13 @@
 import Prcard from "@/components/Prcard";
 import Search from "../../../public/assests/icons/search.svg";
 
-import DatePicker from "@/components/datepicker";
+import Datepicker from "@/components/Datepicker";
 import { useRouter } from "next/navigation";
 const PurchaseRequest = () => {
-  const router=useRouter();
-  const handleClick=()=>{
+  const router = useRouter();
+  const handleClick = () => {
     router.push("/purchaserequest/purchasedetails");
-  }
+  };
   return (
     <>
       <div className="filter-group">
@@ -29,10 +29,9 @@ const PurchaseRequest = () => {
             <option value="option3">Option 3</option>
           </select>
 
-          {/* <DatePicker /> */}
+          <Datepicker />
         </div>
       </div>
-      {/* <DatePicker /> */}
       <div className="quotationwraper grid grid-cols-12 gap-4 p-5 mt-0">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((row) => (
           <Prcard
