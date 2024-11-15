@@ -37,6 +37,7 @@ const QrRecieved = (props) => {
   const [qrMode, setQrMode] = useState("");
   const [headData, setHeadData] = useState({});
   const [toastMsg, setToastMsg] = useState("");
+  const [totalAmount,setTotalAmount]=useState(0)
   useEffect(() => {
     const myProp = searchParams.get("uuid");
     setQrUuid(myProp);
@@ -54,6 +55,11 @@ const QrRecieved = (props) => {
       );
       if (data.length > 0) {
         setData(data);
+        let total=0;
+        for(let i=0;i<data.length;i++){
+         total += data[i].totalPrice;
+        }
+        setTotalAmount(total);
         setTotalCount(data.length); //value need to be set from api
       }
 
@@ -89,6 +95,10 @@ const QrRecieved = (props) => {
     });
   };
   const handleSubmitClick = (value) => {
+    if(value=='accept' && checkList.length==0){
+      alert("No Products Selected");
+      return;
+    }
     handleModal(value);
   };
   const handleDiscountChange = (value) => {
@@ -100,6 +110,11 @@ const QrRecieved = (props) => {
         i === index ? { ...item, [key]: value } : item
       )
     );
+    // let total=0;
+    //     for(let i=0;i<data.length;i++){
+    //      total += data[i].totalPrice;
+    //     }
+    //     setTotalAmount(total);
   };
   const handleModal = (value) => {
     console.log(checkList);
@@ -122,7 +137,7 @@ const QrRecieved = (props) => {
       let inputData = [];
     for (let i = 0; i < data.length; i++) {
       let mData ={};
-      if (checkList.length>0 && checkList.includes(data[i].quotationRequestDetailUUId)) {
+      if (checkList.includes(data[i].quotationRequestDetailUUId)) {//selected products will have a status of SEND if submit quotation is selected
         mData = {
           ...data[i],
           'status': constants.quotationStatus[value],
@@ -132,10 +147,10 @@ const QrRecieved = (props) => {
           'discount':discount
         };
         
-      }else if(checkList.length==0){
+      }else if(value=='send'){//not-selected products will have a status of REJECT if submit quotation is selected
          mData = {
           ...data[i],
-          'status': constants.quotationStatus[value],
+          'status': constants.quotationStatus['reject'],
           'reason': comments,
           'comments': comments,
           'deliverydate':deliveryDate,
@@ -225,7 +240,6 @@ const QrRecieved = (props) => {
                   {row.productName}
                 </TableCell>
                 <TableCell align="left">{row.quantity}</TableCell>
-                <TableCell align="left">
                   <input
                     className="table__input"
                     value={row.gst}
@@ -233,6 +247,15 @@ const QrRecieved = (props) => {
                       handleRowEdit(row, index, "gst", e.target.value)
                     }
                   ></input>
+                <TableCell align="left">
+                  <select value={row.gst} onChange={(e) =>
+                      handleRowEdit(row, index, "gst", e.target.value)
+                    }>
+                    <option value="5">5 %</option>
+                    <option value="12">12 %</option>
+                    <option value="18">18 %</option>
+                    <option value="28">28 %</option>
+                  </select>
                 </TableCell>
                 <TableCell align="left">
                   <input
@@ -296,7 +319,7 @@ const QrRecieved = (props) => {
       <TotalRate
         subTotal={1000}
         totalGst={200}
-        total={1200}
+        total={totalAmount}
         submitClick={handleSubmitClick}
         discountChange={handleDiscountChange}
         selectedCount={checkList.length}

@@ -1,10 +1,17 @@
 import React from "react";
 import Navigation from "../../public/assests/icons/navigation.svg";
 
-const TotalRate = ({ subTotal, totalGst, total,submitClick,discountChange,selectedCount=0 }) => {
-    const handleChange=(e)=>{
-        discountChange(e.target.value);
-    }
+const TotalRate = ({
+  subTotal,
+  totalGst,
+  total,
+  submitClick,
+  discountChange,
+  selectedCount = 0,
+}) => {
+  const handleChange = (e) => {
+    discountChange(e.target.value);
+  };
   return (
     <div className="total_container">
       <h1>
@@ -17,12 +24,22 @@ const TotalRate = ({ subTotal, totalGst, total,submitClick,discountChange,select
         <label className="" htmlFor="inpDis">
           Discount:
         </label>
-        <input className="" id="inpDis" placeholder="0000" type="number" onChange={handleChange}></input>
+        <input
+          className=""
+          id="inpDis"
+          placeholder="0000"
+          type="number"
+          onChange={handleChange}
+        ></input>
       </div>
       <h1>
         Total:<span>{total}</span>
       </h1>
-      <button className="green__btn" onClick={()=>submitClick('accept')} data-count={selectedCount}>
+      <button
+        className="green__btn"
+        onClick={() => submitClick("accept")}
+        data-count={selectedCount}
+      >
         <Navigation />
         Submit Quotation
       </button>

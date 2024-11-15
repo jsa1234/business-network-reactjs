@@ -1,6 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState,Suspense } from "react";
 import Pagenavigation from "@/components/Pagenavigation";
 import SearchTable from "./SearchTable";
 import Search from "../../../../public/assests/icons/search.svg";
@@ -15,7 +15,7 @@ function Page() {
   }, []);
 
   return <div className="bus__body w-full pl-9 mt-6 pr-3 pb-9">
-
+<Suspense fallback={<div>Loading search results...</div>}>
     <div className="flex justify-between">
         <div className="w-full">
           <Pagenavigation
@@ -45,6 +45,7 @@ function Page() {
         </div>
        <SearchTable searchValue={param}></SearchTable>
       </div>
+      </Suspense>
   </div>;
 }
 export default Page;
