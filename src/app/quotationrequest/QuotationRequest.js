@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import Loader from "@/components/Loader";
 const QuotationRequest = () => {
   const [open, setOpen] = useState(false);
   const handleClose = () => {
@@ -38,6 +39,7 @@ const QuotationRequest = () => {
     holdCount: 0,
     rejectCount: 0,
   });
+  const [loading,setLoading]=React.useState(false);
   const reqDataStatus = {
     request: 1,
     send: 2,
@@ -68,6 +70,7 @@ const QuotationRequest = () => {
   };
   const fetchData = async (reqData) => {
     try {
+      setLoading(true);
       let skip=(Number(page)-1)*rowsPerPage;
       let data = await CommonApi.getData(
         `Quotation/vendor/requests`,
@@ -89,13 +92,19 @@ const QuotationRequest = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
+    }finally{
+      setLoading(false)
     }
   };
   const handleCardClick = (uuid) => {
+    setLoading(true);
     router.push(`${routingList[activeTab]}?uuid=${uuid}`);
   };
   return (
     <div>
+      {
+      loading?<Loader/>:''
+    }
       <div className="flex mt-6 background">
         <button
           className={`tab flex items-center justify-center gap-2 p-2 rounded-md relative ${

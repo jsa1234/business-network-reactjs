@@ -4,113 +4,76 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TableHead from '@mui/material/TableHead';
-import TablePaginationActions from '@/components/TablePagination';
-import ChevronRight from "../../../../public/assests/icons/chevron-right.svg"
 import TickIcon from "../../../../public/assests/icons/tick-double.svg";
-
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import Link from 'next/link';
+import QrPopup from "@/components/QrPopup";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import TotalRate from '@/components/TotalRate';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { format } from "date-fns";
+import { constants } from "@/api/constants";
+import CommonApi from "@/api/CommonApi";
+import Cancel from "../../../../public/assests/icons/cancel.svg";
+import Loader from '@/components/Loader';
 const QrHold = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [data, setData] = React.useState([]);
   const [totalCount, setTotalCount] = React.useState(0);
+  const [checkList, setCheckList] = React.useState([]);
   const [discount, setDiscount] = React.useState(0);
-  
-  const fetchData = async (currentPage, rowsPerPage) => {
+  const searchParams = useSearchParams();
+  const [qrUuid, setQrUuid] = React.useState("");
+  const [modalShow, setModalShow] = React.useState(false);
+  const [deliveryDate, setDeliveryDate] = React.useState("");
+  const [comments, setComments] = React.useState("");
+  const [open, setOpen] = React.useState(false);
+  const [qrMode, setQrMode] = React.useState("");
+  const [headData, setHeadData] = React.useState({});
+  const [toastMsg, setToastMsg] = React.useState("");
+  const [totalAmount, setTotalAmount] = React.useState(0);
+  const [selectRow, setSelectedRow] = React.useState({});
+  const [totalGSTAmount, setTotalGSTAmount] = React.useState(0);
+  const [loading,setLoading]=React.useState(false);
+  const router = useRouter();
+  React.useEffect(() => {
+    const myProp = searchParams.get("uuid");
+    setQrUuid(myProp);
+    fetchData(myProp);
+  }, []);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const fetchData = async (qrUuid) => {
     try {
-    //below code need to integrated when api are ready
-    //   const response = await fetch(
-    //     // Replace with your server endpoint URL
-    //     `your-api-endpoint?page=${currentPage + 1}&rowsPerPage=${rowsPerPage}`
-    //   );
+      setLoading(true);
+      let data = await CommonApi.getData(
+        `Quotation/vendor/${qrUuid}/details`,
+        {},
+        { status: 3 }
+      );
+      if (data.length > 0) {
+        setData(data);
+      }
 
-    //   if (!response.ok) {
-    //     throw new Error('Network response was not ok');
-    //   }
-    const rows = [
-        {
-          name: 'Frozen yoghurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          price: 3.99,
-          history: [
-            { date: '2020-01-05', customerId: '11091700', amount: 3 },
-            { date: '2020-01-02', customerId: 'Anonymou5', amount: 1 },
-          ],
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          price: 4.99,
-          history: [
-            { date: '2020-01-05', customerId: '11091700', amount: 3 },
-            { date: '2020-01-02', customerId: 'Anonymous4', amount: 1 },
-          ],
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 24,
-          protein: 6.0,
-          price: 3.79,
-          history: [
-            { date: '2020-01-05', customerId: '11091700', amount: 3 },
-            { date: '2020-01-02', customerId: 'Anonymous3', amount: 1 },
-          ],
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          price: 2.5,
-          history: [
-            { date: '2020-01-05', customerId: '11091700', amount: 3 },
-            { date: '2020-01-02', customerId: 'Anonymous2', amount: 1 },
-          ],
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          price: 1.5,
-          history: [
-            { date: '2020-01-05', customerId: '11091700', amount: 3 },
-            { date: '2020-01-02', customerId: 'Anonymous1', amount: 1 },
-          ],
-        },
-      ];
-      setData(rows);
-      setTotalCount(5);
+      let hData = await CommonApi.getData(
+        `Quotation/vendor/${qrUuid}/request`,
+        {},
+        { status: 1 }
+      );
+      setHeadData(hData);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
+    }finally{
+      setLoading(false)
     }
   };
-
-  React.useEffect(() => {
-    fetchData(page, rowsPerPage);
-  }, [page, rowsPerPage]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -120,64 +83,335 @@ const QrHold = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  React.useEffect(() => {
+    calculateTotal();
+  }, [checkList]);
+  const calculateTotal=()=>{
+    let total = 0;
+    let totalGST = 0;
+    let tData = data;
+    for (const element of tData) {
+      if(checkList.includes(element.productUUId)){
+        
+        total += element.totalPrice;
+        totalGST += (Number(element.gst) / 100) * Number(element.totalPrice);
+      }
+    }
+console.log(total);
+console.log(totalGST);
+    setTotalAmount(total);
+    setTotalGSTAmount(totalGST);
+  }
+  const handleRowclick = (value) => {
+    // alert(value);
+    console.log(checkList);
+    setCheckList((checkList) => {
+      if (checkList.includes(value)) {
+        return checkList.filter((item) => item !== value);
+      } else {
+        return [...checkList, value];
+      }
+    });
+  };
   const handleSubmitClick = (value) => {
-    console.log(value);
-    alert(discount);
+    setLoading(true);
+    if (value == "accept" && checkList.length == 0) {
+      alert("No Products Selected");
+      setLoading(false);
+      return;
+    }
+    handleModal(value);
+    setLoading(false);
   };
   const handleDiscountChange = (value) => {
     setDiscount(value);
   };
+  const handleRowEdit = (row, index, key, value) => {
+    setData((prevData) =>
+      prevData.map((item, i) =>
+        i === index ? { ...item, [key]: value } : item
+      )
+    );
+    setCheckList([]);
+    setTotalAmount(0);
+    setTotalGSTAmount(0);
+    let tData = data;
+    for (const element of tData) {
+      if (row.productUUId == element.productUUId) {
+        if (key == "unitPrice") {
+          element.totalPrice = Number(element.quantity) * value;
+          element.unitPrice = value;
+        }
+        if (key == "gst") element.gst = value;
+      }
+    }
+    if (key == "unitPrice") setData(tData);
+  };
+  const handleModal = (value) => {
+    console.log(checkList);
+    modalShow ? setSelectedRow({}) : "";
+    setModalShow(!modalShow);
+    setQrMode(value);
+  };
+
+  const handleDateChange = (dateValue) => {
+    setDeliveryDate(dateValue);
+    console.log(dateValue);
+  };
+  const handleCommentsChange = (comments) => {
+    setComments(comments);
+    console.log(comments);
+  };
+
+  const submitQuotation = async (value) => {
+    try {
+      setLoading(true);
+    
+    setModalShow(!modalShow);
+    if (Object.keys(selectRow).length > 0) {
+      let mData = {};
+      mData = {
+        ...selectRow,
+        status: constants.quotationStatus["hold"],
+        reason: comments,
+        comments: comments,
+        deliverydate: deliveryDate,
+        discount: discount,
+      };
+      let response = await CommonApi.putData(
+        `Quotation/vendor/${qrUuid}/quotation`,
+        {},
+        [mData]
+      );
+      if (response.status == "success") {
+        setToastMsg("Quotation Hold Submitted SuccessFully!");
+        setOpen(true);
+        
+      } else {
+        setToastMsg("Quotation Request Failed!");
+        setOpen(true);
+      }
+      return;
+    }
+    let inputData = [];
+    for (const element of data) {
+      let mData = {};
+      if (
+        value == "send" &&
+        checkList.includes(element.quotationRequestDetailUUId)
+      ) {
+        //selected products will have a status of SEND if submit quotation is clicked
+        mData = {
+          ...element,
+          status: constants.quotationStatus[value],
+          reason: comments,
+          comments: comments,
+          deliverydate: deliveryDate,
+          discount: discount,
+        };
+      } else if (value == "send" || value == "reject") {
+        //not-selected products will have a status of REJECT if submit quotation is clicked or same for if reject is clicked
+        mData = {
+          ...element,
+          status: constants.quotationStatus["reject"],
+          reason: comments,
+          comments: comments,
+          deliverydate: deliveryDate,
+          discount: discount,
+        };
+      } else if (value == "hold") {
+        mData = {
+          ...element,
+          status: constants.quotationStatus["hold"],
+          reason: comments,
+          comments: comments,
+          deliverydate: deliveryDate,
+          discount: discount,
+        };
+      }
+
+      inputData.push(mData);
+    }
+    let response = await CommonApi.putData(
+      `Quotation/vendor/${qrUuid}/quotation`,
+      {},
+      inputData
+    );
+    if (response.status == "success") {
+      // alert("success");
+      if (value == "send") {
+        setToastMsg("Quotation Request Submitted SuccessFully!");
+        setOpen(true);
+        setLoading(true)
+        setTimeout(function() {
+          router.push('/quotationrequest');
+        }, 2000);
+      } else if (value == "hold") {
+        setToastMsg("Quotation Hold Submitted SuccessFully!");
+        setOpen(true);
+      } else if (value == "reject") {
+        setToastMsg("Quotation Reject Submitted SuccessFully!");
+        setOpen(true);
+      }
+    } else {
+      setToastMsg("Quotation Request Failed!");
+      setOpen(true);
+    }
+    console.log(response.status);
+  } catch (error) {
+      
+  }finally{
+    setLoading(false)
+  }
+  };
+
+  const holdRowItem = async (row) => {
+    setSelectedRow(row);
+    handleModal("hold");
+  };
+
   return (
     <>
-    <TableContainer component={Paper} className="qrtable">
-    <Table className='table' aria-label="collapsible table">
-      <TableHead>
-        <TableRow>
-          <TableCell>Product Name</TableCell>
-          <TableCell align="right">Req Qty</TableCell>
-          <TableCell align="right">GST %</TableCell>
-          <TableCell align="right">Unit Price</TableCell>
-          <TableCell align="right">Total Price</TableCell>
-          <TableCell align="left">Action</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {data.map((row) => (
-          <Row key={row.name} row={row} />
-        ))}
-      </TableBody>
-      <TableFooter>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-              colSpan={6}
-              count={totalCount}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              slotProps={{
-                select: {
-                  inputProps: {
-                    'aria-label': 'rows per page',
-                  },
-                  native: true,
-                },
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-            />
+    {
+      loading?<Loader/>:''
+    }
+    
+      <div className="filter-group-secondary">
+        <h1>
+          QR ID <span>{headData.quotationRequestId}</span>
+        </h1>
+        <h1>
+          Name: <span>{headData.companyName}</span>
+        </h1>
+        <h1>
+          Requested Date:{" "}
+          <span>
+            {format(new Date(headData.requestDate || Date()), "dd-MM-yyyy")}
+          </span>
+        </h1>
+        <h1>
+          Total Items:<span>{headData.totalItems}</span>
+        </h1>
+        <div className="btn_grp">
+          <button
+            className="cancel_btn_secondary flex items-center justify-between"
+            onClick={() => handleSubmitClick("reject")}
+          ><Cancel/>
+            Reject
+          </button>
+        </div>
+      </div>
+      <TableContainer component={Paper} className="qrtable">
+        <Table className="table" aria-label="collapsible table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Product Name</TableCell>
+              <TableCell align="left">Req Qty</TableCell>
+              <TableCell align="left">GST %</TableCell>
+              <TableCell align="left">Unit Price</TableCell>
+              <TableCell align="left">Total Price</TableCell>
+              <TableCell align="left">Action</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+          {data.map((row, index) => (
+          <React.Fragment key={row.productUUId}>
+          <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+            
+            <TableCell component="td" scope="row">
+              {row.productName}
+            </TableCell>
+            <TableCell align="left">{row.quantity}</TableCell>
+            <TableCell align="left"><select
+                    className="table__input"
+                    value={row.gst}
+                    onChange={(e) =>
+                      handleRowEdit(row, index, "gst", e.target.value)
+                    }
+                  >
+                    <option value="5">5 %</option>
+                    <option value="12">12 %</option>
+                    <option value="18">18 %</option>
+                    <option value="28">28 %</option>
+                  </select></TableCell>
+            <TableCell align="left"><input
+                    className="table__input"
+                    value={row.unitPrice}
+                    onChange={(e) =>
+                      handleRowEdit(row, index, "unitPrice", e.target.value)
+                    }
+                  ></input></TableCell>
+            <TableCell align="left">{row.totalPrice}</TableCell>
+            <TableCell>
+            <button
+                        className={
+                          checkList.includes(row.productUUId)
+                            ? "secondary__btn__light"
+                            : "secondary__btn"
+                        }
+                        onClick={() => handleRowclick(row.productUUId)}
+                      >
+                        <TickIcon />
+                        {!checkList.includes(row.productUUId) ? "Select" : ""}
+                      </button>
+            </TableCell>
+            <TableCell/>
           </TableRow>
-        </TableFooter>
-    </Table>
-  </TableContainer>
-  <TotalRate
-        subTotal={1000}
-        totalGst={200}
-        total={1200}
+          <TableRow className={true?'highlight__row':''}>
+            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
+              <Collapse in={true&&row.reason} timeout="auto" unmountOnExit>
+                <Box sx={{ margin: 1 }}>
+               <h1>
+                    Reason
+               </h1>
+                 <p>{row.reason}</p>
+                </Box>
+              </Collapse>
+            </TableCell>
+          </TableRow>
+        </React.Fragment>
+        ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TotalRate
+        subTotal={totalAmount}
+        totalGst={totalGSTAmount}
+        total={totalAmount + totalGSTAmount - discount}
         submitClick={handleSubmitClick}
         discountChange={handleDiscountChange}
+        selectedCount={checkList.length}
       />
-  </>
+      <QrPopup
+        mode={qrMode}
+        showModal={modalShow}
+        handleModalClose={handleModal}
+        handleSubmit={submitQuotation}
+        dateChange={handleDateChange}
+        commentsChange={handleCommentsChange}
+      />
+      <Snackbar
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={open}
+        onClose={handleClose}
+        message="I love snacks"
+      >
+        <Alert
+          onClose={handleClose}
+          severity="success"
+          variant="filled"
+          sx={{
+            width: "100%",
+            // Increase font size here
+            fontSize: "1.4rem",
+          }}
+        >
+          {toastMsg}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 function Row(props) {
@@ -200,29 +434,29 @@ function Row(props) {
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         
         <TableCell component="td" scope="row">
-          {row.name}
+          {row.productName}
         </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
+        <TableCell align="left">{row.quantity}</TableCell>
+        <TableCell align="left">{row.gst}</TableCell>
+        <TableCell align="left">{row.unitPrice}</TableCell>
+        <TableCell align="left">{row.totalPrice}</TableCell>
         <TableCell>
         <button
                     className={
-                      checkList.includes(row.name)
+                      checkList.includes(row.productUUId)
                         ? "secondary__btn__light"
                         : "secondary__btn"
                     }
-                    onClick={() => handleRowclick(row.name)}
+                    onClick={() => handleRowclick(row.productUUId)}
                   >
                     <TickIcon />
-                    {!checkList.includes(row.name) ? "Select" : ""}
+                    {!checkList.includes(row.productUUId) ? "Select" : ""}
                   </button>
         </TableCell>
-       
+        <TableCell/>
       </TableRow>
       <TableRow className={open?'highlight__row':''}>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
            <h1>

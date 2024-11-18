@@ -20,15 +20,18 @@ function Managework(props) {
   }, []);
   async function getApprovalPending() {
     let data = await CommonApi.getData(
-      "ManageNetwork/vendor/search-approval-pending-networks",
+      "ManageNetwork/vendor/search-pending-approvals",
       {},
       {
-        VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
-        Status: 2,
+        VendorMasterUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",//need to be dynamic
+        Status: 2,//need to be dynamic
+        VendorType:1,//need to be dynamic
+        PageSize:10,//need to be dynamic
+        PageNumber:1//need to be dynamic
       }
     );
     console.log("MG.jsx", data);
-    setApprovalData(data);
+      setApprovalData(data.vendorDetails);
   }
 
   useEffect(() => {
