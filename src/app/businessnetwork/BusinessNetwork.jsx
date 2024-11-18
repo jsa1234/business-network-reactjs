@@ -267,8 +267,8 @@ const BusinessNetwork = () => {
                 <option value="">Select from the list</option>
                 {vendorCategoryData.map((item, index) => {
                   return (
-                    <option value={item.categoryName} key={index}>
-                      {item.categoryName}
+                    <option value={item.name} key={index}>
+                      {item.name}
                     </option>
                   );
                 })}
