@@ -37,7 +37,8 @@ const QrRecieved = (props) => {
   const [qrMode, setQrMode] = useState("");
   const [headData, setHeadData] = useState({});
   const [toastMsg, setToastMsg] = useState("");
-  const [totalAmount,setTotalAmount]=useState(0)
+  const [totalAmount,setTotalAmount]=useState(0);
+  const [totalGSTAmount,setTotalGSTAmount]=useState(0);
   useEffect(() => {
     const myProp = searchParams.get("uuid");
     setQrUuid(myProp);
@@ -56,10 +57,14 @@ const QrRecieved = (props) => {
       if (data.length > 0) {
         setData(data);
         let total=0;
-        for(let i=0;i<data.length;i++){
-         total += data[i].totalPrice;
+        let totalGST=0;
+        for(const element of data){
+         
+          total += element.totalPrice;
+          totalGST+=(Number(element.gst)/100)*Number(element.totalPrice)
         }
         setTotalAmount(total);
+        setTotalGSTAmount(totalGST);
         setTotalCount(data.length); //value need to be set from api
       }
 
@@ -110,11 +115,25 @@ const QrRecieved = (props) => {
         i === index ? { ...item, [key]: value } : item
       )
     );
-    // let total=0;
-    //     for(let i=0;i<data.length;i++){
-    //      total += data[i].totalPrice;
-    //     }
-    //     setTotalAmount(total);
+    let total=0;
+    let totalGST=0;
+    let tData=data;
+        for(const element of tData){
+          if(row.productUUId==element.productUUId){
+            total += element.totalPrice;
+            if(key=='unitPrice'){
+              element.totalPrice= Number(element.quantity)*value;
+              element.unitPrice=value;
+            }
+            if(key=='gst')element.gst=value;
+          } 
+          total += element.totalPrice;
+          totalGST+=(Number(element.gst)/100)*Number(element.totalPrice)
+        }
+
+        if(key=='unitPrice') setData(tData);
+        setTotalAmount(total);
+        setTotalGSTAmount(totalGST);
   };
   const handleModal = (value) => {
     console.log(checkList);
@@ -135,11 +154,11 @@ const QrRecieved = (props) => {
     setModalShow(!modalShow);
     
       let inputData = [];
-    for (let i = 0; i < data.length; i++) {
+    for (const element of data) {
       let mData ={};
-      if (checkList.includes(data[i].quotationRequestDetailUUId)) {//selected products will have a status of SEND if submit quotation is selected
+      if (value=='send' && checkList.includes(element.quotationRequestDetailUUId)) {//selected products will have a status of SEND if submit quotation is clicked
         mData = {
-          ...data[i],
+          ...element,
           'status': constants.quotationStatus[value],
           'reason': comments,
           'comments': comments,
@@ -147,16 +166,26 @@ const QrRecieved = (props) => {
           'discount':discount
         };
         
-      }else if(value=='send'){//not-selected products will have a status of REJECT if submit quotation is selected
+      }else if(value=='send'||value=='reject'){//not-selected products will have a status of REJECT if submit quotation is clicked or same for if reject is clicked
          mData = {
-          ...data[i],
+          ...element,
           'status': constants.quotationStatus['reject'],
           'reason': comments,
           'comments': comments,
           'deliverydate':deliveryDate,
           'discount':discount
         };
-      }
+      }else if(value=='hold'){
+        mData = {
+         ...element,
+         'status': constants.quotationStatus['hold'],
+         'reason': comments,
+         'comments': comments,
+         'deliverydate':deliveryDate,
+         'discount':discount
+       };
+     }
+      
       inputData.push(mData);
     }
       let response = await CommonApi.putData(
@@ -228,27 +257,22 @@ const QrRecieved = (props) => {
               <TableCell align="left">Unit Price</TableCell>
               <TableCell align="left">Total Price</TableCell>
               <TableCell align="left">Action</TableCell>
+              <TableCell/>
             </TableRow>
           </TableHead>
           <TableBody>
             {data.map((row, index) => (
               <TableRow
                 sx={{ "& > *": { borderBottom: "unset" } }}
-                key={row.productName}
+                key={row.productUUId}
               >
                 <TableCell component="td" scope="row">
                   {row.productName}
                 </TableCell>
                 <TableCell align="left">{row.quantity}</TableCell>
-                  <input
-                    className="table__input"
-                    value={row.gst}
-                    onChange={(e) =>
-                      handleRowEdit(row, index, "gst", e.target.value)
-                    }
-                  ></input>
+                  
                 <TableCell align="left">
-                  <select value={row.gst} onChange={(e) =>
+                  <select className="table__input" value={row.gst} onChange={(e) =>
                       handleRowEdit(row, index, "gst", e.target.value)
                     }>
                     <option value="5">5 %</option>
@@ -267,7 +291,7 @@ const QrRecieved = (props) => {
                   ></input>
                 </TableCell>
                 <TableCell align="left">{row.totalPrice}</TableCell>
-                <TableCell align="left flex">
+                <TableCell align="left flex border-b-0">
                   <button
                     className={
                       checkList.includes(row.quotationRequestDetailUUId)
@@ -289,14 +313,15 @@ const QrRecieved = (props) => {
                     Hold
                   </button>
                 </TableCell>
+                <TableCell/>
               </TableRow>
             ))}
           </TableBody>
-          <TableFooter>
+          {/* <TableFooter>
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                colSpan={6}
+                colSpan={7}
                 count={totalCount}
                 rowsPerPage={rowsPerPage}
                 page={page}
@@ -313,13 +338,13 @@ const QrRecieved = (props) => {
                 ActionsComponent={TablePaginationActions}
               />
             </TableRow>
-          </TableFooter>
+          </TableFooter> */}
         </Table>
       </TableContainer>
       <TotalRate
-        subTotal={1000}
-        totalGst={200}
-        total={totalAmount}
+        subTotal={totalAmount}
+        totalGst={totalGSTAmount}
+        total={totalAmount+totalGSTAmount-discount}
         submitClick={handleSubmitClick}
         discountChange={handleDiscountChange}
         selectedCount={checkList.length}

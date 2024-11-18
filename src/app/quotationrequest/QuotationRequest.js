@@ -30,7 +30,7 @@ const QuotationRequest = () => {
     reject: "/quotationrequest/quotationrejected",
   };
   const router = useRouter();
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [activeTab, setActiveTab] = useState("request");
   const [reqCount, setreqCount] = useState({
     requestCount: 0,
@@ -68,17 +68,21 @@ const QuotationRequest = () => {
   };
   const fetchData = async (reqData) => {
     try {
+      let skip=(Number(page)-1)*rowsPerPage;
       let data = await CommonApi.getData(
         `Quotation/vendor/requests`,
         {},
         {
           VendorUUId: "9E405931-7756-4A02-96D4-CB03C1BE6D6E",
           Status: reqDataStatus[reqData],
+          PageSize:rowsPerPage,
+          PageNumber:page,
+          Skip:skip
         }
       );
       if (!data.error) {
-        setData(data);
-        setTotalCount(data.length);
+        setData(data.quotationDetails);
+        setTotalCount(data.totalCount);
       } else {
         setOpen(true)
       }
