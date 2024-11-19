@@ -76,7 +76,7 @@ const QuotationRequest = () => {
         `Quotation/vendor/requests`,
         {},
         {
-          VendorUUId: "9E405931-7756-4A02-96D4-CB03C1BE6D6E",
+          VendorMasterUUId : "3D05C3A6-581A-487B-A798-471107312D66",
           Status: reqDataStatus[reqData],
           PageSize:rowsPerPage,
           PageNumber:page,
@@ -84,7 +84,7 @@ const QuotationRequest = () => {
         }
       );
       if (!data.error) {
-        setData(data.quotationDetails);
+        setData(data.quotationDetails||[]);
         setTotalCount(data.totalCount);
       } else {
         setOpen(true)
@@ -190,7 +190,7 @@ const QuotationRequest = () => {
           {data.map((row) => (
             <Qrcard
               key={row.companyName}
-              mode={row.mode}
+              mode={activeTab}
               name={row.companyName}
               date={format(new Date(row.requestDate), "dd-MM-yyyy")}
               qritems={row.totalItems}

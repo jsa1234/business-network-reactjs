@@ -13,6 +13,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePaginationActions from "@/components/TablePagination";
 import CommonApi from "@/api/CommonApi";
 import Loader from "@/components/Loader";
+import { useSearchParams } from "next/navigation";
 
 function QuotationSend() {
   const [page, setPage] = useState(0);
@@ -21,20 +22,20 @@ function QuotationSend() {
   const [totalCount, setTotalCount] = useState(0);
   const [submittedQuotation, setSubmittedQuotation] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [param,setParam]=useState('');
   // Fetch data from the API
-  const fetchData = async (currentPage, rowsPerPage) => {
+  const fetchData = async (uuid) => {
     try {
       setLoading(true);
       const response = await CommonApi.getData(
-        "Quotation/vendor/{a8a50e1f-2e61-4008-933b-61cf2bdc6659}/details",
+        `Quotation/vendor/${uuid}/details`,
         {},
         {
-          VendorUUId: "a8a50e1f-2e61-4008-933b-61cf2bdc6659",
-          Status: 2,
+       
         }
       );
       console.log("API Data:", response);
-      setSubmittedQuotation(response || []);
+      if(response.success) setSubmittedQuotation(response.data || []);
       /*  setTotalCount(response?.totalCount || 0); */
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -42,10 +43,15 @@ function QuotationSend() {
       setLoading(false);
     }
   };
-
+  const searchParams = useSearchParams();
   useEffect(() => {
-    fetchData(page, rowsPerPage);
-  }, [page, rowsPerPage]);
+    const myProp = searchParams.get("uuid");
+    setParam(myProp);
+    fetchData(myProp);
+  }, []);
+  // useEffect(() => {
+  //   param?fetchData(param):'';
+  // }, [page, rowsPerPage]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
