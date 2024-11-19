@@ -31,7 +31,7 @@ const QrPopup = ({mode, showModal, handleModalClose,handleSubmit,dateChange,comm
 
           }</p>
         <div className="input__group mt-10">
-          <label htmlFor="BusinessInpt">Expected Delivery Date</label>
+          <label htmlFor="BusinessInpt">{mode=='accept'?"Expected Delivery Date":"Reason"}</label>
           {
           mode=='accept'?
           <input type="date" id="BusinessInpt" onChange={(e)=>dateChange(e.target.value)}/>:
@@ -48,10 +48,6 @@ const QrPopup = ({mode, showModal, handleModalClose,handleSubmit,dateChange,comm
           <label htmlFor="commentRow">Comments</label>
           <textarea rows={3} id="commentRow" onChange={(e)=>{commentsChange(e.target.value)}}/>
         </div>
-        {/* <button className="green__btn" onClick={()=>handleSubmit()}>
-          <Navigation />
-          Submit
-        </button> */}
   {
           mode=='accept'?
           <button className="green__btn" onClick={()=>handleSubmit('send')}>

@@ -82,6 +82,7 @@ const Page = () => {
           ) : (
             <p>No requests found</p>
           )}
+
         </div>
 
         {/* Render the QuotationSend component */}
