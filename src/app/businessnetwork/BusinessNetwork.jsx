@@ -6,87 +6,76 @@ import BNcard from "@/components/BNcard";
 import Popup from "@/components/Popup";
 import CommonApi from "@/api/CommonApi";
 
+import { useSelector } from "react-redux";
+
 const BusinessNetwork = () => {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = React.useState(0);
   const [connectClick, setconnectClick] = React.useState(false);
 
-  const handlebuttonClick = () => {
-    setconnectClick(!connectClick);
+  const handlebuttonClick = async (VendorMasterUUID, vendorUUID) => {
+    // console.log("connectFromUUID:", VendorMasterUUID);
+    // console.log("connectToUUID:", vendorUUID);
+    try {
+      const res = await CommonApi.postData(
+        "BusinessNetwork/vendor/connection/request",
+        {},
+        {
+          requestFromVendorUUId: VendorMasterUUID,
+          requestedToVendorUUId: vendorUUID,
+        }
+      );
+      setconnectClick(!connectClick);
+    } catch (error) {
+      console.error("Error fetching network data:", error);
+    }
   };
   useEffect(() => {
-    fetchData(page, rowsPerPage);
+    fetchData();
   }, [page, rowsPerPage]);
-  const fetchData = async (currentPage, rowsPerPage) => {
+
+  const fetchData = async () => {
     try {
-      //below code need to integrated when api are ready
-      //   const response = await fetch(
-      //     // Replace with your server endpoint URL
-      //     `your-api-endpoint?page=${currentPage + 1}&rowsPerPage=${rowsPerPage}`
-      //   );
-
-      //   if (!response.ok) {
-      //     throw new Error('Network response was not ok');
-      //   }
-      let rows = [];
-
-      rows = [
+      const res = await CommonApi.getData(
+        "BusinessNetwork/vendor/suggestions",
+        {},
         {
-          name: "ABC Pvt Ltd",
-          gst_number: "27AAAAA1234A1Z5",
-          contact: "+91 9876543210",
-          address: "123, ABC Street, Mumbai, Maharashtra, 400001",
-          vendor: "ABC Vendor",
-        },
-        {
-          name: "XYZ Industries",
-          gst_number: "29BBBBB2345B1Z7",
-          contact: "+91 9988776655",
-          address: "456, XYZ Industrial Park, Bangalore, Karnataka, 560001",
-          vendor: "XYZ Vendor",
-        },
-        {
-          name: "DEF Suppliers",
-          gst_number: "19CCCCD3456C1Z8",
-          contact: "+91 9001122334",
-          address: "789, DEF Plaza, Kolkata, West Bengal, 700001",
-          vendor: "DEF Vendor",
-        },
-        {
-          name: "ABC Pvt Ltd 1",
-          gst_number: "27AAAAA1234A1Z5",
-          contact: "+91 9876543210",
-          address: "123, ABC Street, Mumbai, Maharashtra, 400001",
-          vendor: "ABC Vendor",
-        },
-        {
-          name: "XYZ Industries 1",
-          gst_number: "29BBBBB2345B1Z7",
-          contact: "+91 9988776655",
-          address: "456, XYZ Industrial Park, Bangalore, Karnataka, 560001",
-          vendor: "XYZ Vendor",
-        },
-        {
-          name: "DEF Suppliers 1",
-          gst_number: "19CCCCD3456C1Z8",
-          contact: "+91 9001122334",
-          address: "789, DEF Plaza, Kolkata, West Bengal, 700001",
-          vendor: "DEF Vendor",
-        },
-      ];
-
-      setData(rows);
+          VendorMasterUUID: VendorMasterUUID,
+          gstNo: gstNo,
+          mobileNo: mobileNo,
+          businessName: businessName,
+          productCategory: productCategory,
+          vendorCategory: vendorCategory,
+          location: location,
+          rating: rating,
+          VendorType: VendorType,
+          Status: 3,
+          PageSize: rowsPerPage,
+          PageNumber: page,
+        }
+      );
+      // console.log("suggestion: ", res.suggestionDetails);
+      setData(res.suggestionDetails);
       setTotalCount(5);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
     }
   };
-  const [vendorUUID, setVendorUUID] = useState(
-    "21C7586F-9F29-457B-8E3D-4C75213183DF"
+
+  const mapVendorCategory = (value) => {
+    const category = vendorCategoryData.find((item) => item.value === value);
+    return category ? category.name : "Unknown"; // Default to "Unknown" if no match is found
+  };
+
+  const VendorMasterUUID = useSelector(
+    (state) => state.vendor.VendorMasterUUID
   );
+
+  const VendorType = useSelector((state) => state.vendor.VendorType);
+
   const [gstNo, setGstNo] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -111,11 +100,11 @@ const BusinessNetwork = () => {
     // Add your search logic here
     (async function () {
       try {
-        const res = await CommonApi.postData(
+        const res = await CommonApi.getData(
           "BusinessNetwork/vendor/search/networks",
           {},
           {
-            VendorUUId: vendorUUID,
+            VendorMasterUUID: VendorMasterUUID,
             gstNo: gstNo,
             mobileNo: mobileNo,
             businessName: businessName,
@@ -123,9 +112,14 @@ const BusinessNetwork = () => {
             vendorCategory: vendorCategory,
             location: location,
             rating: rating,
+            VendorType: VendorType,
+            Status: 3,
+            PageSize: rowsPerPage,
+            PageNumber: page,
           }
         );
         setData(res);
+        console.log(res);
       } catch (error) {
         console.error("Error fetching network data:", error);
       }
@@ -267,7 +261,7 @@ const BusinessNetwork = () => {
                 <option value="">Select from the list</option>
                 {vendorCategoryData.map((item, index) => {
                   return (
-                    <option value={item.name} key={index}>
+                    <option value={item.value} key={index}>
                       {item.name}
                     </option>
                   );
@@ -332,13 +326,14 @@ const BusinessNetwork = () => {
         <div className="filter__results__body grid grid-cols-12 gap-4">
           {data.map((row) => (
             <BNcard
-              key={row.name}
+              key={row.gstNo}
               name={row.name}
-              gst_number={row.gst_number}
-              contact={row.contact}
+              gst_number={row.gstNo}
+              contact={row.contactNumber}
               address={row.address}
-              vendor={row.vendor}
+              vendor={mapVendorCategory(row.vendorType)}
               buttonClick={handlebuttonClick}
+              vendorUUID={row.vendorMasterUUId}
             />
           ))}
         </div>

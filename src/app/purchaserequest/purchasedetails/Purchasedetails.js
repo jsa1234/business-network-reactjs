@@ -16,6 +16,9 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableFooter from "@mui/material/TableFooter";
+import CommonApi from "@/api/CommonApi";
+import { format } from "date-fns";
+
 const PurchaseDetails = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -23,57 +26,56 @@ const PurchaseDetails = () => {
   const steps = ["Order Requested", "Order Shipped", "Estimated Delivery"];
   const [data, setData] = React.useState([]);
   const [totalCount, setTotalCount] = React.useState(0);
+  const [purchasedetails,setPurchaseDetails] = useState([]);
+  const [purchaseRequest, setPurchaseRequest] = useState([]);
+
+
+  useEffect(() => {
+    console.log(process.env.API_URL);
+    getPurchaseRequest();
+  }, []);
+  async function getPurchaseRequest() {
+    let data = await CommonApi
+    .getData(
+      "Purchase/vendor/purchase-request",
+      {},
+      {
+        vendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+        PurchaseRequestUUId : "F309B9B2-AA91-401A-9BAF-0926E47F8CD5"
+      }
+    );
+    console.log("MG.jsx", data);
+    setPurchaseRequest(data);
+
+  }
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveStep((prevStep) => (prevStep + 1) % steps.length);
+      setActiveStep((prevStep) => (prevStep + 1) % steps.length);                                                                                     
     }, 2000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const fetchData = async (currentPage, rowsPerPage) => {
-    try {
-      //below code need to integrated when api are ready
-      //   const response = await fetch(
-      //     // Replace with your server endpoint URL
-      //     `your-api-endpoint?page=${currentPage + 1}&rowsPerPage=${rowsPerPage}`
-      //   );
 
-      //   if (!response.ok) {
-      //     throw new Error('Network response was not ok');
-      //   }
-      const rows = [
+ const fetchData = async (currentPage, rowsPerPage) => {
+    try {
+      const response = await CommonApi.getData(
+        "Purchase/vendor/F309B9B2-AA91-401A-9BAF-0926E47F8CD5/request-details",
+        {},
         {
-          name: "Onionn",
-          qty: 700,
-          gst: 700,
-          price: 700,
-          totall: 700,
-        },
-        {
-            name: "Onionny",
-            qty: 700,
-            gst: 700,
-            price: 700,
-            totall: 700,
-          },
-          {
-            name: "Onionnn",
-            qty: 700,
-            gst: 700,
-            price: 700,
-            totall: 700,
-          },
-      ];
-      setData(rows);
-      setTotalCount(5); //value need to be set from api
+          VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+          Status: 2,
+        }
+      );
+      console.log("API Data:", response);
+      setPurchaseDetails(response || []);
+     /*  setTotalCount(response?.totalCount || 0); */
     } catch (error) {
       console.error("Error fetching data:", error);
-      // Handle error, e.g., display error message to the user
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchData(page, rowsPerPage);
   }, [page, rowsPerPage]);
 
@@ -88,7 +90,8 @@ const PurchaseDetails = () => {
 
   return (
     <>
-      <Grid container spacing={2}>
+    <div className="">
+      <Grid container spacing={2}  > 
         <Grid item xs={8}>
           <Box
             sx={{
@@ -100,6 +103,7 @@ const PurchaseDetails = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+             
             }}
           >
             <Stepper activeStep={activeStep} alternativeLabel>
@@ -136,7 +140,7 @@ const PurchaseDetails = () => {
                 <option value="option2">Option 2</option>
                 <option value="option3">Option 3</option>
               </select>
-              <button className="flux w-[350px] mb-4 bg-[#FD9A46] h-[46px] rounded-[10px] text-white text-lg flex items-center justify-center">
+              <button className=" w-[350px] mb-4 bg-[#FD9A46] h-[46px] rounded-[10px] text-white text-lg flex items-center justify-center">
                 <Update />
                 Update
               </button>
@@ -144,26 +148,51 @@ const PurchaseDetails = () => {
           </Box>
         </Grid>
       </Grid>
+      </div> 
+      
       <div className="w-full mt-6 table-container">
-        <div className="filter-group-secondary">
-          <h1>
-            PR ID: <span>#2024ABC</span>
-          </h1>
-          <h1>
-            Name: <span>Earthy Delights Trading</span>
-          </h1>
-          <h1>
-            Approved Date: <span>18/10/2024</span>
-          </h1>
-          <h1>
-            Expected Delivery Date:<span>10</span>
-          </h1>
-          <h1>
-            Total Items:<span>10</span>
-          </h1>
-          <div className="btn_grp"></div>
+      <div className="filter-group-secondary">
+          {Object.keys(purchaseRequest).length > 0 ? (
+            <>
+              <h1>
+                QR ID: <span>{purchaseRequest.QuotationRequestId || "--"}</span>
+              </h1>
+              <h1>
+                Name: <span>{purchaseRequest.companyName || "--"}</span>
+              </h1>
+              <h1>
+                Requested Date:{" "}
+                <span>
+                  {purchaseRequest.orderRequestedDate
+                    ? format(new Date(purchaseRequest.orderRequestedDate), "dd-MM-yyyy")
+                    : "--"}
+                </span>
+              </h1>
+              <h1>
+                Submitted Date:{" "}
+                <span>
+                  {purchaseRequest.approvedDate
+                    ? format(new Date(purchaseRequest.approvedDate), "dd-MM-yyyy")
+                    : "--"}
+                </span>
+              </h1>
+              <h1>
+                Expected Delivery Date:{" "}
+                <span>
+                  {purchaseRequest.expectedDeliveryDate
+                    ? format(
+                        new Date(purchaseRequest.expectedDeliveryDate),
+                        "dd-MM-yyyy"
+                      )
+                    : "--"}
+                </span>
+              </h1>
+            </>
+          ) : (
+            <p>No requests found</p>
+          )}
+        </div> 
         </div>
-      </div>
       <TableContainer component={Paper}>
         <Table className="table" aria-label="collapsible table">
           <TableHead>
@@ -179,42 +208,31 @@ const PurchaseDetails = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => (
-              <TableRow
-                sx={{ "& > *": { borderBottom: "unset" } }}
-                key={row.name}
+          {purchasedetails.length > 0 ? (
+              purchasedetails.map((row, index) => (
+              <TableRow key={index}
+               
+               
               >
                 <TableCell component="td" scope="row">
-                  {row.name}
+                  {row.productName || "--"}
                 </TableCell>
-                <TableCell align="left">{row.qty}</TableCell>
-                <TableCell align="right">{row.gst}</TableCell>
-                <TableCell align="right">{row.price}</TableCell>
-                <TableCell align="right">{row.totall}</TableCell>
+                <TableCell align="left">{row.requestedQuantity || "--"}</TableCell>
+                <TableCell align="right">{row.gstPercentage || "--"}</TableCell>
+                <TableCell align="right">{row.unitPrice || "--"}</TableCell>
+                <TableCell align="right">{row.totalPrice || "--"}</TableCell>
               </TableRow>
-            ))}
+             ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  No data available
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
           <TableFooter>
-            {/* <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                colSpan={6}
-                count={totalCount}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                slotProps={{
-                  select: {
-                    inputProps: {
-                      "aria-label": "rows per page",
-                    },
-                    native: true,
-                  },
-                }}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationActions}
-              />
-            </TableRow> */}
+      
           </TableFooter>
         </Table>
 
@@ -230,6 +248,8 @@ const PurchaseDetails = () => {
           </p>
         </div>
       </TableContainer>
+      
+      
     </>
   );
 };
