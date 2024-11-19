@@ -22,7 +22,7 @@ const Page = () => {
         </div>
        
       </div>
-      <div className="w-full mt-6 table-container">
+    {/*   <div className="w-full mt-6 table-container"> */}
      {/*  <div className="filter-group-secondary">
           {Object.keys(purchaseRequest).length > 0 ? (
             <>
@@ -65,7 +65,7 @@ const Page = () => {
           )}
         </div> */} 
        <Purchasedetails/>
-      </div>
+      {/* </div> */}
     </div>
   )
 }

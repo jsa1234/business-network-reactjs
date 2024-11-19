@@ -17,6 +17,8 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableFooter from "@mui/material/TableFooter";
 import CommonApi from "@/api/CommonApi";
+import { format } from "date-fns";
+
 const PurchaseDetails = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -35,10 +37,11 @@ const PurchaseDetails = () => {
   async function getPurchaseRequest() {
     let data = await CommonApi
     .getData(
-      "Purchase/vendor/{purchaseRequestUUId}/request",
+      "Purchase/vendor/purchase-request",
       {},
       {
-        VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+        vendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+        PurchaseRequestUUId : "F309B9B2-AA91-401A-9BAF-0926E47F8CD5"
       }
     );
     console.log("MG.jsx", data);
@@ -47,7 +50,7 @@ const PurchaseDetails = () => {
   }
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveStep((prevStep) => (prevStep + 1) % steps.length);
+      setActiveStep((prevStep) => (prevStep + 1) % steps.length);                                                                                     
     }, 2000);
 
     return () => clearInterval(interval);
@@ -57,7 +60,7 @@ const PurchaseDetails = () => {
  const fetchData = async (currentPage, rowsPerPage) => {
     try {
       const response = await CommonApi.getData(
-        "Purchase/vendor/{purchaseRequestUUId}/request-details",
+        "Purchase/vendor/F309B9B2-AA91-401A-9BAF-0926E47F8CD5/request-details",
         {},
         {
           VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
@@ -87,7 +90,8 @@ const PurchaseDetails = () => {
 
   return (
     <>
-      <Grid container spacing={2}>
+    <div className="">
+      <Grid container spacing={2}  > 
         <Grid item xs={8}>
           <Box
             sx={{
@@ -99,6 +103,7 @@ const PurchaseDetails = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+             
             }}
           >
             <Stepper activeStep={activeStep} alternativeLabel>
@@ -135,7 +140,7 @@ const PurchaseDetails = () => {
                 <option value="option2">Option 2</option>
                 <option value="option3">Option 3</option>
               </select>
-              <button className="flux w-[350px] mb-4 bg-[#FD9A46] h-[46px] rounded-[10px] text-white text-lg flex items-center justify-center">
+              <button className=" w-[350px] mb-4 bg-[#FD9A46] h-[46px] rounded-[10px] text-white text-lg flex items-center justify-center">
                 <Update />
                 Update
               </button>
@@ -143,12 +148,14 @@ const PurchaseDetails = () => {
           </Box>
         </Grid>
       </Grid>
+      </div> 
+      
       <div className="w-full mt-6 table-container">
       <div className="filter-group-secondary">
           {Object.keys(purchaseRequest).length > 0 ? (
             <>
               <h1>
-                QR ID: <span>{purchaseRequest.quotationRequestId || "--"}</span>
+                QR ID: <span>{purchaseRequest.QuotationRequestId || "--"}</span>
               </h1>
               <h1>
                 Name: <span>{purchaseRequest.companyName || "--"}</span>
@@ -156,16 +163,16 @@ const PurchaseDetails = () => {
               <h1>
                 Requested Date:{" "}
                 <span>
-                  {purchaseRequest.requestDate
-                    ? format(new Date(purchaseRequest.requestDate), "dd-MM-yyyy")
+                  {purchaseRequest.orderRequestedDate
+                    ? format(new Date(purchaseRequest.orderRequestedDate), "dd-MM-yyyy")
                     : "--"}
                 </span>
               </h1>
               <h1>
                 Submitted Date:{" "}
                 <span>
-                  {purchaseRequest.submittedDate
-                    ? format(new Date(purchaseRequest.submittedDate), "dd-MM-yyyy")
+                  {purchaseRequest.approvedDate
+                    ? format(new Date(purchaseRequest.approvedDate), "dd-MM-yyyy")
                     : "--"}
                 </span>
               </h1>
@@ -185,6 +192,7 @@ const PurchaseDetails = () => {
             <p>No requests found</p>
           )}
         </div> 
+        </div>
       <TableContainer component={Paper}>
         <Table className="table" aria-label="collapsible table">
           <TableHead>
@@ -209,8 +217,8 @@ const PurchaseDetails = () => {
                 <TableCell component="td" scope="row">
                   {row.productName || "--"}
                 </TableCell>
-                <TableCell align="left">{row.quantity || "--"}</TableCell>
-                <TableCell align="right">{row.gst || "--"}</TableCell>
+                <TableCell align="left">{row.requestedQuantity || "--"}</TableCell>
+                <TableCell align="right">{row.gstPercentage || "--"}</TableCell>
                 <TableCell align="right">{row.unitPrice || "--"}</TableCell>
                 <TableCell align="right">{row.totalPrice || "--"}</TableCell>
               </TableRow>
@@ -224,26 +232,7 @@ const PurchaseDetails = () => {
             )}
           </TableBody>
           <TableFooter>
-            {/* <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                colSpan={6}
-                count={totalCount}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                slotProps={{
-                  select: {
-                    inputProps: {
-                      "aria-label": "rows per page",
-                    },
-                    native: true,
-                  },
-                }}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationActions}
-              />
-            </TableRow> */}
+      
           </TableFooter>
         </Table>
 
@@ -259,7 +248,7 @@ const PurchaseDetails = () => {
           </p>
         </div>
       </TableContainer>
-      </div>
+      
       
     </>
   );

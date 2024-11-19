@@ -23,15 +23,15 @@ function Managework(props) {
       "ManageNetwork/vendor/search-pending-approvals",
       {},
       {
-        VendorMasterUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",//need to be dynamic
-        Status: 2,//need to be dynamic
+        VendorMasterUUId: "00B7458C-CC8A-495E-BC0B-3D95D5DA8EE5",//need to be dynamic
+        Status: 1,//need to be dynamic
         VendorType:1,//need to be dynamic
-        PageSize:10,//need to be dynamic
+        PageSize:5,//need to be dynamic
         PageNumber:1//need to be dynamic
       }
     );
     console.log("MG.jsx", data);
-      setApprovalData(data.vendorDetails);
+      setApprovalData(data.vendorDetails || []);
   }
 
   useEffect(() => {
@@ -41,14 +41,18 @@ function Managework(props) {
   async function getNetworks() {
     try {
       const data = await CommonApi.getData(
-        "ManageNetwork/vendor/search-networks",
+        "ManageNetwork/vendor/search-connected-networks",
         {},
         {
-          VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+          VendorMasterUUId: "4BF53476-C156-4AAC-B49C-3F5044C66540",
           Status: 2,
+          VendorType:2,//need to be dynamic
+          PageSize:5,//need to be dynamic
+          PageNumber:1//need to be dynamic
         }
       );
-      setNetworkData(data || []); 
+      
+      setNetworkData(data.vendorDetails || []); 
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -61,14 +65,17 @@ function Managework(props) {
   async function  getRequestPending() {
     try {
       const data = await CommonApi.getData(
-        "ManageNetwork/vendor/search-networks",
+        "ManageNetwork/vendor/search-pending-requests",
         {},
         {
-          VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+          VendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
           Status: 1,
+          VendorType:2,//need to be dynamic
+          PageSize:5,//need to be dynamic
+          PageNumber:1//need to be dynamic
         }
       );
-      setRequestPending(data || []); 
+      setRequestPending(data.vendorDetails || []); 
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -109,14 +116,15 @@ function Managework(props) {
 
                 <div className="grid grid-cols-12 gap-4">
                   {networkData.length > 0 ? (
-                    networkData.map((network, index) => (
+                    networkData.map((vendorDetails, index) => (
                       <Networkcard
                         key={index}
-                        name={network.vendorName || "--"}
-                        gst={network.gstNo || "--"}
-                        contact={network.contactNo || "--"}
-                        address={network.address || "--"}
-                        vender={network.vendorType || "--"}
+                        
+                        name={vendorDetails.companyName || "--"}
+                        gst={vendorDetails.gstNo || "--"}
+                        contact={vendorDetails.contactNo || "--"}
+                        address={vendorDetails.address || "--"}
+                        vender={vendorDetails.vendorType || "--"}
                         className="col-span-4"
                       />
                     ))
@@ -135,13 +143,13 @@ function Managework(props) {
       <tbody className="text-left">
         
         {props.activeTab === "approval" &&
-          approvalData.map((row, index) => (
+          approvalData.map((vendorDetails, index) => (
             <tr key={`approval_${index}`}>
-              <td>{row.gstNo || "--"}</td>
-              <td>{row.vendorName || "--"}</td>
-              <td>{row.contactNo || "--"}</td>
-              <td>{row.address || "--"}</td>
-              <td>{row.vendorType || "--"}</td>
+              <td>{vendorDetails.gstNo || "--"}</td>
+              <td>{vendorDetails.companyName || "--"}</td>
+              <td>{vendorDetails.contactNo || "--"}</td>
+              <td>{vendorDetails.address || "--"}</td>
+              <td>{vendorDetails.vendorType || "--"}</td>
               <td>
                 <Buttons />
               </td>
@@ -150,13 +158,13 @@ function Managework(props) {
     
         {props.activeTab === "request" &&
           (requestPending.length > 0 ? (
-            requestPending.map((row, index) => (
+            requestPending.map((vendorDetails, index) => (
               <tr key={`request_${index}`}>
-                <td>{row.gstNo || "--"}</td>
-                <td>{row.vendorName || "--"}</td>
-                <td>{row.contactNo || "--"}</td>
-                <td>{row.address || "--"}</td>
-                <td>{row.vendorType || "--"}</td>
+                <td>{vendorDetails.requestedDate || "--"}</td>
+                <td>{vendorDetails.gstNo || "--"}</td>
+                <td>{vendorDetails.companyName || "--"}</td>
+                <td>{vendorDetails.contactNo || "--"}</td>
+                <td>{vendorDetails.vendorType || "--"}</td>
                 <td>
                   <button className="status-approvel">Waiting for approval</button>
                 </td>

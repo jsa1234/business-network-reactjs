@@ -26,29 +26,34 @@ const PurchaseRequest = () => {
     console.error("Error fetching purchase requests:", error);
   };
 
+
+
   useEffect(() => {
     const fetchPurchaseRequests = async () => {
       try {
-        const response = await CommonApi.postData(
+        const data = await CommonApi.getData(
           "Purchase/vender/requests",
           {},
           {
-            vendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+            VendorUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
             searchString: searchTerm,
             expectedDeliveryFromDate: selectedStartDate,
             expectedDeliveryToDate: selectedEndDate,
-            sortBy: 0,
+            sortBy: sortBy, // Assuming sortBy is a state or prop
+            PageSize: 5, // need to be dynamic
+            PageNumber: 1 // need to be dynamic
           }
         );
-        console.log("API Data:", response);
-        setPurchaseRequest(response || []);
+        setPurchaseRequest(data.purchaseRequests || []);
       } catch (error) {
-        handleError(error);
+        console.error("Error fetching network data:", error);
       }
     };
-
-    fetchPurchaseRequests();
-  }, [searchTerm,selectedStartDate,selectedEndDate,sortBy]);
+  
+    fetchPurchaseRequests(); // Call the async function here without passing data
+  
+  }, [searchTerm, selectedStartDate, selectedEndDate, sortBy]); // Dependencies that will trigger the effect
+  
 
   const handleClick = () => {
     router.push("/purchaserequest/purchasedetails");
@@ -90,13 +95,13 @@ const PurchaseRequest = () => {
       {/* Dynamic Cards Rendering */}
       <div className="quotationwraper grid grid-cols-12 gap-4 p-5 mt-0">
         {filteredRequests.length > 0 ? (
-          filteredRequests.map((request, index) => (
+          filteredRequests.map((purchaseRequests, index) => (
             <Prcard
               key={index}
-              name={request.productName}
-              deliverydate={request.expectedDeliveryFromDate}
-              prdate={request.prdate}
-              status={request.status}
+              name={purchaseRequests.companyName}
+              deliverydate={purchaseRequests.expectedDeliveryDate}
+              prdate={purchaseRequests.purchaseRequestedDate}
+             /*  status={request.status} */
               cardClick={handleClick}
             />
           ))

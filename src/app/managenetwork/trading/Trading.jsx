@@ -22,17 +22,23 @@ function Trading({ activeTab }) {
 
   async function getStock() {
     let data = await CommonApi.getData(
-      "ManageNetwork/vendor/0EA46866-1C70-4AF5-B3E1-F1F2A9E23CD3/stock",
-      {}
+      "Stock/vendor/C34E50DF-6B95-4228-85F0-14D7B7AC778B/stock",
+      {},
+      {
+       
+        PageSize:5,//need to be dynamic
+        PageNumber:1//need to be dynamic
+      }
+     
     );
-    setStock(Array.isArray(data) ? data : []);
+    setStock(data.stockDetails || []);
   }
 
   async function getDetails() {
     let data = await CommonApi.getData(
-      "ManageNetwork/supplier/9E405931-7756-4A02-96D4-CB03C1BE6D6E/details",
+      "ManageNetwork/supplier/C34E50DF-6B95-4228-85F0-14D7B7AC778B /details",
       {
-        VendorUUId:"9E405931-7756-4A02-96D4-CB03C1BE6D6E"
+       
       }
     );
     setDetails(data);
@@ -50,7 +56,7 @@ function Trading({ activeTab }) {
                 <Businessname />
               </h1>
               <h2 className="w-[150px] text-lg font-semibold">Business Name:</h2>
-              <h3 className="text-md w-[400px] text-lg">{details.vendorName || "--"}</h3>
+              <h3 className="text-md w-[400px] text-lg">{details.companyName || "--"}</h3>
             </div>
       
             {/* Address */}
@@ -68,7 +74,7 @@ function Trading({ activeTab }) {
                 <Contact />
               </h1>
               <h2 className="w-[150px] text-lg font-semibold">Contact No:</h2>
-              <h3 className="text-md w-[400px] text-lg">{details.contactNumber || "--"}</h3>
+              <h3 className="text-md w-[400px] text-lg">{details.contactNo || "--"}</h3>
             </div>
       
             {/* Contact Person */}
@@ -102,19 +108,19 @@ function Trading({ activeTab }) {
         <thead>
           <tr>
             <th>Product Name</th>
-            <th>Total Qty</th>
+            <th>Product ID</th>
             <th>Remaining Qty</th>
-            <th>Original Price</th>
+           {/*  <th>Original Price</th>
             <th>Offer Price</th>
-            <th>Action</th>
+            <th>Action</th> */}
           </tr>
         </thead>
         <tbody>
           {stock.length > 0 ? (
-            stock.map((row, index) => (
+            stock.map((stockDetails, index) => (
               <tr key={`approval_${index}`}>
-                <td>{row.productName || "--"}</td>
-                <td>
+                <td>{stockDetails.productName || "--"}</td>
+               {/*  <td>
                   <Typography variant="body2" sx={{ color: "orange" }}>
                     {row.totalQuantity
                       ? `${Math.round(
@@ -141,11 +147,12 @@ function Trading({ activeTab }) {
                       }}
                     />
                   </Box>
-                </td>
-                <td>{row.remainingQuantity || "--"}</td>
-                <td>{row.originalPrice || "--"}</td>
+                </td> */}
+                <td>{stockDetails.productUUId || "--"}</td>
+                <td>{stockDetails.remainingQuantity || "--"}</td>
+                {/* <td>{row.originalPrice || "--"}</td>
                 <td>{row.offerPrice || "--"}</td>
-                <td><Buttons /></td>
+                <td><Buttons /></td> */}
               </tr>
             ))
           ) : (
