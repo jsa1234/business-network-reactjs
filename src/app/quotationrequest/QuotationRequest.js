@@ -14,17 +14,24 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import CommonApi from "@/api/CommonApi";
 import { useRouter } from "next/navigation";
-import { format } from 'date-fns';
-
+import { format } from "date-fns";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import Loader from "@/components/Loader";
 const QuotationRequest = () => {
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   let routingList = {
     request: "/quotationrequest/qrrecieved",
     send: "/quotationrequest/quotationsend",
     hold: "/quotationrequest/qrhold",
     reject: "/quotationrequest/quotationrejected",
   };
-  const router=useRouter();
-  const [page, setPage] = useState(0);
+  const router = useRouter();
+  const [page, setPage] = useState(1);
   const [activeTab, setActiveTab] = useState("request");
   const [reqCount, setreqCount] = useState({
     requestCount: 0,
@@ -32,6 +39,7 @@ const QuotationRequest = () => {
     holdCount: 0,
     rejectCount: 0,
   });
+  const [loading,setLoading]=React.useState(false);
   const reqDataStatus = {
     request: 1,
     send: 2,
@@ -62,27 +70,41 @@ const QuotationRequest = () => {
   };
   const fetchData = async (reqData) => {
     try {
+      setLoading(true);
+      let skip=(Number(page)-1)*rowsPerPage;
       let data = await CommonApi.getData(
         `Quotation/vendor/requests`,
         {},
         {
           VendorUUId: "9E405931-7756-4A02-96D4-CB03C1BE6D6E",
           Status: reqDataStatus[reqData],
+          PageSize:rowsPerPage,
+          PageNumber:page,
+          Skip:skip
         }
       );
-
-      setData(data);
-      setTotalCount(data.length);
+      if (!data.error) {
+        setData(data.quotationDetails);
+        setTotalCount(data.totalCount);
+      } else {
+        setOpen(true)
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
+    }finally{
+      setLoading(false)
     }
   };
-  const handleCardClick=(uuid)=>{
+  const handleCardClick = (uuid) => {
+    setLoading(true);
     router.push(`${routingList[activeTab]}?uuid=${uuid}`);
-  }
+  };
   return (
     <div>
+      {
+      loading?<Loader/>:''
+    }
       <div className="flex mt-6 background">
         <button
           className={`tab flex items-center justify-center gap-2 p-2 rounded-md relative ${
@@ -150,7 +172,9 @@ const QuotationRequest = () => {
             className="form-control form-input"
             placeholder="Search Product Name..."
           />
-          <label className="dropdown-list" htmlFor="dropdown">Sort by</label>
+          <label className="dropdown-list" htmlFor="dropdown">
+            Sort by
+          </label>
           <select id="dropdown" className="dropdownSelect">
             <option value="" className="font-bold text-black">
               Choose
@@ -168,7 +192,7 @@ const QuotationRequest = () => {
               key={row.companyName}
               mode={row.mode}
               name={row.companyName}
-              date={format(new Date(row.requestDate), 'dd-MM-yyyy')}
+              date={format(new Date(row.requestDate), "dd-MM-yyyy")}
               qritems={row.totalItems}
               status={row.status ? "Urgent" : ""}
               qrId={row.quotationRequestId}
@@ -204,6 +228,26 @@ const QuotationRequest = () => {
           </Table>
         </TableContainer>
       </div>
+      <Snackbar
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={open}
+        onClose={handleClose}
+        message="I love snacks"
+      >
+        <Alert
+          onClose={handleClose}
+          severity="error"
+          variant="filled"
+          sx={{
+            width: "100%",
+            // Increase font size here
+            fontSize: "1.2rem",
+          }}
+        >
+          Something Went Wrong. Try Again Later
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

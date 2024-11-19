@@ -12,16 +12,18 @@ import Paper from "@mui/material/Paper";
 import TableHead from "@mui/material/TableHead";
 import TablePaginationActions from "@/components/TablePagination";
 import CommonApi from "@/api/CommonApi";
+import Loader from "@/components/Loader";
 function Quotationreject() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [data, setData] = React.useState([]);
   const [totalCount, setTotalCount] = React.useState(0);
   const [rejectedQuotation, setRejectedQuotation] = useState([]);
-
+const [loading,setLoading]=useState(false);
   const fetchData = async (currentPage, rowsPerPage) => {
    
       try {
+        setLoading(true);
         const response = await CommonApi.getData(
           "Quotation/vendor/{a8a50e1f-2e61-4008-933b-61cf2bdc6659}/details",
           {},
@@ -35,6 +37,9 @@ function Quotationreject() {
        /*  setTotalCount(response?.totalCount || 0); */
       } catch (error) {
         console.error("Error fetching data:", error);
+      }
+      finally{
+        setLoading(false);
       }
     };
   
@@ -54,7 +59,7 @@ function Quotationreject() {
 
   return (
     <>
-
+{loading?<Loader/>:''}
       <TableContainer component={Paper}>
         <Table className="table" aria-label="collapsible table">
           <TableHead>
