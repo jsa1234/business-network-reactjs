@@ -269,7 +269,7 @@ console.log(totalGST);
   return (
     <>
     {
-      loading?<Loader/>:VendorMasterUUID
+      loading?<Loader/>:''
     }
       <div className="filter-group-secondary">
         <h1>
