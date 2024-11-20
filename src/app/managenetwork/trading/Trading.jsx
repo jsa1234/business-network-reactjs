@@ -31,7 +31,7 @@ function Trading({ activeTab }) {
       }
      
     );
-    setStock(data.stockDetails || []);
+    setStock(data.data.stockDetails || []);
   }
 
   async function getDetails() {
@@ -41,7 +41,7 @@ function Trading({ activeTab }) {
        
       }
     );
-    setDetails(data);
+    setDetails(data.data);
   }
 
   const renderTableData = () => {

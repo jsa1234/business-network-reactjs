@@ -91,7 +91,7 @@ const PurchaseDetails = () => {
   return (
     <>
     <div className="">
-      <Grid container spacing={2}  > 
+      <Grid container spacing={2} > 
         <Grid item xs={8}>
           <Box
             sx={{
@@ -152,7 +152,7 @@ const PurchaseDetails = () => {
       
       <div className="w-full mt-6 table-container">
       <div className="filter-group-secondary">
-          {Object.keys(purchaseRequest).length > 0 ? (
+          {Object.keys(purchaseRequest).length > 0 ? ( 
             <>
               <h1>
                 QR ID: <span>{purchaseRequest.QuotationRequestId || "--"}</span>
