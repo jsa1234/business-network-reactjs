@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import CommonApi from "@/api/CommonApi";
 import ChevronIcon from "../../public/assests/icons/chevron-right-icon.svg";
 import Link from "next/link";
-const Networkcard = ({ name, gst, contact, address, vender }) => {
+const Networkcard = ({ vendorMstrUID,name, gst, contact, address, vender }) => {
   const [value, setValue] = useState(null);
   const handleClick = () => {
     if (!gst) {
@@ -31,7 +31,7 @@ const Networkcard = ({ name, gst, contact, address, vender }) => {
           <h1>{name}</h1>
           <div className="qrcard__details_2">
             <Link
-              href={gst ? `/managenetwork/trading?uuid=${gst}` : "#"}
+              href={gst ? `/managenetwork/trading?uuid=${vendorMstrUID}` : "#"}
               onClick={handleClick}
             >
               <ChevronIcon />

@@ -62,11 +62,11 @@ const QuotationRequest = () => {
   };
   const fetchReqCount = async () => {
     let data = await CommonApi.getData(
-      `Quotation/vendor/9E405931-7756-4A02-96D4-CB03C1BE6D6E/quotation-count`,
+      `Quotation/vendor/C34E50DF-6B95-4228-85F0-14D7B7AC778B/quotation-count`,
       {},
       {}
     );
-    setreqCount(data);
+    setreqCount(data.data);
   };
   const fetchData = async (reqData) => {
     try {
@@ -76,7 +76,7 @@ const QuotationRequest = () => {
         `Quotation/vendor/requests`,
         {},
         {
-          VendorMasterUUId : "3D05C3A6-581A-487B-A798-471107312D66",
+          VendorMasterUUId : "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
           Status: reqDataStatus[reqData],
           PageSize:rowsPerPage,
           PageNumber:page,

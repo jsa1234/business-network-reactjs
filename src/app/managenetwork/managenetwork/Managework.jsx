@@ -31,7 +31,7 @@ function Managework(props) {
       }
     );
     console.log("MG.jsx", data);
-      setApprovalData(data.vendorDetails || []);
+      setApprovalData(data.data.vendorDetails || []);
   }
 
   useEffect(() => {
@@ -51,8 +51,8 @@ function Managework(props) {
           PageNumber:1//need to be dynamic
         }
       );
-      
-      setNetworkData(data.vendorDetails || []); 
+      console.log(data)
+      setNetworkData(data.data.vendorDetails || []); 
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -75,7 +75,7 @@ function Managework(props) {
           PageNumber:1//need to be dynamic
         }
       );
-      setRequestPending(data.vendorDetails || []); 
+      setRequestPending(data.data.vendorDetails || []); 
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -119,7 +119,7 @@ function Managework(props) {
                     networkData.map((vendorDetails, index) => (
                       <Networkcard
                         key={index}
-                        
+                        vendorMstrUID={vendorDetails.vendorMasterUUID}
                         name={vendorDetails.companyName || "--"}
                         gst={vendorDetails.gstNo || "--"}
                         contact={vendorDetails.contactNo || "--"}
@@ -129,7 +129,7 @@ function Managework(props) {
                       />
                     ))
                   ) : (
-                    <p>No networks available</p>
+                    <p>No networks available</p> 
                   )}
                 </div>
               </div>
