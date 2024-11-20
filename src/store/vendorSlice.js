@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  VendorMasterUUID: "21C7586F-9F29-457B-8E3D-4C75213183DF", // Default value
+  VendorMasterUUID: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+  VendorType: 2,
 };
 
 const vendorSlice = createSlice({

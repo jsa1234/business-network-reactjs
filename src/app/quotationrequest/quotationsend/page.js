@@ -4,23 +4,28 @@ import Pagenavigation from "@/components/Pagenavigation";
 import QuotationSend from "./QuotationSend";
 import CommonApi from "@/api/CommonApi";
 import { format } from "date-fns";
+import { useSearchParams } from "next/navigation";
 
 const Page = () => {
   const breadcrumbItems = ["Dashboard", "Quotation Request Submitted"];
   const urlList = ["/", "/quotationsend"];
   const [sendRequest, setSendRequest] = useState([]);
-
+  const [param,setParam]=useState('');
+  const searchParams = useSearchParams();
   // Fetch Quotation Requests
   useEffect(() => {
+    const myProp = searchParams.get("uuid");
+    setParam(myProp);
     console.log(process.env.API_URL);
-    getSendRequest();
+    getSendRequest(myProp);
   }, []);
-  async function getSendRequest() {
+  async function getSendRequest(quuid) {
     let data = await CommonApi.getData(
-      "Quotation/vendor/{a8a50e1f-2e61-4008-933b-61cf2bdc6659}/request",
+      "Quotation/vendor/quotation-request",
       {},
       {
-        VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+        QuotationRequestUUId:quuid,
+        VendorMasterUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
       }
     );
     console.log("MG.jsx", data);
