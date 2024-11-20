@@ -75,13 +75,13 @@ const Dashboard = () => {
   return (
     <>
       <div className="grid grid-cols-12 gap-4 mb-6">
-        <StockCard mode="low" btnClick={handleBtnCLick} data={lowStockData} />
+        <StockCard mode="low" btnClick={(e)=>handleBtnCLick("low")} data={lowStockData} />
         <StockCard
           mode="medium"
-          btnClick={handleBtnCLick}
+          btnClick={(e)=>handleBtnCLick("medium")}
           data={avgStockData}
         />
-        <StockCard mode="high" btnClick={handleBtnCLick} data={moreStockData} />
+        <StockCard mode="high" btnClick={(e)=>handleBtnCLick("high")} data={moreStockData} />
       </div>
       <DashBoardChart />
       <div className="table-container mt-6">
