@@ -4,16 +4,31 @@ import Networkcard from "@/components/Networkcard";
 import { Search } from "@mui/icons-material";
 import CommonApi from "@/api/CommonApi";
 import { useEffect, useState } from "react";
+import Cross from "../../../../public/assests/icons/cross.svg";
+import TickIcon from "../../../../public/assests/icons/tick-double.svg";
+import Rejectpopup from "@/components/Rejectpopup";
 function Managework(props) {
   const [selectedOption, setSelectedOption] = useState("");
   const [approvalData, setApprovalData] = useState([]);
   const [networkData, setNetworkData] = useState([]);
   const [requestPending, setRequestPending] = useState([]);
   const [activeTab, setActiveTab] = useState("network");
+  const [reject, setReject] = useState([]);
+  const [approval, setApproval] = useState([]);
   console.log(props);
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
+  //open popup//
+  const [modalShow, setModalShow] = useState(false);
+
+  // Toggle modal visibility
+  const handleModalToggle = () => {
+    setModalShow(!modalShow);
+  };
+
+  //end//
+
   useEffect(() => {
     console.log(process.env.API_URL);
     getApprovalPending();
@@ -23,15 +38,15 @@ function Managework(props) {
       "ManageNetwork/vendor/search-pending-approvals",
       {},
       {
-        VendorMasterUUId: "00B7458C-CC8A-495E-BC0B-3D95D5DA8EE5",//need to be dynamic
-        Status: 1,//need to be dynamic
-        VendorType:1,//need to be dynamic
-        PageSize:5,//need to be dynamic
-        PageNumber:1//need to be dynamic
+        VendorMasterUUId: "00B7458C-CC8A-495E-BC0B-3D95D5DA8EE5", //need to be dynamic
+        Status: 1, //need to be dynamic
+        VendorType: 1, //need to be dynamic
+        PageSize: 5, //need to be dynamic
+        PageNumber: 1, //need to be dynamic
       }
     );
     console.log("MG.jsx", data);
-      setApprovalData(data.data.vendorDetails || []);
+    setApprovalData(data.data.vendorDetails || []);
   }
 
   useEffect(() => {
@@ -46,13 +61,13 @@ function Managework(props) {
         {
           VendorMasterUUId: "4BF53476-C156-4AAC-B49C-3F5044C66540",
           Status: 2,
-          VendorType:2,//need to be dynamic
-          PageSize:5,//need to be dynamic
-          PageNumber:1//need to be dynamic
+          VendorType: 2,
+          PageSize: 5,
+          PageNumber: 1,
         }
       );
-      console.log(data)
-      setNetworkData(data.data.vendorDetails || []); 
+
+      setNetworkData(data.data.vendorDetails || []);
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -62,7 +77,7 @@ function Managework(props) {
     getRequestPending();
   }, []);
 
-  async function  getRequestPending() {
+  async function getRequestPending() {
     try {
       const data = await CommonApi.getData(
         "ManageNetwork/vendor/search-pending-requests",
@@ -70,16 +85,41 @@ function Managework(props) {
         {
           VendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
           Status: 1,
-          VendorType:2,//need to be dynamic
-          PageSize:5,//need to be dynamic
-          PageNumber:1//need to be dynamic
+          VendorType: 2,
+          PageSize: 5,
+          PageNumber: 1,
         }
       );
-      setRequestPending(data.data.vendorDetails || []); 
+      setRequestPending(data.data.vendorDetails || []);
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
   }
+  //approve//
+
+  // Approve Button Handler
+  const handleApprove = async (busid) => {
+    try {
+      const response = await CommonApi.putData(
+        `ManageNetwork/connection/approve`,
+        {},
+        {
+          status: 2,
+          businessNetworkUUId: busid,
+        }
+      );
+
+      if (response.success) {
+        alert("Approval successful!");
+        getApprovalPending();
+      }
+    } catch (error) {
+      console.error("Error approving connection:", error);
+      alert("Error approving connection. Please try again.");
+    }
+  };
+
+  //end//
 
   const renderTableData = () => {
     const theadContent = (
@@ -99,6 +139,7 @@ function Managework(props) {
             <th>Business name</th>
             <th>Contact No.</th>
             <th>Address</th>
+            <th></th>
             <th>Vendor Category</th>
             <th>Action</th>
           </tr>
@@ -141,7 +182,6 @@ function Managework(props) {
 
     const tableBodyContent = (
       <tbody className="text-left">
-        
         {props.activeTab === "approval" &&
           approvalData.map((vendorDetails, index) => (
             <tr key={`approval_${index}`}>
@@ -151,11 +191,36 @@ function Managework(props) {
               <td>{vendorDetails.address || "--"}</td>
               <td>{vendorDetails.vendorType || "--"}</td>
               <td>
-                <Buttons />
+                <button
+                  className="secondary__btn"
+                  onClick={() =>
+                    handleApprove(vendorDetails.businessNetworkUUID)
+                  }
+                >
+                  <div className="flex items-center space-x-2">
+                    <TickIcon />
+                    Approval
+                  </div>
+                </button>
+              </td>
+              <td>
+                <button
+                  className="border border-gray-300 rounded-[15px] px-[30px] py-[10px] bg-[#fef6f6]"
+                  onClick={handleModalToggle}
+                >
+                  <div className="flex items-center space-x-2">
+                    <Cross />
+                    <span className="buttonText">Reject</span>
+                  </div>
+                </button>
+
+                {modalShow && (
+                  <Rejectpopup handleModalClose={handleModalToggle} />
+                )}
               </td>
             </tr>
           ))}
-    
+
         {props.activeTab === "request" &&
           (requestPending.length > 0 ? (
             requestPending.map((vendorDetails, index) => (
@@ -166,7 +231,9 @@ function Managework(props) {
                 <td>{vendorDetails.contactNo || "--"}</td>
                 <td>{vendorDetails.vendorType || "--"}</td>
                 <td>
-                  <button className="status-approvel">Waiting for approval</button>
+                  <button className="status-approvel">
+                    Waiting for approval
+                  </button>
                 </td>
               </tr>
             ))
@@ -178,7 +245,7 @@ function Managework(props) {
               </td>
             </tr>
           ))}
-    
+
         {props.activeTab === "network" && networkData.length === 0 && (
           <tr>
             <td colSpan="6" className="text-center">
@@ -188,7 +255,6 @@ function Managework(props) {
         )}
       </tbody>
     );
-    
 
     return (
       <table className="table w-full rounded-tr-lg">
