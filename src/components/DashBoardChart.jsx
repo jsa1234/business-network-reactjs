@@ -210,6 +210,39 @@ const DashBoardChart = () => {
     }
   }
 
+  // select first product and first supplier in charts on initial load
+  useEffect(() => {
+    async function fetchInitialData() {
+      try {
+        // Fetch suppliers and set the first one as the default
+        const supplierRes = await CommonApi.getData(
+          `Vendor/${VendorMasterUUID}/suppliers`,
+          {},
+          {}
+        )
+        setSuppliers(supplierRes.data)
+        if (supplierRes.data.length > 0) {
+          setSupplierUUID(supplierRes.data[0].supplierUUId)
+        }
+
+        // Fetch products and set the first one as the default
+        const productRes = await CommonApi.getData(
+          `Vendor/${VendorMasterUUID}/products`,
+          {},
+          {}
+        )
+        setProducts(productRes.data)
+        if (productRes.data.length > 0) {
+          setProductUUID(productRes.data[0].productUUId)
+        }
+      } catch (error) {
+        console.error("Error fetching initial data:", error)
+      }
+    }
+
+    fetchInitialData()
+  }, [VendorMasterUUID])
+
   return (
     <div className='charts grid grid-cols-12 gap-4 h-full'>
       <div className='charts-item col-span-6'>
