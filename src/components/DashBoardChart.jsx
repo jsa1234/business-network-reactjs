@@ -1,5 +1,7 @@
-import React from "react";
-import { Bar, Line } from "react-chartjs-2";
+"use client"
+
+import React, { useEffect, useState } from "react"
+import { Bar, Line } from "react-chartjs-2"
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,8 +12,10 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler, 
-} from "chart.js";
+  Filler,
+} from "chart.js"
+import { useSelector } from "react-redux"
+import CommonApi from "@/api/CommonApi"
 
 // Registering the chart elements
 ChartJS.register(
@@ -23,42 +27,43 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler, 
-);
+  Filler
+)
 
 const DashBoardChart = () => {
-  const data = {
-    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange","Apple","Orange","Pineapple","Lemon"],
+  const [data, setData] = useState({
+    labels: [],
     datasets: [
       {
-        label: "# of Votes",
-        data: [9, 12, 3, 5, 2, 3,7,5,9,4],
-        backgroundColor: [
-          "#46332E",
-          "#46332E",
-          "#46332E",
-          "#46332E",
-          "#46332E",
-          "#46332E",
-        ],
-        borderColor: [
-          "#fff",
-          "#fff",
-          "#fff",
-          "#fff",
-          "#fff",
-          "#fff",
-        ],
+        label: "Sales by Buyers",
+        data: [],
+        backgroundColor: "#46332E",
+        borderColor: "#fff",
         borderWidth: 1,
       },
     ],
-  };
+  })
+
+  const [dataLine, setDataLine] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: "Weekly Sales",
+        data: [],
+        borderColor: "rgba(252, 129, 24, 1)",
+        tension: 0.5,
+        borderWidth: 2,
+        fill: "origin",
+        backgroundColor: "rgba(253, 154, 70, 0.42)",
+      },
+    ],
+  })
 
   const options = {
     scales: {
       x: {
         grid: {
-          display: false, // Hides vertical grid lines
+          display: false,
         },
       },
       y: {
@@ -67,38 +72,13 @@ const DashBoardChart = () => {
     },
     elements: {
       bar: {
-        borderRadius: 10, // Add border radius to all bars
+        borderRadius: 10,
       },
     },
-    barPercentage: 0.5, // Controls the width of bars inside each category
-    categoryPercentage: 0.3, // Controls the spacing between bars
-  };
+    barPercentage: 0.5,
+    categoryPercentage: 0.3,
+  }
 
-  const dataLine = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [
-        {
-          label: "Yearly Sales",
-          data: [10, 20, 30, 15, 40, 50], // Data points for each label
-          borderColor: "rgba(70, 51, 46, 1)", // Line color
-          tension: 0.5, // Smoothness of the line
-          borderWidth: 2, // Line width
-          fill: true,
-          backgroundColor: 'rgba(70, 51, 46, 0.45)', // Color of the fill under the line
-        },
-      {
-        label: "Monthly Sales",
-        data: [10, 30, 57, 50, 56, 50], // Data points for each label
-        borderColor: "rgba(252, 129, 24, 1)", // Line color
-        tension: 0.5, // Smoothness of the line
-        borderWidth: 2, // Line width
-        fill: 'origin',
-        backgroundColor: 'rgba(253, 154, 70, 0.42)', // Color of the fill under the line
-      },
-    ],
-  };
-
-  // Options for the line chart
   const optionsLine = {
     responsive: true,
     plugins: {
@@ -113,49 +93,194 @@ const DashBoardChart = () => {
     },
     scales: {
       x: {
-        title: {
-          display: true,
-          text: "",
-        },
         grid: {
-          display: false
-        }
+          display: false,
+        },
       },
       y: {
-        title: {
-          display: true,
-          text: "",
-        },
-        beginAtZero: true, // Ensure the y-axis starts at 0
+        beginAtZero: true,
       },
     },
-  };
+  }
+
+  const [saleByProductData, setSaleByProductData] = useState([])
+  const [saleByBuyersData, setSaleByBuyersData] = useState([])
+
+  const VendorMasterUUID = useSelector((state) => state.vendor.VendorMasterUUID)
+  const [products, setProducts] = useState([])
+  const [suppliers, setSuppliers] = useState([])
+
+  const [productUUID, setProductUUID] = useState()
+  const [supplierUUID, setSupplierUUID] = useState()
+
+  useEffect(() => {
+    getSuppliers()
+    getProducts()
+  }, [])
+
+  useEffect(() => {
+    if (productUUID) getSaleByProduct()
+  }, [productUUID])
+
+  useEffect(() => {
+    if (supplierUUID) getSaleByBuyer()
+  }, [supplierUUID])
+
+  useEffect(() => {
+    const labels = saleByBuyersData.map((item) => item.x)
+    const data = saleByBuyersData.map((item) => item.y)
+
+    setData((prev) => ({
+      ...prev,
+      labels,
+      datasets: [
+        {
+          ...prev.datasets[0],
+          data,
+        },
+      ],
+    }))
+  }, [saleByBuyersData])
+
+  useEffect(() => {
+    const labels = saleByProductData.map((item) => item.x)
+    const data = saleByProductData.map((item) => item.y)
+
+    setDataLine((prev) => ({
+      ...prev,
+      labels,
+      datasets: [
+        {
+          ...prev.datasets[0],
+          data,
+        },
+      ],
+    }))
+  }, [saleByProductData])
+
+  async function getSaleByProduct() {
+    try {
+      const res = await CommonApi.getData(
+        `Stock/get-sale-by-product`,
+        {},
+        { VendorMasterUUID, productUUID }
+      )
+      setSaleByProductData(res.data || [])
+    } catch (error) {
+      console.error("Error fetching sale by product data:", error)
+    }
+  }
+
+  async function getSaleByBuyer() {
+    try {
+      const res = await CommonApi.getData(
+        `Stock/get-sales-by-buyer`,
+        {},
+        { VendorMasterUUID, supplierUUID }
+      )
+      setSaleByBuyersData(res.data || [])
+    } catch (error) {
+      console.error("Error fetching sale by buyer data:", error)
+    }
+  }
+
+  async function getSuppliers() {
+    try {
+      const res = await CommonApi.getData(
+        `Vendor/${VendorMasterUUID}/suppliers`,
+        {},
+        {}
+      )
+      setSuppliers(res.data)
+    } catch (error) {
+      console.error("Error fetching suppliers:", error)
+    }
+  }
+
+  async function getProducts() {
+    try {
+      const res = await CommonApi.getData(
+        `Vendor/${VendorMasterUUID}/products`,
+        {},
+        {}
+      )
+      setProducts(res.data)
+    } catch (error) {
+      console.error("Error fetching products:", error)
+    }
+  }
+
+  // select first product and first supplier in charts on initial load
+  useEffect(() => {
+    async function fetchInitialData() {
+      try {
+        // Fetch suppliers and set the first one as the default
+        const supplierRes = await CommonApi.getData(
+          `Vendor/${VendorMasterUUID}/suppliers`,
+          {},
+          {}
+        )
+        setSuppliers(supplierRes.data)
+        if (supplierRes.data.length > 0) {
+          setSupplierUUID(supplierRes.data[0].supplierUUId)
+        }
+
+        // Fetch products and set the first one as the default
+        const productRes = await CommonApi.getData(
+          `Vendor/${VendorMasterUUID}/products`,
+          {},
+          {}
+        )
+        setProducts(productRes.data)
+        if (productRes.data.length > 0) {
+          setProductUUID(productRes.data[0].productUUId)
+        }
+      } catch (error) {
+        console.error("Error fetching initial data:", error)
+      }
+    }
+
+    fetchInitialData()
+  }, [VendorMasterUUID])
+
   return (
-    <div className="charts grid grid-cols-12 gap-4 h-full">
-      <div className="charts-item col-span-6">
+    <div className='charts grid grid-cols-12 gap-4 h-full'>
+      <div className='charts-item col-span-6'>
         <Line data={dataLine} options={optionsLine} />
-        <select id="dropdown" className="dropdownSelect">
-            <option value="" className="font-bold text-black">
-              Choose
+        <select
+          id='dropdown'
+          className='dropdownSelect capitalize'
+          value={productUUID || ""}
+          onChange={(e) => setProductUUID(e.target.value)}
+        >
+          {products.map((item, index) => (
+            <option key={index} className='capitalize' value={item.productUUId}>
+              {item.productName}
             </option>
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </select>
+          ))}
+        </select>
       </div>
-      <div className="charts-item col-span-6">
+      <div className='charts-item col-span-6'>
         <Bar data={data} options={options} />
-        <select id="dropdown" className="dropdownSelect">
-            <option value="" className="font-bold text-black">
-              Choose
+        <select
+          id='dropdown'
+          className='dropdownSelect capitalize'
+          value={supplierUUID || ""}
+          onChange={(e) => setSupplierUUID(e.target.value)}
+        >
+          {suppliers.map((item, index) => (
+            <option
+              key={index}
+              className='capitalize'
+              value={item.supplierUUId}
+            >
+              {item.supplierName}
             </option>
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </select>
+          ))}
+        </select>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DashBoardChart;
+export default DashBoardChart
