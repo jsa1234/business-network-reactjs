@@ -48,7 +48,7 @@ const DashBoardChart = () => {
     labels: [],
     datasets: [
       {
-        label: "Monthly Sales",
+        label: "Weekly Sales",
         data: [],
         borderColor: "rgba(252, 129, 24, 1)",
         tension: 0.5,
@@ -250,11 +250,9 @@ const DashBoardChart = () => {
         <select
           id='dropdown'
           className='dropdownSelect capitalize'
+          value={productUUID || ""}
           onChange={(e) => setProductUUID(e.target.value)}
         >
-          <option value='' className='font-bold text-black'>
-            Choose
-          </option>
           {products.map((item, index) => (
             <option key={index} className='capitalize' value={item.productUUId}>
               {item.productName}
@@ -267,11 +265,9 @@ const DashBoardChart = () => {
         <select
           id='dropdown'
           className='dropdownSelect capitalize'
+          value={supplierUUID || ""}
           onChange={(e) => setSupplierUUID(e.target.value)}
         >
-          <option value='' className='font-bold text-black'>
-            Choose
-          </option>
           {suppliers.map((item, index) => (
             <option
               key={index}
