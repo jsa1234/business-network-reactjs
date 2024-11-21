@@ -25,11 +25,11 @@ const Page = () => {
       {},
       {
         QuotationRequestUUId:quuid,
-        VendorMasterUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+        VendorMasterUUId: "4bf53476-c156-4aac-b49c-3f5044c66540",
       }
     );
     console.log("MG.jsx", data);
-    setSendRequest(data);
+    setSendRequest(data.data);
   }
 
   return (
