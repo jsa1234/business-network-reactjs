@@ -10,38 +10,53 @@ import Contact from "../../../../public/assests/icons/contact.svg";
 import Contactperson from "../../../../public/assests/icons/contactperson.svg";
 import Email from "../../../../public/assests/icons/email.svg";
 import CommonApi from "@/api/CommonApi";
+import TickIcon from "../../../../public/assests/icons/tick-double.svg";
+import { useSearchParams } from "next/navigation";
+import TotalRate from "@/components/TotalRate";
 
 function Trading({ activeTab }) {
   const [stock, setStock] = useState([]);
   const [details, setDetails] = useState([]);
-
+  const [vendorMstrUID,setVendorMstrUID]=useState('');
+  const searchParams = useSearchParams();
+  const [checkList, setCheckList] = useState([]);
   useEffect(() => {
-    getStock();
-    getDetails();
+    const myProp = searchParams.get("uuid");
+    setVendorMstrUID(myProp);
+    getStock(myProp);
+    getDetails(myProp);
   }, []);
 
-  async function getStock() {
+  async function getStock(uuid) {
     let data = await CommonApi.getData(
-      "Stock/vendor/C34E50DF-6B95-4228-85F0-14D7B7AC778B/stock",
+      `Stock/vendor/${uuid}/stock`,
       {},
-      {
-       
-        PageSize:5,//need to be dynamic
+      {      
+        PageSize:10,//need to be dynamic
         PageNumber:1//need to be dynamic
       }
      
     );
-    setStock(data.stockDetails || []);
+    setStock(data.data.stockDetails || []);
   }
+  const handleRowclick = (value) => {
 
-  async function getDetails() {
+    console.log(checkList);
+    setCheckList((checkList) => {
+      if (checkList.includes(value)) {
+        return checkList.filter((item) => item !== value);
+      } else {
+        return [...checkList, value];
+      }
+    });
+  };
+  async function getDetails(uuid) {
     let data = await CommonApi.getData(
-      "ManageNetwork/supplier/C34E50DF-6B95-4228-85F0-14D7B7AC778B /details",
-      {
-       
+      `ManageNetwork/supplier/${uuid}/details`,
+      {       
       }
     );
-    setDetails(data);
+    setDetails(data.data);
   }
 
   const renderTableData = () => {
@@ -104,15 +119,15 @@ function Trading({ activeTab }) {
     }
 
     return (
-      <table className="table w-full rounded-tr-lg">
+      <>
+      <table className="table w-full rounded-tr-lg mb-40">
         <thead>
           <tr>
             <th>Product Name</th>
-            <th>Product ID</th>
             <th>Remaining Qty</th>
-           {/*  <th>Original Price</th>
+           <th>Original Price</th>
             <th>Offer Price</th>
-            <th>Action</th> */}
+            <th>Action</th> 
           </tr>
         </thead>
         <tbody>
@@ -120,39 +135,30 @@ function Trading({ activeTab }) {
             stock.map((stockDetails, index) => (
               <tr key={`approval_${index}`}>
                 <td>{stockDetails.productName || "--"}</td>
-               {/*  <td>
-                  <Typography variant="body2" sx={{ color: "orange" }}>
-                    {row.totalQuantity
-                      ? `${Math.round(
-                          ((row.totalQuantity - row.remainingQuantity) / row.totalQuantity) * 100
-                        )}%`
-                      : "0%"}
-                  </Typography>
-                  <Box sx={{ width: "100%", height: "50%" }}>
-                    <LinearProgress
-                      variant="determinate"
-                      value={
-                        row.totalQuantity
-                          ? ((row.totalQuantity - row.remainingQuantity) / row.totalQuantity) * 100
-                          : 0
-                      }
-                      sx={{
-                        height: "10px",
-                        width: "100px",
-                        borderRadius: "10px",
-                        backgroundColor: "#DEDFE3",
-                        "& .MuiLinearProgress-bar": {
-                          backgroundColor: "orange",
-                        },
-                      }}
-                    />
-                  </Box>
-                </td> */}
-                <td>{stockDetails.productUUId || "--"}</td>
                 <td>{stockDetails.remainingQuantity || "--"}</td>
-                {/* <td>{row.originalPrice || "--"}</td>
-                <td>{row.offerPrice || "--"}</td>
-                <td><Buttons /></td> */}
+                <td> <input className="table__input"></input></td>
+                <td> <input className="table__input"></input></td>
+                <td><button
+                                        className={
+                                          checkList.includes(
+                                            stockDetails.productUUId 
+                                          )
+                                            ? "secondary__btn__light"
+                                            : "secondary__btn"
+                                        }
+                                        onClick={() =>
+                                          handleRowclick(
+                                            stockDetails.productUUId 
+                                          )
+                                        }
+                                      >
+                                        <TickIcon />
+                                        {!checkList.includes(
+                                          stockDetails.productUUId
+                                        )
+                                          ? "Select"
+                                          : ""}
+                                      </button></td>
               </tr>
             ))
           ) : (
@@ -162,6 +168,8 @@ function Trading({ activeTab }) {
           )}
         </tbody>
       </table>
+      <TotalRate/>
+      </>
     );
   };
 

@@ -9,6 +9,7 @@
 .secondary__btn{
   background: radial-gradient(70.75% 307.72% at 0% 0%, #FD9A46 0%, #FC8118 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
   border-radius: 0.8rem;
+  border:1px solid #FC8118;
 }
 
 .primary__btn,.secondary__btn {  

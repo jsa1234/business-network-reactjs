@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const Buttons = () => {
+const Buttons = ({name}) => {
     const [showText, setShowText] = useState(true);
 
     const handleClick = () => {
@@ -35,7 +35,7 @@ const Buttons = () => {
             strokeLinejoin="round"
           />
         </svg>
-        {showText && <span className="buttonText">Search</span>}
+        {showText && <span className="buttonText">{name}</span>}
       </div>
     </button>
     </>
