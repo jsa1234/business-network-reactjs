@@ -31,42 +31,39 @@ ChartJS.register(
 )
 
 const DashBoardChart = () => {
-  const data = {
-    labels: [
-      "Red",
-      "Blue",
-      "Yellow",
-      "Green",
-      "Purple",
-      "Orange",
-      "Apple",
-      "Orange",
-      "Pineapple",
-      "Lemon",
-    ],
+  const [data, setData] = useState({
+    labels: [],
     datasets: [
       {
-        label: "# of Votes",
-        data: [9, 12, 3, 5, 2, 3, 7, 5, 9, 4],
-        backgroundColor: [
-          "#46332E",
-          "#46332E",
-          "#46332E",
-          "#46332E",
-          "#46332E",
-          "#46332E",
-        ],
-        borderColor: ["#fff", "#fff", "#fff", "#fff", "#fff", "#fff"],
+        label: "Sales by Buyers",
+        data: [],
+        backgroundColor: "#46332E",
+        borderColor: "#fff",
         borderWidth: 1,
       },
     ],
-  }
+  })
+
+  const [dataLine, setDataLine] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: "Monthly Sales",
+        data: [],
+        borderColor: "rgba(252, 129, 24, 1)", // Line color
+        tension: 0.5, // Smoothness of the line
+        borderWidth: 2, // Line width
+        fill: "origin",
+        backgroundColor: "rgba(253, 154, 70, 0.42)", // Color of the fill under the line
+      },
+    ],
+  })
 
   const options = {
     scales: {
       x: {
         grid: {
-          display: false, // Hides vertical grid lines
+          display: false,
         },
       },
       y: {
@@ -75,38 +72,13 @@ const DashBoardChart = () => {
     },
     elements: {
       bar: {
-        borderRadius: 10, // Add border radius to all bars
+        borderRadius: 10,
       },
     },
-    barPercentage: 0.5, // Controls the width of bars inside each category
-    categoryPercentage: 0.3, // Controls the spacing between bars
+    barPercentage: 0.5,
+    categoryPercentage: 0.3,
   }
 
-  const dataLine = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [
-      {
-        label: "Yearly Sales",
-        data: [10, 20, 30, 15, 40, 50], // Data points for each label
-        borderColor: "rgba(70, 51, 46, 1)", // Line color
-        tension: 0.5, // Smoothness of the line
-        borderWidth: 2, // Line width
-        fill: true,
-        backgroundColor: "rgba(70, 51, 46, 0.45)", // Color of the fill under the line
-      },
-      {
-        label: "Monthly Sales",
-        data: [10, 30, 57, 50, 56, 50], // Data points for each label
-        borderColor: "rgba(252, 129, 24, 1)", // Line color
-        tension: 0.5, // Smoothness of the line
-        borderWidth: 2, // Line width
-        fill: "origin",
-        backgroundColor: "rgba(253, 154, 70, 0.42)", // Color of the fill under the line
-      },
-    ],
-  }
-
-  // Options for the line chart
   const optionsLine = {
     responsive: true,
     plugins: {
@@ -121,25 +93,18 @@ const DashBoardChart = () => {
     },
     scales: {
       x: {
-        title: {
-          display: true,
-          text: "",
-        },
         grid: {
           display: false,
         },
       },
       y: {
-        title: {
-          display: true,
-          text: "",
-        },
-        beginAtZero: true, // Ensure the y-axis starts at 0
+        beginAtZero: true,
       },
     },
   }
 
   const [saleByProductData, setSaleByProductData] = useState([])
+  const [saleByBuyersData, setSaleByBuyersData] = useState([])
 
   const VendorMasterUUID = useSelector((state) => state.vendor.VendorMasterUUID)
   const [products, setProducts] = useState([])
@@ -154,14 +119,45 @@ const DashBoardChart = () => {
   }, [])
 
   useEffect(() => {
-    getSaleByProduct()
+    if (productUUID) getSaleByProduct()
   }, [productUUID])
 
   useEffect(() => {
-    getSaleByBuyer()
+    if (supplierUUID) getSaleByBuyer()
   }, [supplierUUID])
 
-  // get sales by product api
+  useEffect(() => {
+    const labels = saleByBuyersData.map((item) => item.x)
+    const data = saleByBuyersData.map((item) => item.y)
+
+    setData((prev) => ({
+      ...prev,
+      labels,
+      datasets: [
+        {
+          ...prev.datasets[0],
+          data,
+        },
+      ],
+    }))
+  }, [saleByBuyersData])
+
+  useEffect(() => {
+    const labels = saleByProductData.map((item) => item.x)
+    const data = saleByProductData.map((item) => item.y)
+
+    setDataLine((prev) => ({
+      ...prev,
+      labels,
+      datasets: [
+        {
+          ...prev.datasets[0],
+          data,
+        },
+      ],
+    }))
+  }, [saleByProductData])
+
   async function getSaleByProduct() {
     try {
       const res = await CommonApi.getData(
@@ -169,13 +165,12 @@ const DashBoardChart = () => {
         {},
         { VendorMasterUUID, productUUID }
       )
-      console.log(res.data)
+      setSaleByProductData(res.data || [])
     } catch (error) {
-      console.error("Error fetching network data:", error)
+      console.error("Error fetching sale by product data:", error)
     }
   }
 
-  // get sales by suppliers api
   async function getSaleByBuyer() {
     try {
       const res = await CommonApi.getData(
@@ -183,13 +178,12 @@ const DashBoardChart = () => {
         {},
         { VendorMasterUUID, supplierUUID }
       )
-      console.log(res.data)
+      setSaleByBuyersData(res.data || [])
     } catch (error) {
-      console.error("Error fetching network data:", error)
+      console.error("Error fetching sale by buyer data:", error)
     }
   }
 
-  // get suppliers api
   async function getSuppliers() {
     try {
       const res = await CommonApi.getData(
@@ -197,14 +191,12 @@ const DashBoardChart = () => {
         {},
         {}
       )
-      // console.log(res.data)
       setSuppliers(res.data)
     } catch (error) {
-      console.error("Error fetching network data:", error)
+      console.error("Error fetching suppliers:", error)
     }
   }
 
-  // get products api
   async function getProducts() {
     try {
       const res = await CommonApi.getData(
@@ -212,10 +204,9 @@ const DashBoardChart = () => {
         {},
         {}
       )
-      // console.log(res.data)
       setProducts(res.data)
     } catch (error) {
-      console.error("Error fetching network data:", error)
+      console.error("Error fetching products:", error)
     }
   }
 
@@ -231,17 +222,11 @@ const DashBoardChart = () => {
           <option value='' className='font-bold text-black'>
             Choose
           </option>
-          {products.map((item, index) => {
-            return (
-              <option
-                key={index}
-                className='capitalize'
-                value={item.productUUId}
-              >
-                {item.productName}
-              </option>
-            )
-          })}
+          {products.map((item, index) => (
+            <option key={index} className='capitalize' value={item.productUUId}>
+              {item.productName}
+            </option>
+          ))}
         </select>
       </div>
       <div className='charts-item col-span-6'>
@@ -254,17 +239,15 @@ const DashBoardChart = () => {
           <option value='' className='font-bold text-black'>
             Choose
           </option>
-          {suppliers.map((item, index) => {
-            return (
-              <option
-                key={index}
-                className='capitalize'
-                value={item.supplierUUId}
-              >
-                {item.supplierName}
-              </option>
-            )
-          })}
+          {suppliers.map((item, index) => (
+            <option
+              key={index}
+              className='capitalize'
+              value={item.supplierUUId}
+            >
+              {item.supplierName}
+            </option>
+          ))}
         </select>
       </div>
     </div>

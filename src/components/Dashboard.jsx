@@ -61,7 +61,6 @@ const Dashboard = () => {
         {}
       )
       setMoreStockData(res.data[0])
-      console.log(res[0])
     } catch (error) {
       console.error("Error fetching network data:", error)
     }
