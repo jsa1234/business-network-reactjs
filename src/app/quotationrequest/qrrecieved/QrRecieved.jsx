@@ -63,8 +63,8 @@ const QrRecieved = (props) => {
         {},
         { status: 1 }
       );
-      if (data.length > 0) {
-        setData(data);
+      if (data.data.length > 0) {
+        setData(data.data);
       }
 
       let hData = await CommonApi.getData(

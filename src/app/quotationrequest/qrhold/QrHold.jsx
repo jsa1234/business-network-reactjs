@@ -57,16 +57,19 @@ const QrHold = () => {
         {},
         { status: 3 }
       );
-      if (data.length > 0) {
-        setData(data);
+      if (data.data.length > 0) {
+        setData(data.data);
       }
 
       let hData = await CommonApi.getData(
-        `Quotation/vendor/${qrUuid}/request`,
+        `Quotation/vendor/quotation-request`,
         {},
-        { status: 1 }
+        {
+          QuotationRequestUUId:qrUuid,
+          VendorMasterUUId: "4bf53476-c156-4aac-b49c-3f5044c66540",
+         }
       );
-      setHeadData(hData);
+      setHeadData(hData.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user

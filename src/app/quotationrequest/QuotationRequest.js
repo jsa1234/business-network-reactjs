@@ -62,7 +62,7 @@ const QuotationRequest = () => {
   };
   const fetchReqCount = async () => {
     let data = await CommonApi.getData(
-      `Quotation/vendor/C34E50DF-6B95-4228-85F0-14D7B7AC778B/quotation-count`,
+      `Quotation/vendor/3D05C3A6-581A-487B-A798-471107312D66/quotation-count`,
       {},
       {}
     );
@@ -76,7 +76,7 @@ const QuotationRequest = () => {
         `Quotation/vendor/requests`,
         {},
         {
-          VendorMasterUUId : "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+          VendorMasterUUId : "3D05C3A6-581A-487B-A798-471107312D66",
           Status: reqDataStatus[reqData],
           PageSize:rowsPerPage,
           PageNumber:page,
@@ -84,7 +84,7 @@ const QuotationRequest = () => {
         }
       );
       if (!data.error) {
-        setData(data.quotationDetails||[]);
+        setData(data.data.quotationDetails||[]);
         setTotalCount(data.totalCount);
       } else {
         setOpen(true)
@@ -189,7 +189,7 @@ const QuotationRequest = () => {
         <div className="quotationwraper grid grid-cols-12 gap-4 p-6">
           {data.map((row) => (
             <Qrcard
-              key={row.companyName}
+              key={row.quotationRequestUUId}
               mode={activeTab}
               name={row.companyName}
               date={format(new Date(row.requestDate), "dd-MM-yyyy")}
