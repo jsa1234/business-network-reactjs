@@ -39,19 +39,24 @@ function Managework(props) {
       {},
       {
         VendorMasterUUId: "00B7458C-CC8A-495E-BC0B-3D95D5DA8EE5", //need to be dynamic
-        Status: 1, //need to be dynamic
-        VendorType: 1, //need to be dynamic
+        Status: 2, //need to be dynamic
+        VendorType: 2, //need to be dynamic
         PageSize: 5, //need to be dynamic
         PageNumber: 1, //need to be dynamic
       }
     );
     console.log("MG.jsx", data);
     setApprovalData(data.data.vendorDetails || []);
+   
   }
+  useEffect(() => {
+    getApprovalPending();
+  }, []);
 
   useEffect(() => {
     getNetworks();
   }, []);
+
 
   async function getNetworks() {
     try {
@@ -85,7 +90,7 @@ function Managework(props) {
         {
           VendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
           Status: 1,
-          VendorType: 2,
+          VendorType: 1,
           PageSize: 5,
           PageNumber: 1,
         }
@@ -104,7 +109,7 @@ function Managework(props) {
         `ManageNetwork/connection/approve`,
         {},
         {
-          status: 2,
+          status: 1,
           businessNetworkUUId: busid,
         }
       );
@@ -231,7 +236,11 @@ function Managework(props) {
                 <td>{vendorDetails.contactNo || "--"}</td>
                 <td>{vendorDetails.vendorType || "--"}</td>
                 <td>
-                  <button className="status-approvel">
+                  <button className="status-approvel"
+                   onClick={() =>
+                    handleApprove(vendorDetails.businessNetworkUUID)
+                  }
+                  >
                     Waiting for approval
                   </button>
                 </td>

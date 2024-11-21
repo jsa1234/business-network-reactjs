@@ -1,4 +1,3 @@
-// Add this directive at the top
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -15,49 +14,47 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
-import TableFooter from "@mui/material/TableFooter";
 import CommonApi from "@/api/CommonApi";
 import { format } from "date-fns";
+import TableFooter from "@mui/material/TableFooter";
+import { Typography } from "@mui/material";
 
 const PurchaseDetails = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [activeStep, setActiveStep] = useState(0);
   const steps = ["Order Requested", "Order Shipped", "Estimated Delivery"];
-  const [data, setData] = React.useState([]);
-  const [totalCount, setTotalCount] = React.useState(0);
-  const [purchasedetails,setPurchaseDetails] = useState([]);
+  const [purchasedetails, setPurchaseDetails] = useState([]);
   const [purchaseRequest, setPurchaseRequest] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState(""); // Tracks dropdown selection
 
-
+  // Fetch initial purchase request data
   useEffect(() => {
-    console.log(process.env.API_URL);
     getPurchaseRequest();
   }, []);
-  async function getPurchaseRequest() {
-    let data = await CommonApi
-    .getData(
-      "Purchase/vendor/purchase-request",
-      {},
-      {
-        vendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
-        PurchaseRequestUUId : "F309B9B2-AA91-401A-9BAF-0926E47F8CD5"
-      }
-    );
-    console.log("MG.jsx", data);
-    setPurchaseRequest(data);
 
-  }
+  const getPurchaseRequest = async () => {
+    try {
+      const data = await CommonApi.getData(
+        "Purchase/vendor/purchase-request",
+        {},
+        {
+          vendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+          PurchaseRequestUUId: "F309B9B2-AA91-401A-9BAF-0926E47F8CD5",
+        }
+      );
+      setPurchaseRequest(data.data);
+    } catch (error) {
+      console.error("Error fetching purchase request:", error);
+    }
+  };
+
+  // Fetch purchase details data for the table
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveStep((prevStep) => (prevStep + 1) % steps.length);                                                                                     
-    }, 2000);
+    fetchData(page, rowsPerPage);
+  }, [page, rowsPerPage]);
 
-    return () => clearInterval(interval);
-  }, []);
-
-
- const fetchData = async (currentPage, rowsPerPage) => {
+  const fetchData = async (currentPage, rowsPerPage) => {
     try {
       const response = await CommonApi.getData(
         "Purchase/vendor/F309B9B2-AA91-401A-9BAF-0926E47F8CD5/request-details",
@@ -67,17 +64,11 @@ const PurchaseDetails = () => {
           Status: 2,
         }
       );
-      console.log("API Data:", response);
-      setPurchaseDetails(response || []);
-     /*  setTotalCount(response?.totalCount || 0); */
+      setPurchaseDetails(response.data || []);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
-  useEffect(() => {
-    fetchData(page, rowsPerPage);
-  }, [page, rowsPerPage]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -88,67 +79,152 @@ const PurchaseDetails = () => {
     setPage(0);
   };
 
+  const updateOrderStatus = async () => {
+    try {
+      const statusMapping = {
+        "Order Requested": {
+          status: 1,
+          PurchaseRequestUUId: "DBC7B93D-AFB1-4432-87EE-DE5A7508A821",
+          VendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+        },
+        "Order Shipped": {
+          status: 2,
+          PurchaseRequestUUId: "F309B9B2-AA91-401A-9BAF-0926E47F8CD5",
+          VendorMasterUUId: "C82ACA22-8F7F-4F62-AF48-94005850C5E4",
+        },
+        "Estimated Delivery": {
+          status: 3,
+          PurchaseRequestUUId: "FC660FE4-FC2F-4383-9DF6-022F3020394F",
+          VendorMasterUUId: "3D05C3A6-581A-487B-A798-471107312D66",
+        },
+      };
+
+      const selected = statusMapping[selectedStatus];
+      if (!selected) {
+        alert("Please select a valid status!");
+        return;
+      }
+
+      const payload = {
+        PurchaseRequestUUId: selected.PurchaseRequestUUId,
+        VendorMasterUUId: selected.VendorMasterUUId,
+        Status: selected.status,
+      };
+
+      const response = await CommonApi.putData(
+        "Purchase/vendor/update-status",
+        {},
+        payload
+      );
+
+      if (response.success) {
+        alert(`Order status updated to: ${selectedStatus}`);
+        
+      
+        const stepIndex = steps.indexOf(selectedStatus);
+        setActiveStep(stepIndex !== -1 ? stepIndex : 0);
+        
+        setSelectedStatus(""); 
+      } else {
+        alert("Error updating the order status.");
+      }
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      alert("An error occurred while updating the order status.");
+    }
+  };
+
+  useEffect(() => {
+    const stepIndex = steps.indexOf(selectedStatus);
+    setActiveStep(stepIndex !== -1 ? stepIndex : 0);
+  }, [selectedStatus]);
+
+
   return (
     <>
-    <div className="">
-      <Grid container spacing={2} > 
-        <Grid item xs={8}>
-          <Box
-            sx={{
-              width: "100%",
-              borderRadius: "20px",
-              backgroundColor: "white",
-              height: "150px",
-              textAlign: "center",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+      <div className="mt-8">
+       
+      <Grid container spacing={2}>
+  <Grid item xs={8}>
+    <Box
+      sx={{
+        width: "100%",
+        borderRadius: "20px",
+        backgroundColor: "white",
+        height: "150px",
+        textAlign: "center",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "left",
+        justifyContent: "center",
+        padding: "20px",
+      }}
+    >
+      {/* Heading */}
+      <Typography variant="h5" 
+      sx={{
+        fontWeight:'600',
+        marginBottom: "16px",
+        color: "#3b3b3b",
+        textAlign: "left",
+        marginBottom:'8px', 
+        fontSize:'16px' // Align the text to the left
+      }}>
+        Order Status
+      </Typography>
+              
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
              
-            }}
-          >
-            <Stepper activeStep={activeStep} alternativeLabel>
-              {steps.map((label) => (
-                <Step  key={label}>
-                  <StepLabel >{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-          </Box>
+            </Box>
+          </Grid>
+          <Grid item xs={4}>
+            <Box
+              sx={{
+                width: "100%",
+                borderRadius: "20px",
+                backgroundColor: "white",
+                height: "150px",
+                textAlign: "center",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div className="flux text-left flex flex-col justify-end">
+                <p className="mb-4">
+                  Update Order Status <span className="text-red-500">*</span>
+                </p>
+                <select
+                  id="dropdown"
+                  className="dropdownSelect w-[350px] mb-4"
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                >
+                  <option value="" disabled>
+                    Select Status
+                  </option>
+                  <option value="Order Requested">Order Requested</option>
+                  <option value="Order Shipped">Order Shipped</option>
+                  <option value="Estimated Delivery">Estimated Delivery</option>
+                </select>
+                <button
+                  className="w-[350px] mb-4 bg-[#FD9A46] h-[46px] rounded-[10px] text-white text-lg flex items-center justify-center"
+                  onClick={updateOrderStatus}
+                >
+                  <Update />
+                  Update
+                </button>
+              </div>
+            </Box>
+          </Grid>
         </Grid>
-        <Grid item xs={4}>
-          <Box
-            sx={{
-              width: "100%",
-              borderRadius: "20px",
-              backgroundColor: "white",
-              height: "150px",
-              textAlign: "center",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div className="flux text-left flex flex-col justify-end">
-              <p className="mb-4  ">
-                Update Order Status <span className="text-red-500">*</span>
-              </p>
-              <select id="dropdown" className="dropdownSelect w-[350px] mb-4">
-                <option value="" className="font-bold text-black">
-                  Order Shipped
-                </option>
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-              </select>
-              <button className=" w-[350px] mb-4 bg-[#FD9A46] h-[46px] rounded-[10px] text-white text-lg flex items-center justify-center">
-                <Update />
-                Update
-              </button>
-            </div>
-          </Box>
-        </Grid>
-      </Grid>
-      </div> 
+      </div>
       
       <div className="w-full mt-6 table-container">
       <div className="filter-group-secondary">

@@ -37,6 +37,7 @@ const Rejectpopup = ({ handleModalClose }) => {
 
 
   const handleReject = (e) => {
+    handleModalClose();
   };
 
   return (

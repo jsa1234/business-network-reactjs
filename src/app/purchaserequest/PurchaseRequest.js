@@ -35,7 +35,7 @@ const PurchaseRequest = () => {
           "Purchase/vender/requests",
           {},
           {
-            VendorUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+            VendorMasterUUId : "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
             searchString: searchTerm,
             expectedDeliveryFromDate: selectedStartDate,
             expectedDeliveryToDate: selectedEndDate,
@@ -44,7 +44,7 @@ const PurchaseRequest = () => {
             PageNumber: 1 // need to be dynamic
           }
         );
-        setPurchaseRequest(data.purchaseRequests || []);
+        setPurchaseRequest(data.data.purchaseRequests || []);
       } catch (error) {
         console.error("Error fetching network data:", error);
       }
