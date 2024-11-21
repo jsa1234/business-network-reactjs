@@ -12,7 +12,7 @@ class CommonAPI {
     const combinedHeaders = { ...this.defaultHeaders, ...headers };
     return axios
       .get(`${process.env.NEXT_PUBLIC_API_URL}/${url}`, { headers: combinedHeaders,  params: params}).then((response) => {
-        // console.log("MN.js", response.data);
+        console.log("MN.js", response.data);
         return response.data;
       })
       .catch((error) => {

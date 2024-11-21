@@ -50,11 +50,11 @@ const DashBoardChart = () => {
       {
         label: "Monthly Sales",
         data: [],
-        borderColor: "rgba(252, 129, 24, 1)", // Line color
-        tension: 0.5, // Smoothness of the line
-        borderWidth: 2, // Line width
+        borderColor: "rgba(252, 129, 24, 1)",
+        tension: 0.5,
+        borderWidth: 2,
         fill: "origin",
-        backgroundColor: "rgba(253, 154, 70, 0.42)", // Color of the fill under the line
+        backgroundColor: "rgba(253, 154, 70, 0.42)",
       },
     ],
   })
