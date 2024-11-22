@@ -33,7 +33,7 @@ class CommonAPI {
           return response.data;
         })
         .catch((error) => {
-          return this.handleError(error);
+          return JSON.stringify(error);
         });
     }
     putData(url, headers = {}, data) {

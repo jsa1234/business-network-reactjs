@@ -17,9 +17,9 @@ const TotalRate = ({
       <h1>
         Sub Total:<span>{subTotal}</span>
       </h1>
-      <h1>
+      {totalGst?<h1>
         Total GST:<span>{totalGst}</span>
-      </h1>
+      </h1>:''}
       <div className="flex items-center gap-3">
         <label className="" htmlFor="inpDis">
           Discount:

@@ -180,9 +180,23 @@ console.log(totalGST);
         discount: discount,
       };
       let response = await CommonApi.putData(
-        `Quotation/vendor/${qrUuid}/quotation`,
+        `Quotation/vendor/quotation`,
         {},
-        [mData]
+        {
+          quotationRequestUUId: qrUuid,
+          requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          quotationRequestId: "string",
+          purchaseRequestId: "string",
+          requestDate: "2024-11-22T11:26:23.984Z",
+          holdDate: "2024-11-22T11:26:23.984Z",
+          rejectedDate: "2024-11-22T11:26:23.984Z",
+          status: 0,
+          expectedDeliveryDate: "2024-11-22T11:26:23.984Z",
+          comments: "string",
+          reasonId: 0,
+          quotationDetails: [mData],
+        }
       );
       if (response.status == "success") {
         setToastMsg("Quotation Hold Submitted SuccessFully!");
@@ -229,7 +243,6 @@ console.log(totalGST);
           discount: discount,
         };
       }
-
       inputData.push(mData);
     }
     let response = await CommonApi.putData(

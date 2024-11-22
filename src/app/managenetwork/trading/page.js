@@ -1,17 +1,32 @@
 "use client";
 import Image from "next/image";
 import Pagenavigation from "@/components/Pagenavigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Trading from "./Trading";
 import Stockdetails from "../../../../public/assests/icons/stockdetails.svg";
 import Supplierdetails from "../../../../public/assests/icons/supplierdetails.svg";
+import CommonApi from "@/api/CommonApi";
+import { useSearchParams } from "next/navigation";
 
 function Page() {
   // Manage tab state in the Page component and pass it down as props
   const [activeTab, setActiveTab] = useState("approval");
-
+  const searchParams = useSearchParams();
+  const [details, setDetails] = useState([]);
+  useEffect(() => {
+    const myProp = searchParams.get("uuid");
+    getDetails(myProp);
+  }, []);
+  async function getDetails(uuid) {
+    let data = await CommonApi.getData(
+      `ManageNetwork/supplier/${uuid}/details`,
+      {       
+      }
+    );
+    setDetails(data.data);
+  }
   return (
-    <>
+    
       <div className="bus__body w-full pl-9 mt-6 pr-3 pb-9">
         <div className="flex justify-between">
           <div className="w-full md:w-1/2">
@@ -19,14 +34,14 @@ function Page() {
               <Image
                 src="/assests/trading.png"
                 alt="trading"
-                width={35}
-                height={35}
+                width={45}
+                height={45}
                 className="mr-4"
               />
-              <Pagenavigation pageName="Earthly Delights Trading" />
+              <Pagenavigation pageName={details.companyName} />
             </div>
             <p className="text-[14px] text-slate-400 ml-[48px]">
-              GST No. <span className="font-bold text-black">GSTN10247894BS</span>
+              GST No. <span className="font-bold text-black">{details.gstNo}</span>
             </p>
           </div>
         </div>
@@ -61,7 +76,7 @@ function Page() {
           <Trading activeTab={activeTab} />
         </div>
       </div>
-    </>
+   
   );
 }
 

@@ -38,8 +38,8 @@ function Managework(props) {
       "ManageNetwork/vendor/search-pending-approvals",
       {},
       {
-        VendorMasterUUId: "00B7458C-CC8A-495E-BC0B-3D95D5DA8EE5", //need to be dynamic
-        Status: 2, //need to be dynamic
+        VendorMasterUUId: "C82ACA22-8F7F-4F62-AF48-94005850C5E4", //need to be dynamic
+        Status: 1, //need to be dynamic
         VendorType: 2, //need to be dynamic
         PageSize: 5, //need to be dynamic
         PageNumber: 1, //need to be dynamic
@@ -64,7 +64,7 @@ function Managework(props) {
         "ManageNetwork/vendor/search-connected-networks",
         {},
         {
-          VendorMasterUUId: "4BF53476-C156-4AAC-B49C-3F5044C66540",
+          VendorMasterUUId: "b228cf6f-5db5-47dd-b74c-aa481b3aacb2",
           Status: 2,
           VendorType: 2,
           PageSize: 5,
