@@ -57,7 +57,7 @@ const BusinessNetwork = () => {
         }
       );
       // console.log("suggestion: ", res.suggestionDetails);
-      setData(res.suggestionDetails);
+      setData(res.data.suggestionDetails);
       setTotalCount(5);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -144,7 +144,7 @@ const BusinessNetwork = () => {
         {},
         {}
       );
-      setProductCategoryData((prevState) => [...prevState, ...res]);
+      setProductCategoryData((prevState) => [...prevState, ...res.data]);
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -158,7 +158,7 @@ const BusinessNetwork = () => {
         {},
         {}
       );
-      setVendorCategoryData((prevState) => [...prevState, ...res]);
+      setVendorCategoryData((prevState) => [...prevState, ...res.data]);
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -172,7 +172,7 @@ const BusinessNetwork = () => {
         {},
         {}
       );
-      setLoationsData((prevState) => [...prevState, ...res]);
+      setLoationsData((prevState) => [...prevState, ...res.data]);
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -186,7 +186,7 @@ const BusinessNetwork = () => {
         {},
         {}
       );
-      setRatingsData((prevState) => [...prevState, ...res]);
+      setRatingsData((prevState) => [...prevState, ...res.data]);
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
@@ -326,7 +326,7 @@ const BusinessNetwork = () => {
         <div className="filter__results__body grid grid-cols-12 gap-4">
           {data.map((row) => (
             <BNcard
-              key={row.gstNo}
+              key={row.vendorUUId}
               name={row.name}
               gst_number={row.gstNo}
               contact={row.contactNumber}

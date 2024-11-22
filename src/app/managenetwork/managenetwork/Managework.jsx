@@ -15,6 +15,8 @@ function Managework(props) {
   const [activeTab, setActiveTab] = useState("network");
   const [reject, setReject] = useState([]);
   const [approval, setApproval] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("");
   console.log(props);
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
@@ -31,34 +33,46 @@ function Managework(props) {
 
   useEffect(() => {
     console.log(process.env.API_URL);
-    getApprovalPending();
-  }, []);
-  async function getApprovalPending() {
-    let data = await CommonApi.getData(
+ /*    getApprovalPending(); */
+    const fetchApprovalPending = async () => {
+      try {
+const  data = await CommonApi.getData(
       "ManageNetwork/vendor/search-pending-approvals",
       {},
       {
-        VendorMasterUUId: "00B7458C-CC8A-495E-BC0B-3D95D5DA8EE5", //need to be dynamic
-        Status: 2, //need to be dynamic
+        VendorMasterUUId: "C82ACA22-8F7F-4F62-AF48-94005850C5E4", //need to be dynamic
+        Status: 1, //need to be dynamic
         VendorType: 2, //need to be dynamic
         PageSize: 5, //need to be dynamic
         PageNumber: 1, //need to be dynamic
+        searchString: searchTerm,
+        sortBy: sortBy
       }
     );
     console.log("MG.jsx", data);
     setApprovalData(data.data.vendorDetails || []);
-   
+  } catch (error) {
+    console.error("Error fetching network data:", error);
   }
-  useEffect(() => {
+   
+  };
+/*   useEffect(() => {
     getApprovalPending();
-  }, []);
+  }, []); */
+  fetchApprovalPending(); // Call the function inside the effect
+
+}, [searchTerm, sortBy]); 
+const filteredApproval = approvalData.filter((request) => {
+  return (
+    request.companyName &&
+    request.companyName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+});
+
 
   useEffect(() => {
-    getNetworks();
-  }, []);
 
-
-  async function getNetworks() {
+    const fetchNetworks = async () => {
     try {
       const data = await CommonApi.getData(
         "ManageNetwork/vendor/search-connected-networks",
@@ -68,7 +82,9 @@ function Managework(props) {
           Status: 2,
           VendorType: 2,
           PageSize: 5,
-          PageNumber: 1,
+          PageNumber: 1,                                                                                                                                                                                                     
+          searchString: searchTerm,
+          sortBy: sortBy
         }
       );
 
@@ -76,30 +92,50 @@ function Managework(props) {
     } catch (error) {
       console.error("Error fetching network data:", error);
     }
-  }
+  };
+  fetchNetworks(); // Call the function inside the effect
+
+}, [searchTerm, sortBy]); 
+const filteredMynetwork = networkData.filter((request) => {
+  return (
+    request.companyName &&
+    request.companyName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+});
+  
+
 
   useEffect(() => {
-    getRequestPending();
-  }, []);
+    const fetchRequestPending = async () => {
+      try {
+        const data = await CommonApi.getData(
+          "ManageNetwork/vendor/search-pending-requests",
+          {},
+          {
+            VendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+            Status: 1,
+            VendorType: 1,
+            PageSize: 5,
+            PageNumber: 1,
+            searchString: searchTerm,
+            sortBy: sortBy // Make sure to include sorting if it's necessary
+          }
+        );
+        setRequestPending(data.data.vendorDetails || []);
+      } catch (error) {
+        console.error("Error fetching network data:", error);
+      }
+    };
 
-  async function getRequestPending() {
-    try {
-      const data = await CommonApi.getData(
-        "ManageNetwork/vendor/search-pending-requests",
-        {},
-        {
-          VendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
-          Status: 1,
-          VendorType: 1,
-          PageSize: 5,
-          PageNumber: 1,
-        }
-      );
-      setRequestPending(data.data.vendorDetails || []);
-    } catch (error) {
-      console.error("Error fetching network data:", error);
-    }
-  }
+    fetchRequestPending(); // Call the function inside the effect
+
+  }, [searchTerm, sortBy]); 
+  const filteredRequests = requestPending.filter((request) => {
+    return (
+      request.companyName &&
+      request.companyName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
   //approve//
 
   // Approve Button Handler
@@ -111,6 +147,12 @@ function Managework(props) {
         {
           status: 1,
           businessNetworkUUId: busid,
+          isDelete: true,
+          createdAt: "2024-11-22T04:36:22.581Z",
+          modifiedAt: "2024-11-22T04:36:22.581Z",
+           comment: "string",
+           reasonId: 0,
+          
         }
       );
 
@@ -123,6 +165,7 @@ function Managework(props) {
       alert("Error approving connection. Please try again.");
     }
   };
+  
 
   //end//
 
@@ -161,8 +204,8 @@ function Managework(props) {
                 /> */}
 
                 <div className="grid grid-cols-12 gap-4">
-                  {networkData.length > 0 ? (
-                    networkData.map((vendorDetails, index) => (
+                  {filteredMynetwork.length > 0 ? (
+                   filteredMynetwork.map((vendorDetails, index) => (
                       <Networkcard
                         key={index}
                         vendorMstrUID={vendorDetails.vendorMasterUUID}
@@ -188,7 +231,7 @@ function Managework(props) {
     const tableBodyContent = (
       <tbody className="text-left">
         {props.activeTab === "approval" &&
-          approvalData.map((vendorDetails, index) => (
+         filteredApproval.map((vendorDetails, index) => (
             <tr key={`approval_${index}`}>
               <td>{vendorDetails.gstNo || "--"}</td>
               <td>{vendorDetails.companyName || "--"}</td>
@@ -220,15 +263,15 @@ function Managework(props) {
                 </button>
 
                 {modalShow && (
-                  <Rejectpopup handleModalClose={handleModalToggle} />
+                  <Rejectpopup handleModalClose={handleModalToggle} busid={vendorDetails.businessNetworkUUID}/>
                 )}
               </td>
             </tr>
           ))}
 
         {props.activeTab === "request" &&
-          (requestPending.length > 0 ? (
-            requestPending.map((vendorDetails, index) => (
+          (filteredRequests.length > 0 ? (
+            filteredRequests.map((vendorDetails, index) => (
               <tr key={`request_${index}`}>
                 <td>{vendorDetails.requestedDate || "--"}</td>
                 <td>{vendorDetails.gstNo || "--"}</td>
@@ -282,6 +325,8 @@ function Managework(props) {
               type="text"
               className="form-control form-input"
               placeholder="Search Product Name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
