@@ -12,7 +12,8 @@ import { useSearchParams } from "next/navigation";
 const BusinessNetwork = () => {
   const searchParams = useSearchParams();
   const hasQueryParam = searchParams.has("search-keyword");
-  const [searchKeyword, setSearchKeyword] = searchParams.get("search-keyword");
+  const [searchKeyword, setSearchKeyword] =
+    searchParams.get("search-keyword") || "";
 
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
