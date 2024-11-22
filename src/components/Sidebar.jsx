@@ -6,10 +6,20 @@ import QuotationIcon from "../../public/assests/icons/quotation.svg";
 import PurchaseIcon from "../../public/assests/icons/purchase.svg";
 import BusNeticon from "../../public/assests/icons/managenetwork.svg";
 import ManageNetIcon from "../../public/assests/icons/network-icon.svg";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 function Sidebar() {
-  // const router=useRouter();
+  const router = useRouter();
+
   const pathName = usePathname();
   console.log(pathName);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleGlobalSearch = () => {
+    router.push(`/businessnetwork?search-keyword=${searchQuery}`);
+  };
+
   return (
     <div>
       <nav className="left__navbar">
@@ -116,8 +126,12 @@ function Sidebar() {
                 You can find the current supply chain by using GST/ Name / Phone
                 number
               </p>
-              <input placeholder="Enter Here"></input>
-              <button className="primary__btn">
+              <input
+                placeholder="Enter Here"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              ></input>
+              <button className="primary__btn" onClick={handleGlobalSearch}>
                 Search Now{" "}
                 <svg
                   width="18"

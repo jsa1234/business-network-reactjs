@@ -7,8 +7,14 @@ import Popup from "@/components/Popup";
 import CommonApi from "@/api/CommonApi";
 
 import { useSelector } from "react-redux";
+import { useSearchParams } from "next/navigation";
 
 const BusinessNetwork = () => {
+  const searchParams = useSearchParams();
+  const hasQueryParam = searchParams.has("search-keyword");
+  const [searchKeyword, setSearchKeyword] =
+    searchParams.get("search-keyword") || "";
+
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
@@ -40,12 +46,13 @@ const BusinessNetwork = () => {
   };
 
   const handleModalClose = () => {
-    fetchData();
+    hasQueryParam && searchKeyword !== "" ? basicSearch() : fetchData();
+
     setconnectClick(!connectClick);
   };
   useEffect(() => {
-    fetchData();
-  }, [page, rowsPerPage]);
+    hasQueryParam && searchKeyword !== "" ? basicSearch() : fetchData();
+  }, [page, rowsPerPage, searchKeyword]);
 
   const fetchData = async () => {
     try {
@@ -67,13 +74,36 @@ const BusinessNetwork = () => {
           PageNumber: page,
         }
       );
-      console.log("suggestion: ", res);
+      // console.log("suggestion: ", res);
       setData(res.data.suggestionDetails);
       setTotalCount(5);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
     }
+  };
+
+  const basicSearch = async () => {
+    try {
+      const res = await CommonApi.getData(
+        "BusinessNetwork/vendor/basic-search",
+        {},
+        {
+          VendorMasterUUID: VendorMasterUUID,
+          searchKey: searchKeyword,
+          VendorType: VendorType,
+          Status: 3,
+          PageSize: rowsPerPage,
+          PageNumber: page,
+        }
+      );
+      setData(res.data.suggestionDetails);
+      // console.log(res);
+    } catch (error) {
+      console.error("Error fetching network data:", error);
+    }
+
+    // console.log(searchKeyword);
   };
 
   const mapVendorCategory = (value) => {

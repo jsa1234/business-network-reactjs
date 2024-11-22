@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Cross from "../../public/assests/icons/cross.svg";
 import CommonApi from "@/api/CommonApi";
-const Rejectpopup = ({ handleModalClose }) => {
+const Rejectpopup = ({ handleModalClose,busid }) => {
   const [reason, setReason] = useState([]); 
   const [selectedReason, setselectedReason] = useState(''); 
   const [comments, setComments] = useState(""); 
@@ -21,6 +21,7 @@ const Rejectpopup = ({ handleModalClose }) => {
     }
   }
 
+
   useEffect(() => {
     getReasons();
   }, []);
@@ -36,9 +37,41 @@ const Rejectpopup = ({ handleModalClose }) => {
   };
 
 
-  const handleReject = (e) => {
+ 
+  //reject button//
+
+  const handleReject = async () => {
+    try {
+      const response = await CommonApi.putData(
+        `ManageNetwork/connection/approve`,
+        {},
+        {
+          status: 3,
+          businessNetworkUUId: busid,
+          comment: comments,
+          isDelete: true,
+          createdAt: "2024-11-22T04:36:22.581Z",
+          modifiedAt: "2024-11-22T04:36:22.581Z",
+          reasonId: selectedReason,
+         
+        }
+      );
+  
+      if (response.success) {
+        alert("Rejection successful!");
+      }
+    } catch (error) {
+      console.error("Error rejecting connection:", error);
+      alert("Error rejecting connection. Please try again.");
+    }
     handleModalClose();
+    
+ 
   };
+  
+  
+  // const busid = ""; 
+  //end//
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 ">
@@ -95,7 +128,7 @@ const Rejectpopup = ({ handleModalClose }) => {
         {/* Reject Button */}
         <div className="flex justify-center mt-4">
           <button
-            onClick={handleReject}
+             onClick={() => handleReject()}
             className="border border-gray-300 rounded-[15px] px-[30px] py-[10px] bg-[#fef6f6]"
           >
             <div className="flex items-center space-x-2">
