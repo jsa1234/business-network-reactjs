@@ -4,7 +4,7 @@ import Success from "../../public/assests/icons/success.svg";
 
 const Popup = ({showModal,handleModalClose}) => {
   const sendValue = () => {
-        handleModalClose(false); // Call the parent's function
+        handleModalClose(!showModal); // Call the parent's function
   };
   return (
     showModal==true?
