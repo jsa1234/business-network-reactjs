@@ -1,25 +1,25 @@
 "use client"
-import * as React from 'react';
+import CommonApi from "@/api/CommonApi";
+import { constants } from "@/api/constants";
+import Loader from '@/components/Loader';
+import QrPopup from "@/components/QrPopup";
+import TotalRate from '@/components/TotalRate';
+import Alert from "@mui/material/Alert";
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
+import Paper from '@mui/material/Paper';
+import Snackbar from "@mui/material/Snackbar";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import TableHead from '@mui/material/TableHead';
-import TickIcon from "../../../../public/assests/icons/tick-double.svg";
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import QrPopup from "@/components/QrPopup";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
-import TotalRate from '@/components/TotalRate';
-import { useRouter, useSearchParams } from 'next/navigation';
+import TableRow from '@mui/material/TableRow';
 import { format } from "date-fns";
-import { constants } from "@/api/constants";
-import CommonApi from "@/api/CommonApi";
+import { useRouter, useSearchParams } from 'next/navigation';
+import * as React from 'react';
 import Cancel from "../../../../public/assests/icons/cancel.svg";
-import Loader from '@/components/Loader';
+import TickIcon from "../../../../public/assests/icons/tick-double.svg";
 const QrHold = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -182,9 +182,19 @@ console.log(totalGST);
         discount: discount,
       };
       let response = await CommonApi.putData(
-        `Quotation/vendor/${qrUuid}/quotation`,
+        `Quotation/vendor/quotation`,
         {},
-        [mData]
+        {
+          quotationRequestUUId: qrUuid,
+          requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic 
+          requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic
+          quotationRequestId: "string",//needs to be dynamic
+          purchaseRequestId: "string",//needs to be dynamic
+          // status: constants.quotationStatus["hold"],
+          expectedDeliveryDate: deliveryDate,
+          comments: comments,
+          quotationDetails: [mData],
+        }
       );
       if (response.status == "success") {
         setToastMsg("Quotation Hold Submitted SuccessFully!");
@@ -238,7 +248,17 @@ console.log(totalGST);
     let response = await CommonApi.putData(
       `Quotation/vendor/${qrUuid}/quotation`,
       {},
-      inputData
+      {
+        quotationRequestUUId: qrUuid,
+        requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic 
+        requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic
+        quotationRequestId: "string",//needs to be dynamic
+        purchaseRequestId: "string",//needs to be dynamic
+        // status: constants.quotationStatus["hold"],
+        expectedDeliveryDate: deliveryDate,
+        comments: comments,
+        quotationDetails: [...inputData],
+      }
     );
     if (response.status == "success") {
       // alert("success");

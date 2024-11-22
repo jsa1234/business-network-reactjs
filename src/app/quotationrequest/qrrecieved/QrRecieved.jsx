@@ -131,7 +131,6 @@ const QrRecieved = (props) => {
         if (key == "gst") element.gst = value;
       }
     }
-
     if (key == "unitPrice") setData(tData);
   };
   const calculateTotal=()=>{
@@ -173,28 +172,24 @@ console.log(totalGST);
       let mData = {};
       mData = {
         ...selectRow,
-        status: constants.quotationStatus["hold"],
-        reason: comments,
-        comments: comments,
-        deliverydate: deliveryDate,
-        discount: discount,
+        // status: constants.quotationStatus["hold"],
+        // reason: comments,
+        // comments: comments,
+        // deliverydate: deliveryDate,
+        // discount: discount,
       };
       let response = await CommonApi.putData(
         `Quotation/vendor/quotation`,
         {},
         {
           quotationRequestUUId: qrUuid,
-          requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          quotationRequestId: "string",
-          purchaseRequestId: "string",
-          requestDate: "2024-11-22T11:26:23.984Z",
-          holdDate: "2024-11-22T11:26:23.984Z",
-          rejectedDate: "2024-11-22T11:26:23.984Z",
-          status: 0,
-          expectedDeliveryDate: "2024-11-22T11:26:23.984Z",
-          comments: "string",
-          reasonId: 0,
+          requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic 
+          requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic
+          quotationRequestId: "string",//needs to be dynamic
+          purchaseRequestId: "string",//needs to be dynamic
+          status: constants.quotationStatus["hold"],
+          expectedDeliveryDate: deliveryDate,
+          comments: comments,
           quotationDetails: [mData],
         }
       );
@@ -246,9 +241,19 @@ console.log(totalGST);
       inputData.push(mData);
     }
     let response = await CommonApi.putData(
-      `Quotation/vendor/${qrUuid}/quotation`,
+      `Quotation/vendor/quotation`,
       {},
-      inputData
+      {
+        quotationRequestUUId: qrUuid,
+        requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic 
+        requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic
+        quotationRequestId: "string",//needs to be dynamic
+        purchaseRequestId: "string",//needs to be dynamic
+        // status: constants.quotationStatus["hold"],
+        expectedDeliveryDate: deliveryDate,
+        comments: comments,
+        quotationDetails: [...inputData],
+      }
     );
     if (response.status == "success") {
       // alert("success");
