@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ChevronIcon from "../../../public/assests/icons/chevron-right.svg";
 import SearchIcon from "../../../public/assests/icons/search_btn.svg";
 import BNcard from "@/components/BNcard";
@@ -7,22 +7,33 @@ import Popup from "@/components/Popup";
 import CommonApi from "@/api/CommonApi";
 
 import { useSelector } from "react-redux";
+import { useSearchParams } from "next/navigation";
 
 const BusinessNetwork = () => {
+  const searchParams = useSearchParams();
+  const hasQueryParam = searchParams.has("search-keyword");
+  const [searchKeyword, setSearchKeyword] = searchParams.get("search-keyword");
+
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
-  const [totalCount, setTotalCount] = React.useState(0);
-  const [connectClick, setconnectClick] = React.useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [connectClick, setconnectClick] = useState(false);
 
   const handlebuttonClick = async (VendorMasterUUID, vendorUUID) => {
+    const today = new Date();
+    const formattedDate = today.toISOString().split("T")[0];
+
     // console.log("connectFromUUID:", VendorMasterUUID);
     // console.log("connectToUUID:", vendorUUID);
+
     try {
       const res = await CommonApi.postData(
         "BusinessNetwork/vendor/connection/request",
         {},
         {
+          createdAt: formattedDate,
+          modifiedAt: formattedDate,
           requestFromVendorUUId: VendorMasterUUID,
           requestedToVendorUUId: vendorUUID,
         }
@@ -32,9 +43,15 @@ const BusinessNetwork = () => {
       console.error("Error fetching network data:", error);
     }
   };
+
+  const handleModalClose = () => {
+    hasQueryParam && searchKeyword !== "" ? basicSearch() : fetchData();
+
+    setconnectClick(!connectClick);
+  };
   useEffect(() => {
-    fetchData();
-  }, [page, rowsPerPage]);
+    hasQueryParam && searchKeyword !== "" ? basicSearch() : fetchData();
+  }, [page, rowsPerPage, searchKeyword]);
 
   const fetchData = async () => {
     try {
@@ -56,13 +73,36 @@ const BusinessNetwork = () => {
           PageNumber: page,
         }
       );
-      // console.log("suggestion: ", res.suggestionDetails);
+      // console.log("suggestion: ", res);
       setData(res.data.suggestionDetails);
       setTotalCount(5);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
     }
+  };
+
+  const basicSearch = async () => {
+    try {
+      const res = await CommonApi.getData(
+        "BusinessNetwork/vendor/basic-search",
+        {},
+        {
+          VendorMasterUUID: VendorMasterUUID,
+          searchKey: searchKeyword,
+          VendorType: VendorType,
+          Status: 3,
+          PageSize: rowsPerPage,
+          PageNumber: page,
+        }
+      );
+      setData(res.data.suggestionDetails);
+      // console.log(res);
+    } catch (error) {
+      console.error("Error fetching network data:", error);
+    }
+
+    // console.log(searchKeyword);
   };
 
   const mapVendorCategory = (value) => {
@@ -118,8 +158,8 @@ const BusinessNetwork = () => {
             PageNumber: page,
           }
         );
-        setData(res);
-        console.log(res);
+        setData(res.data.suggestionDetails);
+        // console.log(res);
       } catch (error) {
         console.error("Error fetching network data:", error);
       }
@@ -244,7 +284,7 @@ const BusinessNetwork = () => {
 
                 {productCategoryData.map((item, index) => {
                   return (
-                    <option value={item.categoryName} key={index}>
+                    <option value={item.categoryUUId} key={index}>
                       {item.categoryName}
                     </option>
                   );
@@ -278,7 +318,7 @@ const BusinessNetwork = () => {
                 <option value="">Select from the list</option>
                 {locationsData.map((item, index) => {
                   return (
-                    <option value={item.name} key={index}>
+                    <option value={item.value} key={index}>
                       {item.name}
                     </option>
                   );
@@ -295,7 +335,7 @@ const BusinessNetwork = () => {
                 <option value="">Select from the list</option>
                 {ratingsData.map((item, index) => {
                   return (
-                    <option value={item.name} key={index}>
+                    <option value={item.value} key={index}>
                       {item.name}
                     </option>
                   );
@@ -324,10 +364,10 @@ const BusinessNetwork = () => {
         </div>
         <hr></hr>
         <div className="filter__results__body grid grid-cols-12 gap-4">
-          {data.map((row) => (
+          {data.map((row, index) => (
             <BNcard
-              key={row.vendorUUId}
-              name={row.name}
+              key={index}
+              name={row.companyName}
               gst_number={row.gstNo}
               contact={row.contactNumber}
               address={row.address}
@@ -338,7 +378,7 @@ const BusinessNetwork = () => {
           ))}
         </div>
       </div>
-      <Popup showModal={connectClick} handleModalClose={handlebuttonClick} />
+      <Popup showModal={connectClick} handleModalClose={handleModalClose} />
     </div>
   );
 };
