@@ -3,8 +3,12 @@ import { useEffect, useState } from "react";
 import CommonApi from "@/api/CommonApi";
 import ChevronIcon from "../../public/assests/icons/chevron-right-icon.svg";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 const Networkcard = ({ vendorMstrUID,name, gst, contact, address, vender }) => {
   const [value, setValue] = useState(null);
+  const VendorType = useSelector(
+    (state) => state.vendor.VendorType
+  );
   const handleClick = () => {
     if (!gst) {
       console.log("No value provided.");
@@ -31,7 +35,7 @@ const Networkcard = ({ vendorMstrUID,name, gst, contact, address, vender }) => {
           <h1>{name}</h1>
           <div className="qrcard__details_2">
             <Link
-              href={gst ? `/managenetwork/trading?uuid=${vendorMstrUID}` : "#"}
+              href={VendorType==1 ? `/managenetwork/trading?uuid=${vendorMstrUID}` : `/managenetwork/stock-details-buyer?uuid=${vendorMstrUID}`}
               onClick={handleClick}
             >
               <ChevronIcon />
