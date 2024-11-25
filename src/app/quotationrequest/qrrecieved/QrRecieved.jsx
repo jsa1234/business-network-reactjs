@@ -61,18 +61,24 @@ const QrRecieved = (props) => {
       let data = await CommonApi.getData(
         `Quotation/vendor/${qrUuid}/details`,
         {},
-        { status: 1 }
+        { }
       );
       if (data.data.length > 0) {
+        let tData=data.data;
+        for(let i=0;i<tData.length;i++){
+          tData[i].totalPrice=tData[i].quantity*tData[i].unitPrice;
+        }
         setData(data.data);
       }
 
       let hData = await CommonApi.getData(
-        `Quotation/vendor/${qrUuid}/request`,
+        `Quotation/vendor/quotation-request`,
         {},
-        { status: 1 }
+        { QuotationRequestUUId: qrUuid,
+          VendorMasterUUId:"3D05C3A6-581A-487B-A798-471107312D66"
+         }
       );
-      setHeadData(hData);
+      setHeadData(hData.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
@@ -182,11 +188,11 @@ console.log(totalGST);
         `Quotation/vendor/quotation`,
         {},
         {
-          quotationRequestUUId: qrUuid,
+          quotationRequestId: qrUuid,
           requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic 
           requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic
-          quotationRequestId: "string",//needs to be dynamic
-          purchaseRequestId: "string",//needs to be dynamic
+          // quotationRequestId: "string",//needs to be dynamic
+          // purchaseRequestId: "string",//needs to be dynamic
           status: constants.quotationStatus["hold"],
           expectedDeliveryDate: deliveryDate,
           comments: comments,
@@ -200,44 +206,37 @@ console.log(totalGST);
         setToastMsg("Quotation Request Failed!");
         setOpen(true);
       }
+      setSelectedRow({});
       return;
     }
     let inputData = [];
     for (const element of data) {
       let mData = {};
       if (
-        value == "send" &&
+        (value == "send"|| value == "reject"|| value == "hold") &&
         checkList.includes(element.quotationRequestDetailUUId)
       ) {
         //selected products will have a status of SEND if submit quotation is clicked
         mData = {
           ...element,
-          status: constants.quotationStatus[value],
+          status: 2,
           reason: comments,
           comments: comments,
           deliverydate: deliveryDate,
           discount: discount,
         };
-      } else if (value == "send" || value == "reject") {
+      } else if ((value == "send"|| value == "reject"|| value == "hold") &&
+      !checkList.includes(element.quotationRequestDetailUUId)) {
         //not-selected products will have a status of REJECT if submit quotation is clicked or same for if reject is clicked
         mData = {
           ...element,
-          status: constants.quotationStatus["reject"],
+          status: 1,
           reason: comments,
           comments: comments,
           deliverydate: deliveryDate,
           discount: discount,
         };
-      } else if (value == "hold") {
-        mData = {
-          ...element,
-          status: constants.quotationStatus["hold"],
-          reason: comments,
-          comments: comments,
-          deliverydate: deliveryDate,
-          discount: discount,
-        };
-      }
+      } 
       inputData.push(mData);
     }
     let response = await CommonApi.putData(
@@ -249,7 +248,7 @@ console.log(totalGST);
         requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic
         quotationRequestId: "string",//needs to be dynamic
         purchaseRequestId: "string",//needs to be dynamic
-        // status: constants.quotationStatus["hold"],
+        status: constants.quotationStatus[value],
         expectedDeliveryDate: deliveryDate,
         comments: comments,
         quotationDetails: [...inputData],

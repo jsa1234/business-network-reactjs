@@ -41,8 +41,8 @@ const QuotationRequest = () => {
   });
   const [loading,setLoading]=React.useState(false);
   const reqDataStatus = {
-    request: 1,
-    send: 2,
+    request: 2,
+    send: 3,
     hold: 4,
     reject: 5,
   };
@@ -71,6 +71,7 @@ const QuotationRequest = () => {
   const fetchData = async (reqData) => {
     try {
       setLoading(true);
+      console.log('req',reqDataStatus[reqData]);
       let skip=(Number(page)-1)*rowsPerPage;
       let data = await CommonApi.getData(
         `Quotation/vendor/requests`,

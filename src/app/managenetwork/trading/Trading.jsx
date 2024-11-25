@@ -36,12 +36,13 @@ function Trading({ activeTab }) {
       `Stock/vendor/${uuid}/stock`,
       {},
       {
+        token:sessionStorage.getItem('token'),
         PageSize: 10, //need to be dynamic
         PageNumber: 1, //need to be dynamic
       }
     );
     console.log(data);
-    setStock(data.data.stockDetails || []);
+    setStock(data.data || []);
   }
   const handleRowclick = (row) => {
     console.log(checkList);

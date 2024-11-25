@@ -55,7 +55,7 @@ const QrHold = () => {
       let data = await CommonApi.getData(
         `Quotation/vendor/${qrUuid}/details`,
         {},
-        { status: 3 }
+        { }
       );
       if (data.data.length > 0) {
         setData(data.data);
