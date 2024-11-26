@@ -1,5 +1,6 @@
 import React from "react";
 import Navigation from "../../public/assests/icons/navigation.svg";
+import { useSelector } from "react-redux";
 
 const TotalRate = ({
   subTotal,
@@ -9,6 +10,9 @@ const TotalRate = ({
   discountChange,
   selectedCount = 0,
 }) => {
+  const VendorType = useSelector(
+    (state) => state.vendor.VendorType
+  );
   const handleChange = (e) => {
     discountChange(e.target.value);
   };
@@ -17,10 +21,10 @@ const TotalRate = ({
       <h1>
         Sub Total:<span>{subTotal}</span>
       </h1>
-      {totalGst?<h1>
+      {totalGst||VendorType==2?<h1>
         Total GST:<span>{totalGst}</span>
       </h1>:''}
-      <div className="flex items-center gap-3">
+      {VendorType!=2?<div className="flex items-center gap-3">
         <label className="" htmlFor="inpDis">
           Discount:
         </label>
@@ -31,7 +35,7 @@ const TotalRate = ({
           type="number"
           onChange={handleChange}
         ></input>
-      </div>
+      </div>:''}
       <h1>
         Total:<span>{total}</span>
       </h1>

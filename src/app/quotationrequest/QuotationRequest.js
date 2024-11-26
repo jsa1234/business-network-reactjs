@@ -86,7 +86,8 @@ const QuotationRequest = () => {
       );
       if (!data.error) {
         setData(data.data.quotationDetails||[]);
-        setTotalCount(data.totalCount);
+        setTotalCount(data.data.totalCount);
+        setRowsPerPage(data.data.pageSize)
       } else {
         setOpen(true)
       }

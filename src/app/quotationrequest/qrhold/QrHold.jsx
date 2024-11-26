@@ -20,6 +20,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import * as React from 'react';
 import Cancel from "../../../../public/assests/icons/cancel.svg";
 import TickIcon from "../../../../public/assests/icons/tick-double.svg";
+import { useSelector } from "react-redux";
 const QrHold = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -41,6 +42,9 @@ const QrHold = () => {
   const [totalGSTAmount, setTotalGSTAmount] = React.useState(0);
   const [loading,setLoading]=React.useState(false);
   const router = useRouter();
+  const VendorType = useSelector(
+    (state) => state.vendor.VendorType
+  );
   React.useEffect(() => {
     const myProp = searchParams.get("uuid");
     setQrUuid(myProp);
@@ -58,7 +62,12 @@ const QrHold = () => {
         { }
       );
       if (data.data.length > 0) {
-        setData(data.data);
+        let tData=[...data.data];
+        for(const element of tData){
+          element.totalPrice=element.quantity*element.unitPrice;
+          element.gst=12;
+        }
+        setData(tData);
       }
 
       let hData = await CommonApi.getData(
@@ -100,8 +109,8 @@ const QrHold = () => {
         totalGST += (Number(element.gst) / 100) * Number(element.totalPrice);
       }
     }
-console.log(total);
-console.log(totalGST);
+    console.log(total);
+    console.log(totalGST);
     setTotalAmount(total);
     setTotalGSTAmount(totalGST);
   }
@@ -181,7 +190,22 @@ console.log(totalGST);
         deliverydate: deliveryDate,
         discount: discount,
       };
-      let response = await CommonApi.putData(
+      let response;
+      if(VendorType==2){
+        response = await CommonApi.postData(
+          `Purchase/vendor/request`,
+          {},
+          {
+            "quotationRequestUUId": qrUuid,
+            "requestFromVendorUUId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "requestedToVendorUUId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "expectedDeliveryDate": deliveryDate,
+            "comments": "",
+            "quotationDetails": [mData]
+          }
+        );
+      } else{
+      response = await CommonApi.putData(
         `Quotation/vendor/quotation`,
         {},
         {
@@ -196,6 +220,7 @@ console.log(totalGST);
           quotationDetails: [mData],
         }
       );
+    }
       if (response.status == "success") {
         setToastMsg("Quotation Hold Submitted SuccessFully!");
         setOpen(true);
@@ -245,21 +270,38 @@ console.log(totalGST);
 
       inputData.push(mData);
     }
-    let response = await CommonApi.putData(
-      `Quotation/vendor/${qrUuid}/quotation`,
-      {},
-      {
-        quotationRequestUUId: qrUuid,
-        requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic 
-        requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic
-        quotationRequestId: "string",//needs to be dynamic
-        purchaseRequestId: "string",//needs to be dynamic
-        // status: constants.quotationStatus["hold"],
-        expectedDeliveryDate: deliveryDate,
-        comments: comments,
-        quotationDetails: [...inputData],
-      }
-    );
+    let response;
+    if(VendorType==2){
+      response = await CommonApi.postData(
+        `Purchase/vendor/request`,
+        {},
+        {
+          "quotationRequestUUId": qrUuid,
+          "requestFromVendorUUId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "requestedToVendorUUId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "expectedDeliveryDate": deliveryDate,
+          "comments": comments,
+          "quotationDetails": [...inputData]
+        }
+      );
+    } else{
+
+      response = await CommonApi.putData(
+        `Quotation/vendor/${qrUuid}/quotation`,
+        {},
+        {
+          quotationRequestUUId: qrUuid,
+          requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic 
+          requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic
+          quotationRequestId: "string",//needs to be dynamic
+          purchaseRequestId: "string",//needs to be dynamic
+          // status: constants.quotationStatus["hold"],
+          expectedDeliveryDate: deliveryDate,
+          comments: comments,
+          quotationDetails: [...inputData],
+        }
+      );
+    } 
     if (response.status == "success") {
       // alert("success");
       if (value == "send") {
@@ -347,6 +389,7 @@ console.log(totalGST);
             </TableCell>
             <TableCell align="left">{row.quantity}</TableCell>
             <TableCell align="left"><select
+            disabled={VendorType === 2}
                     className="table__input"
                     value={row.gst}
                     onChange={(e) =>
@@ -359,6 +402,7 @@ console.log(totalGST);
                     <option value="28">28 %</option>
                   </select></TableCell>
             <TableCell align="left"><input
+            disabled={VendorType === 2}
                     className="table__input"
                     value={row.unitPrice}
                     onChange={(e) =>

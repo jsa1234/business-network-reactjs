@@ -24,14 +24,19 @@ function Trading({ activeTab }) {
   const [deliveryDate, setDeliveryDate] = useState("");
   const [comments, setComments] = useState("");
   const [loading, setLoading] = useState();
+  const [qType, setQType] = useState("");
   useEffect(() => {
     const myProp = searchParams.get("uuid");
+    const mType= searchParams.get("type");
+    setQType(mType);
     setVendorMstrUID(myProp);
     getStock(myProp);
     getDetails(myProp);
   }, []);
 
   async function getStock(uuid) {
+    try {      
+      setLoading(true);
     let data = await CommonApi.getData(
       `Stock/vendor/${uuid}/stock`,
       {},
@@ -43,6 +48,11 @@ function Trading({ activeTab }) {
     );
     console.log(data);
     setStock(data.data || []);
+  } catch (error) {
+      
+  }finally{
+    setLoading(false);
+  }
   }
   const handleRowclick = (row) => {
     console.log(checkList);

@@ -28,10 +28,13 @@ function DetailsBuyer({ activeTab }) {
     const myProp = searchParams.get("uuid");
     setVendorMstrUID(myProp);
     getStock(myProp);
-    getDetails(myProp);
+    // getDetails(myProp);
   }, []);
 
   async function getStock(uuid) {
+    try {
+      setLoading(true);
+
     let data = await CommonApi.getData(
       `Stock/vendor/${uuid}/stock`,
       {},
@@ -43,6 +46,12 @@ function DetailsBuyer({ activeTab }) {
     );
     console.log(data);
     setStock(data.data || []);
+  } catch (error) {
+      
+  }finally{
+    setLoading(false)
+  }
+  
   }
   const handleRowclick = (row) => {
     console.log(checkList);
@@ -62,11 +71,19 @@ function DetailsBuyer({ activeTab }) {
     });
   };
   async function getDetails(uuid) {
+    try {
+      setLoading(true);
     let data = await CommonApi.getData(
       `ManageNetwork/supplier/${uuid}/details`,
       {}
     );
     setDetails(data.data);
+  } catch (error) {
+      
+  }finally{
+    setLoading(false)
+  }
+  
   }
   const handleRowEdit = (value, key, row, index) => {
     let data = [...stock];

@@ -1,19 +1,35 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DetailsBuyer from "./DetailsBuyer";
 import Pagenavigation from "@/components/Pagenavigation";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import CommonApi from "@/api/CommonApi";
 function Page() {
   const breadcrumbItems = ["Dashboard", "Manage Networks"];
   const urlList = ["/", "/dashboard", ""];
   const [selectedOption, setSelectedOption] = useState("");
   const [activeTab, setActiveTab] = useState("stock");
+  const searchParams = useSearchParams();
+  const [details, setDetails] = useState([]);
 
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
+  useEffect(() => {
+    const myProp = searchParams.get("uuid");
+    getDetails(myProp);
+  }, []);
+  async function getDetails(uuid) {
+    let data = await CommonApi.getData(
+      `ManageNetwork/supplier/${uuid}/details`,
+      {       
+      }
+    );
+    setDetails(data.data);
+  }
   return (
-    <>
+    
     <div className="bus__body w-full pl-9 mt-6 pr-3">
     <div className="flex justify-between">
           <div className="w-full md:w-1/2">
@@ -25,10 +41,10 @@ function Page() {
                 height={45}
                 className="mr-4"
               />
-              <Pagenavigation pageName={'earthy'} />
+              <Pagenavigation pageName={details.companyName} />
             </div>
             <p className="text-[14px] text-slate-400 ml-[48px]">
-              GST No. <span className="font-bold text-black">{'GST3210012j11'}</span>
+              GST No. <span className="font-bold text-black">{details.gstNo}</span>
             </p>
           </div>
         </div>
@@ -64,7 +80,7 @@ function Page() {
       </div>
       <DetailsBuyer/>
       </div>
-    </>
+    
   );
 }
 
