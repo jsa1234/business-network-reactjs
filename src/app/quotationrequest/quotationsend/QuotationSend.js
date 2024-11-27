@@ -13,7 +13,8 @@ import TableHead from "@mui/material/TableHead";
 import TablePaginationActions from "@/components/TablePagination";
 import CommonApi from "@/api/CommonApi";
 import Loader from "@/components/Loader";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
+import { useSelector } from "react-redux";
 
 function QuotationSend() {
   const [page, setPage] = useState(0);
@@ -23,12 +24,38 @@ function QuotationSend() {
   const [submittedQuotation, setSubmittedQuotation] = useState([]);
   const [loading, setLoading] = useState(false);
   const [param,setParam]=useState('');
+  const [vendorDetails,setVendorDetails]=useState({});
+  const [quotationDetails,setQuotationDetails]=useState({});
+  const Quotation = useSelector((state) => state.quotation.Quotation);
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+  useEffect(() => {
+    if (Quotation) {
+      setQuotationDetails(Quotation);
+    }
+  }, [Quotation]);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(quotationDetails).length>0) {
+      // const myProp = searchParams.get("uuid");
+    // setQrUuid(quotationDetails.qrUuid);
+    // fetchData();
+    setParam(quotationDetails.qrUuid);
+    fetchData();
+    }
+  }, [vendorDetails,quotationDetails]); 
   // Fetch data from the API
-  const fetchData = async (uuid) => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       const response = await CommonApi.getData(
-        `Quotation/vendor/${uuid}/details`,
+        `Quotation/vendor/${quotationDetails.qrUuid}/details`,
         {},
         {
        
@@ -43,12 +70,12 @@ function QuotationSend() {
       setLoading(false);
     }
   };
-  const searchParams = useSearchParams();
-  useEffect(() => {
-    const myProp = searchParams.get("uuid");
-    setParam(myProp);
-    fetchData(myProp);
-  }, []);
+  // const searchParams = useSearchParams();
+  // useEffect(() => {
+  //   const myProp = searchParams.get("uuid");
+  //   setParam(myProp);
+  //   fetchData(myProp);
+  // }, []);
   // useEffect(() => {
   //   param?fetchData(param):'';
   // }, [page, rowsPerPage]);

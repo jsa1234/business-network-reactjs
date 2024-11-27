@@ -4,12 +4,23 @@ import React, { useState } from "react";
 import "../styles/login.scss";
 import Image from "next/image";
 import Link from "next/link";
+import LoginApi from "@/api/LoginApi";
+import { useDispatch, useSelector } from 'react-redux';
+import { setVendorMasterUUID } from '../../store/vendorSlice';
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [formData, setFormData] = useState({ userName: "", password: "" });
   const [errors, setErrors] = useState({});
   const [fieldTextType, setFieldTextType] = useState(false);
-
+  const dispatch = useDispatch();
+  const router=useRouter();
+  const VendorMasterUUID = useSelector(
+    (state) => state.vendor.VendorMasterUUID
+  );
+  // const handleVendorChange = (newVendorId) => {
+  //     dispatch(setVendorMasterUUID(newVendorId));
+  // };
   const validateForm = () => {
     const newErrors = {};
     if (!formData.userName) {
@@ -26,16 +37,31 @@ const Page = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-    setErrors({});
+    // const validationErrors = validateForm();
+    // if (Object.keys(validationErrors).length > 0) {
+    //   setErrors(validationErrors);
+    //   return;
+    // }
+    // setErrors({});
     console.log("Vendor ID:", formData.userName);
     console.log("Password:", formData.password);
+    let data = await LoginApi.login(
+      "Vendor/login",
+      {},
+      {
+        username: "super@mail.com",
+        password: "123456",
+      }
+    );
+    if(data.success &&data.message=='success'){
+      console.log(data.data);
+      // await dispatch(setVendorMasterUUID(data.data));
+      sessionStorage.setItem("vendorDetails",JSON.stringify(data.data));
+      router.push('/');
+    }
   };
 
   return (
@@ -132,7 +158,7 @@ const Page = () => {
           <div className="w-[400px] flex justify-end my-4">
             <Link href="#">
               <span className="text-[#fc8118] font-bold text-xl">
-                Forgot password?
+              {VendorMasterUUID}
               </span>
             </Link>
           </div>

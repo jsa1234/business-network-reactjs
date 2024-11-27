@@ -19,17 +19,42 @@ function Quotationreject() {
   const [data, setData] = React.useState([]);
   const [totalCount, setTotalCount] = React.useState(0);
   const [rejectedQuotation, setRejectedQuotation] = useState([]);
-const [loading,setLoading]=useState(false);
-  const fetchData = async (currentPage, rowsPerPage) => {
+  const [vendorDetails,setVendorDetails]=useState({});
+  const [quotationDetails,setQuotationDetails]=useState({});
+  const Quotation = useSelector((state) => state.quotation.Quotation);
+  const [loading,setLoading]=useState(false);
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+  useEffect(() => {
+    if (Quotation) {
+      setQuotationDetails(Quotation);
+    }
+  }, [Quotation]);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(quotationDetails).length>0) {
+      // const myProp = searchParams.get("uuid");
+    // setQrUuid(quotationDetails.qrUuid);
+    // fetchData();
+    // setParam(quotationDetails.qrUuid);
+    fetchData();
+    }
+  }, [vendorDetails,quotationDetails]); 
+  const fetchData = async () => {
    
       try {
         setLoading(true);
+        debugger;
         const response = await CommonApi.getData(
-          "Quotation/vendor/{a8a50e1f-2e61-4008-933b-61cf2bdc6659}/details",
+         `Quotation/vendor/${quotationDetails.qrUuid}/details`,
           {},
           {
-            VendorUUId: "a8a50e1f-2e61-4008-933b-61cf2bdc6659",
-            Status: 4,
           }
         );
         console.log("API Data:", response);
@@ -44,7 +69,7 @@ const [loading,setLoading]=useState(false);
     };
   
     useEffect(() => {
-      fetchData(page, rowsPerPage);
+      fetchData();
     }, [page, rowsPerPage]);
   
     const handleChangePage = (event, newPage) => {

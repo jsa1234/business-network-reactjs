@@ -18,11 +18,23 @@ import { format } from "date-fns";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import Loader from "@/components/Loader";
+import { useDispatch } from "react-redux";
+import { setQuotation } from "@/store/quotationSlice";  // Adjust the path as needed
+
 const QuotationRequest = () => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const [vendorDetails,setVendorDetails]=useState({});
   const handleClose = () => {
     setOpen(false);
   };
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
 
   let routingList = {
     request: "/quotationrequest/qrrecieved",
@@ -49,10 +61,17 @@ const QuotationRequest = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = React.useState(0);
+  // useEffect(() => {
+  //   fetchData(activeTab);
+  //   fetchReqCount();
+  // }, [activeTab]);
   useEffect(() => {
-    fetchData(activeTab);
-    fetchReqCount();
-  }, [activeTab]);
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      fetchData(activeTab);
+      fetchReqCount();
+    }
+  }, [vendorDetails,activeTab]); 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -62,7 +81,7 @@ const QuotationRequest = () => {
   };
   const fetchReqCount = async () => {
     let data = await CommonApi.getData(
-      `Quotation/vendor/3D05C3A6-581A-487B-A798-471107312D66/quotation-count`,
+      `Quotation/vendor/${vendorDetails.vendorMasterUUId}/quotation-count`,
       {},
       {}
     );
@@ -77,7 +96,7 @@ const QuotationRequest = () => {
         `Quotation/vendor/requests`,
         {},
         {
-          VendorMasterUUId : "3D05C3A6-581A-487B-A798-471107312D66",
+          VendorMasterUUId : vendorDetails.vendorMasterUUId,
           Status: reqDataStatus[reqData],
           PageSize:rowsPerPage,
           PageNumber:page,
@@ -98,9 +117,14 @@ const QuotationRequest = () => {
       setLoading(false)
     }
   };
-  const handleCardClick = (uuid) => {
+  const handleCardClick = async (uuid,vendorMasterUUId) => {
+    debugger;
     setLoading(true);
-    router.push(`${routingList[activeTab]}?uuid=${uuid}`);
+    await dispatch(setQuotation({
+      vendorMasterUUId,
+      qrUuid:uuid
+    }));
+    router.push(`${routingList[activeTab]}`);
   };
   return (
     <div>
@@ -200,6 +224,7 @@ const QuotationRequest = () => {
               qrId={row.quotationRequestId}
               cardClick={handleCardClick}
               qrUUID={row.quotationRequestUUId}
+              vMstrid={row.vendorMasterUUId}
             />
           ))}
         </div>

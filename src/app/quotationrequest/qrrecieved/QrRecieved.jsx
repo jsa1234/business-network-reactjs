@@ -15,7 +15,7 @@ import HoldIcon from "../../../../public/assests/icons/hold.svg";
 import { useEffect, useState } from "react";
 import TotalRate from "@/components/TotalRate";
 import CommonApi from "@/api/CommonApi";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import QrPopup from "@/components/QrPopup";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
@@ -31,7 +31,7 @@ const QrRecieved = (props) => {
   const [totalCount, setTotalCount] = useState(0);
   const [checkList, setCheckList] = useState([]);
   const [discount, setDiscount] = useState(0);
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   const [qrUuid, setQrUuid] = useState("");
   const [modalShow, setModalShow] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState("");
@@ -44,23 +44,39 @@ const QrRecieved = (props) => {
   const [selectRow, setSelectedRow] = useState({});
   const [totalGSTAmount, setTotalGSTAmount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const VendorMasterUUID = useSelector(
-    (state) => state.vendor.VendorMasterUUID
-  );
-  const VendorType = useSelector((state) => state.vendor.VendorType);
+  const [vendorDetails,setVendorDetails]=useState({});
+  const [quotationDetails,setQuotationDetails]=useState({});
+  const Quotation = useSelector((state) => state.quotation.Quotation);
   useEffect(() => {
-    const myProp = searchParams.get("uuid");
-    setQrUuid(myProp);
-    fetchData(myProp);
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
   }, []);
+  useEffect(() => {
+    if (Quotation) {
+      setQuotationDetails(Quotation);
+    }
+  }, [Quotation]);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(quotationDetails).length>0) {
+      // const myProp = searchParams.get("uuid");
+    setQrUuid(quotationDetails.qrUuid);
+    fetchData();
+    }
+  }, [vendorDetails,quotationDetails]); 
+  
   const handleClose = () => {
     setOpen(false);
   };
-  const fetchData = async (qrUuid) => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       let data = await CommonApi.getData(
-        `Quotation/vendor/${qrUuid}/details`,
+        `Quotation/vendor/${quotationDetails.qrUuid}/details`,
         {},
         {}
       );
@@ -76,8 +92,8 @@ const QrRecieved = (props) => {
         `Quotation/vendor/quotation-request`,
         {},
         {
-          QuotationRequestUUId: qrUuid,
-          VendorMasterUUId: "3D05C3A6-581A-487B-A798-471107312D66",
+          QuotationRequestUUId: quotationDetails.qrUuid,
+          VendorMasterUUId: vendorDetails.vendorMasterUUId,
         }
       );
       setHeadData(hData.data);
@@ -186,13 +202,13 @@ const QrRecieved = (props) => {
           // discount: discount,
         };
         let response;
-        if (VendorType == 2) {
+        if (vendorDetails.vendorType == 2) {
           response = await CommonApi.postData(
             `Purchase/vendor/request`,
             {},
             {
               quotationRequestUUId: qrUuid,
-              requestFromVendorUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",//buyer who is logged in
+              requestFromVendorUUId:vendorDetails.vendorMasterUUId,//buyer who is logged in
               requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//seller
               expectedDeliveryDate: deliveryDate,
               comments: comments,
@@ -205,7 +221,7 @@ const QrRecieved = (props) => {
             {},
             {
               quotationRequestId: qrUuid,
-              requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", //needs to be dynamic
+              requestFromVendorUUId: vendorDetails.vendorMasterUUId, //needs to be dynamic
               requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", //needs to be dynamic
               // quotationRequestId: "string",//needs to be dynamic
               // purchaseRequestId: "string",//needs to be dynamic
@@ -234,7 +250,7 @@ const QrRecieved = (props) => {
           checkList.includes(element.productUUId)
         ) {
           //selected products will have a status of 2 if submit quotation is clicked
-          if (VendorType == 2){
+          if (vendorDetails.vendorType == 2){
             mData = {
               quotationRequestDetailUUId:element.quotationRequestDetailUUId,
               status: 2,
@@ -257,13 +273,13 @@ const QrRecieved = (props) => {
         inputData.push(mData);
       }
       let response;
-      if (VendorType == 2) {
+      if (vendorDetails.vendorType == 2) {
         response = await CommonApi.postData(
           `Purchase/vendor/request`,
           {},
           {
             quotationRequestUUId: qrUuid,
-            requestFromVendorUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+            requestFromVendorUUId: vendorDetails.vendorMasterUUId,
             requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             expectedDeliveryDate: deliveryDate,
             comments: comments,
@@ -276,10 +292,9 @@ const QrRecieved = (props) => {
           {},
           {
             quotationRequestUUId: qrUuid,
-            requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", //needs to be dynamic
+            requestFromVendorUUId: vendorDetails.vendorMasterUUId, //needs to be dynamic
             requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", //needs to be dynamic
             quotationRequestId: "string", //needs to be dynamic
-            purchaseRequestId: "string", //needs to be dynamic
             status: constants.quotationStatus[value],
             expectedDeliveryDate: deliveryDate,
             comments: comments,
@@ -376,7 +391,7 @@ const QrRecieved = (props) => {
 
                 <TableCell align="left">
                   <select
-                    disabled={VendorType == 2}
+                    disabled={vendorDetails.vendorType == 2}
                     className="table__input"
                     value={row.gst}
                     onChange={(e) =>
@@ -391,7 +406,7 @@ const QrRecieved = (props) => {
                 </TableCell>
                 <TableCell align="left">
                   <input
-                    disabled={VendorType == 2}
+                    disabled={vendorDetails.vendorType == 2}
                     className="table__input"
                     value={row.unitPrice}
                     onChange={(e) =>

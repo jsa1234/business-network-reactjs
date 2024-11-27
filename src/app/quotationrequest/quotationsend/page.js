@@ -5,6 +5,7 @@ import QuotationSend from "./QuotationSend";
 import CommonApi from "@/api/CommonApi";
 import { format } from "date-fns";
 import { useSearchParams } from "next/navigation";
+import { useSelector } from "react-redux";
 
 const Page = () => {
   const breadcrumbItems = ["Dashboard", "Quotation Request Submitted"];
@@ -12,20 +13,38 @@ const Page = () => {
   const [sendRequest, setSendRequest] = useState([]);
   const [param,setParam]=useState('');
   const searchParams = useSearchParams();
-  // Fetch Quotation Requests
+  const [quotationDetails,setQuotationDetails]=useState({});
+  const [vendorDetails,setVendorDetails]=useState({});
+  const Quotation = useSelector((state) => state.quotation.Quotation);
   useEffect(() => {
-    const myProp = searchParams.get("uuid");
-    setParam(myProp);
-    console.log(process.env.API_URL);
-    getSendRequest(myProp);
+    if (Quotation) {
+      setQuotationDetails(Quotation);
+    }
+  }, [Quotation]);
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
   }, []);
-  async function getSendRequest(quuid) {
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(quotationDetails).length>0) {
+
+    setParam(quotationDetails.qrUuid);
+    getSendRequest();
+    }
+  }, [vendorDetails,quotationDetails]); 
+
+  async function getSendRequest() {
     let data = await CommonApi.getData(
       "Quotation/vendor/quotation-request",
       {},
       {
-        QuotationRequestUUId:quuid,
-        VendorMasterUUId: "4bf53476-c156-4aac-b49c-3f5044c66540",
+        QuotationRequestUUId:quotationDetails.qrUuid,
+        VendorMasterUUId: vendorDetails.vendorMasterUUId,
       }
     );
     console.log("MG.jsx", data);

@@ -41,23 +41,47 @@ const QrHold = () => {
   const [selectRow, setSelectedRow] = React.useState({});
   const [totalGSTAmount, setTotalGSTAmount] = React.useState(0);
   const [loading,setLoading]=React.useState(false);
+  const [vendorDetails,setVendorDetails]=React.useState({});
+  const [quotationDetails,setQuotationDetails]=React.useState({});
+  const Quotation = useSelector((state) => state.quotation.Quotation);
   const router = useRouter();
-  const VendorType = useSelector(
-    (state) => state.vendor.VendorType
-  );
+  // const VendorType = useSelector(
+  //   (state) => state.vendor.VendorType
+  // );
+  // React.useEffect(() => {
+  //   const myProp = searchParams.get("uuid");
+  //   setQrUuid(myProp);
+  //   fetchData(myProp);
+  // }, []);
   React.useEffect(() => {
-    const myProp = searchParams.get("uuid");
-    setQrUuid(myProp);
-    fetchData(myProp);
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
   }, []);
+  React.useEffect(() => {
+    if (Quotation) {
+      setQuotationDetails(Quotation);
+    }
+  }, [Quotation]);
+  React.useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(quotationDetails).length>0) {
+      // const myProp = searchParams.get("uuid");
+    setQrUuid(quotationDetails.qrUuid);
+    fetchData();
+    }
+  }, [vendorDetails,quotationDetails]); 
   const handleClose = () => {
     setOpen(false);
   };
-  const fetchData = async (qrUuid) => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       let data = await CommonApi.getData(
-        `Quotation/vendor/${qrUuid}/details`,
+        `Quotation/vendor/${quotationDetails.qrUuid}/details`,
         {},
         { }
       );
@@ -74,8 +98,8 @@ const QrHold = () => {
         `Quotation/vendor/quotation-request`,
         {},
         {
-          QuotationRequestUUId:qrUuid,
-          VendorMasterUUId: "4bf53476-c156-4aac-b49c-3f5044c66540",
+          QuotationRequestUUId:quotationDetails.qrUuid,
+          VendorMasterUUId: vendorDetails.vendorMasterUUId,
          }
       );
       setHeadData(hData.data);
@@ -191,14 +215,15 @@ const QrHold = () => {
         discount: discount,
       };
       let response;
-      if(VendorType==2){
+      if(vendorDetails.vendorType
+==2){
         response = await CommonApi.postData(
           `Purchase/vendor/request`,
           {},
           {
-            "quotationRequestUUId": qrUuid,
-            "requestFromVendorUUId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "requestedToVendorUUId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "quotationRequestUUId": quotationDetails.qrUuid,
+            "requestFromVendorUUId": vendorDetails.vendorMasterUUId,
+            "requestedToVendorUUId": quotationDetails.vendorMasterUUId,
             "expectedDeliveryDate": deliveryDate,
             "comments": "",
             "quotationDetails": [mData]
@@ -209,9 +234,9 @@ const QrHold = () => {
         `Quotation/vendor/quotation`,
         {},
         {
-          quotationRequestUUId: qrUuid,
-          requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic 
-          requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic
+          quotationRequestUUId: quotationDetails.qrUuid,
+          requestFromVendorUUId: vendorDetails.vendorMasterUUId,//needs to be dynamic 
+          requestedToVendorUUId:  quotationDetails.vendorMasterUUId,//needs to be dynamic
           quotationRequestId: "string",//needs to be dynamic
           purchaseRequestId: "string",//needs to be dynamic
           // status: constants.quotationStatus["hold"],
@@ -271,14 +296,15 @@ const QrHold = () => {
       inputData.push(mData);
     }
     let response;
-    if(VendorType==2){
+    if(vendorDetails.vendorType
+==2){
       response = await CommonApi.postData(
         `Purchase/vendor/request`,
         {},
         {
           "quotationRequestUUId": qrUuid,
-          "requestFromVendorUUId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "requestedToVendorUUId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "requestFromVendorUUId": vendorDetails.vendorMasterUUId,
+          "requestedToVendorUUId":  quotationDetails.vendorMasterUUId,
           "expectedDeliveryDate": deliveryDate,
           "comments": comments,
           "quotationDetails": [...inputData]
@@ -291,8 +317,8 @@ const QrHold = () => {
         {},
         {
           quotationRequestUUId: qrUuid,
-          requestFromVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic 
-          requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//needs to be dynamic
+          requestFromVendorUUId: vendorDetails.vendorMasterUUId,//needs to be dynamic 
+          requestedToVendorUUId:  quotationDetails.vendorMasterUUId,//needs to be dynamic
           quotationRequestId: "string",//needs to be dynamic
           purchaseRequestId: "string",//needs to be dynamic
           // status: constants.quotationStatus["hold"],
@@ -389,7 +415,8 @@ const QrHold = () => {
             </TableCell>
             <TableCell align="left">{row.quantity}</TableCell>
             <TableCell align="left"><select
-            disabled={VendorType === 2}
+            disabled={vendorDetails.vendorType
+ === 2}
                     className="table__input"
                     value={row.gst}
                     onChange={(e) =>
@@ -402,7 +429,8 @@ const QrHold = () => {
                     <option value="28">28 %</option>
                   </select></TableCell>
             <TableCell align="left"><input
-            disabled={VendorType === 2}
+            disabled={vendorDetails.vendorType
+ === 2}
                     className="table__input"
                     value={row.unitPrice}
                     onChange={(e) =>

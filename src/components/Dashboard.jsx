@@ -5,30 +5,55 @@ import DashBoardTable from "./DashBoardTable"
 import { useRouter } from "next/navigation"
 import DashBoardChart from "./DashBoardChart"
 import CommonApi from "@/api/CommonApi"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { setStock } from "@/store/stockSlice"
 
 const Dashboard = () => {
-  const VendorMasterUUID = useSelector((state) => state.vendor.VendorMasterUUID)
+  const dispatch = useDispatch();
+  const [vendorDetails,setVendorDetails]=useState({});
+
 
   const [lowStockData, setLowStockData] = useState({})
   const [avgStockData, setAvgStockData] = useState({})
   const [moreStockData, setMoreStockData] = useState({})
 
   const router = useRouter()
-  const handleBtnCLick = (value) => {
-    router.push(`/stockdetails?status=${value}`)
+  const handleBtnCLick = async (value) => {
+    await dispatch(setStock({
+      stockStatus:value
+    }));
+    router.push(`/stockdetails`);
   }
   useEffect(() => {
-    getLow()
-    getAvg()
-    getMore()
-  }, [])
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      getLow();
+      getAvg();
+      getMore();
+    }
+  }, [vendorDetails]); 
+  // useEffect(() => {
+  //   debugger;
+  //   setVendorDetails(sessionStorage.getItem("vendorDetails"));
+  //   debugger;
+  //   getLow()
+  //   getAvg()
+  //   getMore()
+  // }, [])
 
   // low stock api
   async function getLow() {
     try {
+      console.log(vendorDetails);
       const res = await CommonApi.getData(
-        `Stock/vendor/${VendorMasterUUID}/get-less-stock-status`,
+        `Stock/vendor/${vendorDetails.vendorMasterUUId}/get-less-stock-status`,
         {},
         {}
       )
@@ -42,7 +67,7 @@ const Dashboard = () => {
   async function getAvg() {
     try {
       const res = await CommonApi.getData(
-        `Stock/vendor/${VendorMasterUUID}/get-average-stock-status`,
+        `Stock/vendor/${vendorDetails.vendorMasterUUId}/get-average-stock-status`,
         {},
         {}
       )
@@ -56,7 +81,7 @@ const Dashboard = () => {
   async function getMore() {
     try {
       const res = await CommonApi.getData(
-        `Stock/vendor/${VendorMasterUUID}/get-more-stock-status`,
+        `Stock/vendor/${vendorDetails.vendorMasterUUId}/get-more-stock-status`,
         {},
         {}
       )
@@ -69,6 +94,9 @@ const Dashboard = () => {
   // async function callAPi() {
   //   let data = await CommonApi.getData("products");
   // }
+  if (Object.keys(vendorDetails).length==0) {
+    return <div>Loading...</div>;  // Handle loading state or error
+  }
   return (
     <>
       <div className='grid grid-cols-12 gap-4 mb-6'>
