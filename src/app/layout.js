@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
         <main>
           <Navbar></Navbar>
         </main>
-        <main>
+        <main className="busntwrk__body">
           <Sidebar />
           <ClientProvider>{children}</ClientProvider>
         </main>
