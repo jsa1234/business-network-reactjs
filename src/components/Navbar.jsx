@@ -1,10 +1,14 @@
 "use client"
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation"; 
 import Buttons from "./Buttons/Buttons";
 
 const Navbar = () => {
+  const pathname = usePathname();
   return (
+    <>
+    {pathname!='/login'?
     <div className="bg-white">
       <nav>
         <div className="container">
@@ -72,6 +76,8 @@ const Navbar = () => {
       </nav>
      
     </div>
+    :''}
+    </>
   );
 }
 export default Navbar;

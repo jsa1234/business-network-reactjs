@@ -1,5 +1,5 @@
 import Pagenavigation from "@/components/Pagenavigation";
-import React from "react";
+import React, { Suspense } from "react";
 import BusinessNetwork from "./BusinessNetwork";
 
 function Page() {
@@ -8,13 +8,16 @@ function Page() {
       <div className="flex justify-between">
         <div className="w-full md:w-1/2">
           <Pagenavigation
-            pageName="Build My Netowork Connections"
+            pageName="Build My Network Connections"
             message="Hi, MS Market. Welcome back to Olopo"
           />
         </div>
       </div>
       <div className="w-full mt-6">
-<BusinessNetwork/>
+        {/* Wrap BusinessNetwork with Suspense */}
+        <Suspense fallback={<div>Loading Business Network...</div>}>
+          <BusinessNetwork />
+        </Suspense>
       </div>
     </div>
   );
