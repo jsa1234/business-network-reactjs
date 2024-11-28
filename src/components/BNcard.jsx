@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Connect from "../../public/assests/icons/connect.svg";
 import { useSelector } from "react-redux";
 

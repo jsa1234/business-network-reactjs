@@ -122,7 +122,7 @@ const QuotationRequest = () => {
     }
   };
   
-  const handleCardClick = (uuid) => {
+  const handleCardClick = async (uuid) => {
     setLoading(true);
     await dispatch(setQuotation({
       vendorMasterUUId,

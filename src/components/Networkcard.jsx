@@ -26,7 +26,7 @@ const Networkcard = ({ vendorMstrUID,name, gst, contact, address, vender }) => {
 // href={VendorType==1 ? `/managenetwork/trading?uuid=${vendorMstrUID}` : `/managenetwork/stock-details-buyer?uuid=${vendorMstrUID}`}
 
     // setValue(gst);
-    if(vendorDetails.vendorType==2){
+    if(vendorDetails.vendorType==1){
       await dispatch(setmyNetwork({
         vendorMstrUID,
       }));
