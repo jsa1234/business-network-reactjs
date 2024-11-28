@@ -190,7 +190,7 @@ const Page = () => {
           className="absolute right-0 top-0 max-w-full max-h-full object-contain"
         />
       </div>
-    </section>
+    </section>mr-10
     </>
   );
 };
