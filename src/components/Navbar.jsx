@@ -90,7 +90,7 @@ const router=useRouter()
                  <div className="absolute right-0 mt-4 mb-4 bg-white  rounded-[10px] w-[300px] text-center  profile-header">
                  <ul className="text-lg">
                    <li className="px-4 py-2 pt-4  hover:bg-gray-100">
-                     <Link href="/networkprofile" className="block">
+                     <Link href="/companyprofile" className="block">
                        Company Profile
                      </Link>
                    </li>
