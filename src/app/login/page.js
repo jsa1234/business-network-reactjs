@@ -8,11 +8,13 @@ import LoginApi from "@/api/LoginApi";
 import { useDispatch, useSelector } from 'react-redux';
 import { setVendorMasterUUID } from '../../store/vendorSlice';
 import { useRouter } from "next/navigation";
+import Loader from "@/components/Loader";
 
 const Page = () => {
   const [formData, setFormData] = useState({ userName: "", password: "" });
   const [errors, setErrors] = useState({});
   const [fieldTextType, setFieldTextType] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const router=useRouter();
   const VendorMasterUUID = useSelector(
@@ -40,6 +42,9 @@ const Page = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      setLoading(true);
+    
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -62,9 +67,16 @@ const Page = () => {
       sessionStorage.setItem("vendorDetails",JSON.stringify(data.data));
       router.push('/');
     }
+  } catch (error) {
+      
+  }finally{
+    setLoading(false);
+  }
   };
 
   return (
+    <>
+    {loading?<Loader/>:""}
     <section className="flex items-center justify-between h-screen w-full bg-white">
       <div className="w-1/2 h-full flex flex-col items-center justify-center">
         <div className="w-[400px] mb-20">
@@ -179,6 +191,7 @@ const Page = () => {
         />
       </div>
     </section>
+    </>
   );
 };
 
