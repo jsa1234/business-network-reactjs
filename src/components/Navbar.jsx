@@ -1,14 +1,20 @@
-"use client"
+"use client";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Buttons from "./Buttons/Buttons";
 
 const Navbar = () => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   return (
     <div className="bg-white">
       <nav>
         <div className="container">
-          <div className="flex justify-between uppercase items-center  mt-0 pt-6 pb-6 ml-6 mr-6">
+          <div className="flex justify-between uppercase items-center mt-0 pt-6 pb-6 ml-6 mr-6">
             <Link href="/" className="flex items-center text-5xl font-bold">
               <div className="mr-[40px] ">
                 <svg
@@ -58,20 +64,53 @@ const Navbar = () => {
                   </span>
                 </p>
               </div>
-              <div className="">
-                <Image
-                  src="/assests/header-icons.png"
-                  alt="header-icon"
-                  width={40}
-                  height={40}
-                />
+              <div className="relative">
+                <div
+                  className="cursor-pointer"
+                  onClick={toggleDropdown}
+                >
+                  <Image
+                    src="/assests/header-icons.png"
+                    alt="header-icon"
+                    width={40}
+                    height={40}
+                  />
+                </div>
+                {isDropdownOpen && (
+                 <div className="absolute right-0 mt-4 mb-4 bg-white  rounded-[10px] w-[300px] text-center  profile-header">
+                 <ul className="text-lg">
+                   <li className="px-4 py-2 pt-4  hover:bg-gray-100">
+                     <Link href="/networkprofile" className="block">
+                       Company Profile
+                     </Link>
+                   </li>
+                   <li className="px-4 py-2 hover:bg-gray-100">
+                     <button
+                       className="block w-full text-center"
+                       onClick={() => alert("Logging out")}
+                     >
+                       Logout
+                     </button>
+                   </li>
+                   <li className="px-4 py-2 hover:bg-gray-100 pb-4">
+                     <button
+                       className="block w-full text-center  text-white py-2 rounded header-button"
+                     >
+                       Update
+                     </button>
+                   </li>
+                 </ul>
+               </div>
+               
+                )}
               </div>
             </div>
+
           </div>
         </div>
       </nav>
-     
     </div>
   );
-}
+};
+
 export default Navbar;

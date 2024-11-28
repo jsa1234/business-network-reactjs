@@ -33,6 +33,8 @@ const QuotationRequest = () => {
   const router = useRouter();
   const [page, setPage] = useState(1);
   const [activeTab, setActiveTab] = useState("request");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy,setSortBy]=useState(0)
   const [reqCount, setreqCount] = useState({
     requestCount: 0,
     sendCount: 0,
@@ -80,7 +82,9 @@ const QuotationRequest = () => {
           Status: reqDataStatus[reqData],
           PageSize:rowsPerPage,
           PageNumber:page,
-          Skip:skip
+          Skip:skip,
+          searchString: searchTerm,
+          sortBy: sortBy
         }
       );
       if (!data.error) {
@@ -96,6 +100,7 @@ const QuotationRequest = () => {
       setLoading(false)
     }
   };
+  
   const handleCardClick = (uuid) => {
     setLoading(true);
     router.push(`${routingList[activeTab]}?uuid=${uuid}`);
@@ -104,7 +109,7 @@ const QuotationRequest = () => {
     <div>
       {
       loading?<Loader/>:''
-    }
+    }    
       <div className="flex mt-6 background">
         <button
           className={`tab flex items-center justify-center gap-2 p-2 rounded-md relative ${
@@ -115,7 +120,7 @@ const QuotationRequest = () => {
           onClick={() => setActiveTab("request")}
         >
           <DocIcon />
-          <span className="relative">
+          <span className="relative">  
             QR Recived{" "}
             <span className="badge-count">{reqCount.requestCount}</span>
           </span>
@@ -171,6 +176,8 @@ const QuotationRequest = () => {
             type="text"
             className="form-control form-input"
             placeholder="Search Product Name..."
+            
+            
           />
           <label className="dropdown-list" htmlFor="dropdown">
             Sort by

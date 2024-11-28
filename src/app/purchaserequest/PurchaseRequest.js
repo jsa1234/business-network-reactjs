@@ -96,7 +96,7 @@ const PurchaseRequest = () => {
       <div className="quotationwraper grid grid-cols-12 gap-4 p-5 mt-0">
         {filteredRequests.length > 0 ? (
           filteredRequests.map((purchaseRequests, index) => (
-            <Prcard
+            <Prcard               
               key={index}
               name={purchaseRequests.companyName}
               deliverydate={purchaseRequests.expectedDeliveryDate}
