@@ -2,16 +2,21 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; 
+import { usePathname, useRouter } from "next/navigation"; 
 import Buttons from "./Buttons/Buttons";
 
 const Navbar = () => {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+const router=useRouter()
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+  const handleLogout=()=>{
+    toggleDropdown();
+    sessionStorage.removeItem("vendorDetails");
+    router.push("/login");
+  }
 
   return (
     <>
@@ -92,7 +97,7 @@ const Navbar = () => {
                    <li className="px-4 py-2 hover:bg-gray-100">
                      <button
                        className="block w-full text-center"
-                       onClick={() => alert("Logging out")}
+                       onClick={() => handleLogout()}
                      >
                        Logout
                      </button>
