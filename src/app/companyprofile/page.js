@@ -79,14 +79,6 @@ const Page = () => {
                 </div>
                 <div style={{ flex: 1 }}>test@gmail.com</div>
               </div>
-              
-
-              <div style={{ display: "flex" }}>
-                <div style={{ flex: 1 }} className=" font-medium ">
-                  Services:
-                </div>
-                <div style={{ flex: 1 }}>test@gmail.com</div>
-              </div>
             </div>
           </div>
         </section>
@@ -136,9 +128,6 @@ const Page = () => {
             </div>
           </div>
         </section>
-
-
-       
       </div>
     </div>
   );
