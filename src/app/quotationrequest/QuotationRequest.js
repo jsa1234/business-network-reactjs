@@ -73,7 +73,7 @@ const QuotationRequest = () => {
       fetchData(activeTab);
       fetchReqCount();
     }
-  }, [vendorDetails,activeTab]); 
+  }, [vendorDetails,activeTab,searchTerm]); 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -100,10 +100,11 @@ const QuotationRequest = () => {
         {
           VendorMasterUUId : vendorDetails.vendorMasterUUId,
           Status: reqDataStatus[reqData],
+          Type:1,
           PageSize:rowsPerPage,
           PageNumber:page,
           Skip:skip,
-          searchString: searchTerm,
+          CompanyName: searchTerm,
           sortBy: sortBy
         }
       );
@@ -200,21 +201,21 @@ const QuotationRequest = () => {
           <input
             type="text"
             className="form-control form-input"
-            placeholder="Search Product Name..."
-            
+            placeholder="Search Company Name..."
+            onChange={(e)=>setSearchTerm(e.target.value)}
             
           />
-          <label className="dropdown-list" htmlFor="dropdown">
+          {/* <label className="dropdown-list" htmlFor="dropdown">
             Sort by
-          </label>
-          <select id="dropdown" className="dropdownSelect">
+          </label> */}
+          {/* <select id="dropdown" className="dropdownSelect">
             <option value="" className="font-bold text-black">
               Choose
             </option>
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
             <option value="option3">Option 3</option>
-          </select>
+          </select> */}
         </div>
       </div>
       <div>
@@ -232,7 +233,11 @@ const QuotationRequest = () => {
               qrUUID={row.quotationRequestUUId}
               vMstrid={row.vendorMasterUUId}
             />
-          ))}
+          ))
+        }
+          {
+            data.length==0?<h1 className="col-span-12 text-center text-2xl font-medium">No Data Available</h1>:""
+          }
         </div>
         <TableContainer>
           <Table>

@@ -156,7 +156,10 @@ const BusinessNetwork = () => {
             PageNumber: page,
           }
         );
-        setData(res.data.suggestionDetails);
+        if(res.data && res.data.suggestionDetails){
+
+          setData(res.data.suggestionDetails);
+        }
         // console.log(res);
       } catch (error) {
         console.error("Error fetching network data:", error);

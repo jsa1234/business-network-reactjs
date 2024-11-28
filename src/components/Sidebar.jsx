@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import HomeIcon from "../../public/assests/icons/home.svg";
 import QuotationIcon from "../../public/assests/icons/quotation.svg";
+import OpenQuotationIcon from "../../public/assests/icons/openQuotation.svg";
 import PurchaseIcon from "../../public/assests/icons/purchase.svg";
 import BusNeticon from "../../public/assests/icons/managenetwork.svg";
 import ManageNetIcon from "../../public/assests/icons/network-icon.svg";
@@ -36,7 +37,7 @@ function Sidebar() {
               <h2>Business Board</h2>
             </Link>
           </li>
-          <li className={pathName.includes("quotationrequest") ? "active" : ""}>
+          <li className={pathName.includes("/quotationrequest")&&pathName!=="/quotationrequest/openquotation" ? "active" : ""}>
             <Link href="/quotationrequest">
               <QuotationIcon />
               <h2>Quotation Request</h2>
@@ -46,6 +47,12 @@ function Sidebar() {
             <Link href="/purchaserequest">
               <PurchaseIcon />
               <h2>Purchase Request</h2>
+            </Link>
+          </li>
+          <li className={pathName.includes("openquotation") ? "active" : ""}>
+            <Link href="/quotationrequest/openquotation">
+              <OpenQuotationIcon />
+              <h2>Open Quotation</h2>
             </Link>
           </li>
           <span className="sub-head">Networks</span>

@@ -98,7 +98,7 @@ const QrHold = () => {
         {},
         {
           QuotationRequestUUId:quotationDetails.qrUuid,
-          VendorMasterUUId: vendorDetails.vendorMasterUUId,
+          VendorMasterUUId: quotationDetails.vendorMasterUUId,
          }
       );
       setHeadData(hData.data);
@@ -207,15 +207,10 @@ const QrHold = () => {
       let mData = {};
       mData = {
         ...selectRow,
-        status: constants.quotationStatus["hold"],
-        reason: comments,
-        comments: comments,
-        deliverydate: deliveryDate,
-        discount: discount,
+      
       };
       let response;
-      if(vendorDetails.vendorType
-==2){
+      if(vendorDetails.vendorType==2){
         response = await CommonApi.postData(
           `Purchase/vendor/request`,
           {},
@@ -236,9 +231,7 @@ const QrHold = () => {
           quotationRequestUUId: quotationDetails.qrUuid,
           requestFromVendorUUId: vendorDetails.vendorMasterUUId,//needs to be dynamic 
           requestedToVendorUUId:  quotationDetails.vendorMasterUUId,//needs to be dynamic
-          quotationRequestId: "string",//needs to be dynamic
-          purchaseRequestId: "string",//needs to be dynamic
-          // status: constants.quotationStatus["hold"],
+          status: constants.quotationStatus[value],
           expectedDeliveryDate: deliveryDate,
           comments: comments,
           quotationDetails: [mData],
@@ -265,30 +258,15 @@ const QrHold = () => {
         //selected products will have a status of SEND if submit quotation is clicked
         mData = {
           ...element,
-          status: constants.quotationStatus[value],
-          reason: comments,
-          comments: comments,
-          deliverydate: deliveryDate,
-          discount: discount,
         };
       } else if (value == "send" || value == "reject") {
         //not-selected products will have a status of REJECT if submit quotation is clicked or same for if reject is clicked
         mData = {
           ...element,
-          status: constants.quotationStatus["reject"],
-          reason: comments,
-          comments: comments,
-          deliverydate: deliveryDate,
-          discount: discount,
         };
       } else if (value == "hold") {
         mData = {
           ...element,
-          status: constants.quotationStatus["hold"],
-          reason: comments,
-          comments: comments,
-          deliverydate: deliveryDate,
-          discount: discount,
         };
       }
 
@@ -318,9 +296,7 @@ const QrHold = () => {
           quotationRequestUUId: qrUuid,
           requestFromVendorUUId: vendorDetails.vendorMasterUUId,//needs to be dynamic 
           requestedToVendorUUId:  quotationDetails.vendorMasterUUId,//needs to be dynamic
-          quotationRequestId: "string",//needs to be dynamic
-          purchaseRequestId: "string",//needs to be dynamic
-          // status: constants.quotationStatus["hold"],
+          status: constants.quotationStatus[value],
           expectedDeliveryDate: deliveryDate,
           comments: comments,
           quotationDetails: [...inputData],

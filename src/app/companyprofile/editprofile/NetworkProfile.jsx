@@ -347,7 +347,7 @@ const NetworkProfile = () => {
                 GST No.
               </label>
               <input
-                type="text"
+                type="                                                                                          text"
                 name="gstNo"
                 className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
                 value={companyDetails.gstNo}

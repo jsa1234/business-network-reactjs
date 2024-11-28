@@ -42,7 +42,7 @@ const Page = () => {
       {},
       {
         QuotationRequestUUId:quotationDetails.qrUuid,
-        VendorMasterUUId: vendorDetails.vendorMasterUUId,
+        VendorMasterUUId: quotationDetails.vendorMasterUUId,
       }
     );
     console.log("MG.jsx", data);

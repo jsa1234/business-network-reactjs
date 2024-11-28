@@ -95,9 +95,9 @@ function Quotationreject() {
               <TableCell align="right">GST %</TableCell>
               <TableCell align="right">Unit Price</TableCell>
               <TableCell align="right">Total Price</TableCell>
+              {/* <TableCell align="right"></TableCell>
               <TableCell align="right"></TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell align="right"></TableCell>
+              <TableCell align="right"></TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>

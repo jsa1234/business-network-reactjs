@@ -61,7 +61,13 @@ function QuotationSend() {
         }
       );
       console.log("API Data:", response);
-      if(response.success) setSubmittedQuotation(response.data || []);
+      if(response.success){
+        let tData = response.data;
+        for (let i = 0; i < tData.length; i++) {
+          tData[i].totalPrice = tData[i].quantity * tData[i].unitPrice;
+        }
+        setSubmittedQuotation(response.data || []);
+      } 
       /*  setTotalCount(response?.totalCount || 0); */
     } catch (error) {
       console.error("Error fetching data:", error);
