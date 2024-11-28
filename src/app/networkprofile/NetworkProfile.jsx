@@ -67,19 +67,18 @@ const NetworkProfile = () => {
     try {
       const res = await CommonApi.getData(
         "Vendor/C34E50DF-6B95-4228-85F0-14D7B7AC778B/vendor-products",
-        {}, // Additional payload if necessary
+        {}, 
         {}
       );
-
-      const productsData = res.data.flatMap(
-        (item) => item.productMasterDetails
-      );
+  
+     
+      const productsData = res.data; 
       setProducts(productsData);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
-
+  
   // Fetch products on component mount
   useEffect(() => {
     getProducts();
@@ -104,7 +103,7 @@ const NetworkProfile = () => {
     try {
       const res = await CommonApi.getData(
         "Vendor/C34E50DF-6B95-4228-85F0-14D7B7AC778B/vendor-services",
-        {}, // Additional payload if necessary
+        {}, 
         {}
       );
 
@@ -137,8 +136,7 @@ const NetworkProfile = () => {
     // setPreviousData(data);
     setSelectedDomain(data.domain);
     setSelectedSegment(data.segments);
-    setProducts(data.productsData);
-    setServices(data.productsData);
+    
     
   
     
@@ -269,6 +267,9 @@ const NetworkProfile = () => {
     }
   }; 
 
+
+
+
   return (
     <>
       <div className="w-full mt-6 table-container">
@@ -276,8 +277,12 @@ const NetworkProfile = () => {
           <h4 className="text-[18px] mt-4 font-semibold">Company Details</h4>
         </div>
         <div className="grid grid-cols-12">
+          
           <div className="col-span-9">
             <div className="grid grid-cols-12 gap-6 ml-8 mr-8 mb-8">
+
+
+     
               <div className="col-span-4">
                 <label
                   htmlFor="businessDomain"
@@ -371,6 +376,7 @@ const NetworkProfile = () => {
                   onChange={handleInputChange}
                 />
               </div>
+              
             </div>
           </div>
           <div className="col-span-3">
@@ -455,56 +461,43 @@ const NetworkProfile = () => {
 
           {/* Products Dropdown */}
           <div className="col-span-6 relative">
-            <label
-              htmlFor="products"
-              className="block text-[14px] font-medium text-gray-700"
-            >
-              Products
-            </label>
-            <div
-              onClick={handleToggleDropdown}
-              className="mt-1 w-full px-3 py-4 text-[14px] border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-            >
-              {selectedProducts.length > 0
-                ? `Selected: ${selectedProducts.length} product(s)`
-                : "Click to select products"}
-            </div>
+  <label htmlFor="products" className="block text-[14px] font-medium text-gray-700">
+    Products
+  </label>
+  <div
+    onClick={handleToggleDropdown}
+    className="mt-1 w-full px-3 py-4 text-[14px] border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+  >
+    {selectedProducts.length > 0
+      ? `Selected: ${selectedProducts.length} product(s)`
+      : "Click to select products"}
+  </div>
 
-            {/* Dropdown with checkboxes */}
-            {isDropdownOpen && (
-              <div className=" mt-2 w-full border border-gray-300 rounded-md bg-white shadow-lg max-h-64 overflow-y-auto">
-                {products.length > 0 ? (
-                  products.map((product) => (
-                    <div
-                      key={product.productUUId}
-                      className="flex items-center px-4 py-2"
-                    >
-                      <input
-                        type="checkbox"
-                        id={product.productUUId}
-                        value={product.productUUId}
-                        checked={selectedProducts.includes(product.productUUId)}
-                        onChange={() =>
-                          handleCheckboxChange(product.productUUId)
-                        }
-                        className="mr-2 h-6 w-6 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                      />
-                      <label
-                        htmlFor={product.productUUId}
-                        className="text-gray-700 cursor-pointer"
-                      >
-                        {product.productName}
-                      </label>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500 px-4 py-2">
-                    No products available
-                  </p>
-                )}
-              </div>
-            )}
+  {/* Dropdown with checkboxes */}
+  {isDropdownOpen && (
+    <div className="mt-2 w-full border border-gray-300 rounded-md bg-white shadow-lg max-h-64 overflow-y-auto">
+      {products.length > 0 ? (
+        products.map((product) => (
+          <div key={product.productUUId} className="flex items-center px-4 py-2">
+            <input
+              type="checkbox"
+              id={product.productUUId}
+              value={product.productUUId}
+              checked={selectedProducts.includes(product.productUUId)}
+              onChange={() => handleCheckboxChange(product.productUUId)}
+              className="mr-2 h-6 w-6 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+            />
+            <label htmlFor={product.productUUId} className="text-gray-700 cursor-pointer">
+              {product.productName}
+            </label>
           </div>
+        ))
+      ) : (
+        <p className="text-gray-500 px-4 py-2">No products available</p>
+      )}
+    </div>
+  )}
+</div>
 
           <div className="col-span-6">
             <label
