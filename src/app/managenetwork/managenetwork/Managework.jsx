@@ -21,6 +21,14 @@ function Managework(props) {
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
+  const [vendorDetails,setVendorDetails]=useState({});
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []); 
   //open popup//
   const [modalShow, setModalShow] = useState(false);
 
@@ -40,7 +48,7 @@ const  data = await CommonApi.getData(
       "ManageNetwork/vendor/search-pending-approvals",
       {},
       {
-        VendorMasterUUId: "C82ACA22-8F7F-4F62-AF48-94005850C5E4", //need to be dynamic
+        VendorMasterUUId: vendorDetails.vendorMasterUUId, //need to be dynamic
         Status: 1, //need to be dynamic
         VendorType: 2, //need to be dynamic
         PageSize: 5, //need to be dynamic
@@ -59,9 +67,10 @@ const  data = await CommonApi.getData(
 /*   useEffect(() => {
     getApprovalPending();
   }, []); */
-  fetchApprovalPending(); // Call the function inside the effect
-
-}, [searchTerm, sortBy]); 
+  if (vendorDetails && vendorDetails.vendorMasterUUId) {
+    fetchApprovalPending(); // Call the function inside the effect
+    }
+}, [searchTerm, sortBy,vendorDetails]); 
 const filteredApproval = approvalData.filter((request) => {
   return (
     request.companyName &&
@@ -78,7 +87,7 @@ const filteredApproval = approvalData.filter((request) => {
         "ManageNetwork/vendor/search-connected-networks",
         {},
         {
-          VendorMasterUUId: "b228cf6f-5db5-47dd-b74c-aa481b3aacb2",
+          VendorMasterUUId: vendorDetails.vendorMasterUUId,
           Status: 2,
           VendorType: 2,
           PageSize: 5,
@@ -93,9 +102,11 @@ const filteredApproval = approvalData.filter((request) => {
       console.error("Error fetching network data:", error);
     }
   };
-  fetchNetworks(); // Call the function inside the effect
-
-}, [searchTerm, sortBy]); 
+  if (vendorDetails && vendorDetails.vendorMasterUUId) {
+    fetchNetworks(); // Call the function inside the effect
+    
+  }
+}, [searchTerm, sortBy,vendorDetails]); 
 const filteredMynetwork = networkData.filter((request) => {
   return (
     request.companyName &&
@@ -112,7 +123,7 @@ const filteredMynetwork = networkData.filter((request) => {
           "ManageNetwork/vendor/search-pending-requests",
           {},
           {
-            VendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+            VendorMasterUUId: vendorDetails.vendorMasterUUId,
             Status: 1,
             VendorType: 1,
             PageSize: 5,
@@ -126,10 +137,12 @@ const filteredMynetwork = networkData.filter((request) => {
         console.error("Error fetching network data:", error);
       }
     };
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+    
+      fetchRequestPending(); // Call the function inside the effect
+    }
 
-    fetchRequestPending(); // Call the function inside the effect
-
-  }, [searchTerm, sortBy]); 
+  }, [searchTerm, sortBy,vendorDetails]); 
   const filteredRequests = requestPending.filter((request) => {
     return (
       request.companyName &&
@@ -145,11 +158,8 @@ const filteredMynetwork = networkData.filter((request) => {
         `ManageNetwork/connection/approve`,
         {},
         {
-          status: 1,
+          status: 2,
           businessNetworkUUId: busid,
-          isDelete: true,
-          createdAt: "2024-11-22T04:36:22.581Z",
-          modifiedAt: "2024-11-22T04:36:22.581Z",
            comment: "string",
            reasonId: 0,
           
@@ -280,9 +290,7 @@ const filteredMynetwork = networkData.filter((request) => {
                 <td>{vendorDetails.vendorType || "--"}</td>
                 <td>
                   <button className="status-approvel"
-                   onClick={() =>
-                    handleApprove(vendorDetails.businessNetworkUUID)
-                  }
+                   
                   >
                     Waiting for approval
                   </button>

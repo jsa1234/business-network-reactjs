@@ -62,6 +62,7 @@ const QrRecieved = (props) => {
     // This effect will run when vendorDetails is updated
     if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(quotationDetails).length>0) {
       // const myProp = searchParams.get("uuid");
+      console.log(quotationDetails);
     setQrUuid(quotationDetails.qrUuid);
     fetchData();
     }
@@ -91,7 +92,7 @@ const QrRecieved = (props) => {
         {},
         {
           QuotationRequestUUId: quotationDetails.qrUuid,
-          VendorMasterUUId: vendorDetails.vendorMasterUUId,
+          VendorMasterUUId: quotationDetails.vendorMasterUUId,
         }
       );
       setHeadData(hData.data);
@@ -193,11 +194,6 @@ const QrRecieved = (props) => {
         let mData = {};
         mData = {
           ...selectRow,
-          // status: constants.quotationStatus["hold"],
-          // reason: comments,
-          // comments: comments,
-          // deliverydate: deliveryDate,
-          // discount: discount,
         };
         let response;
         if (vendorDetails.vendorType == 2) {
@@ -207,7 +203,7 @@ const QrRecieved = (props) => {
             {
               quotationRequestUUId: qrUuid,
               requestFromVendorUUId:vendorDetails.vendorMasterUUId,//buyer who is logged in
-              requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//seller
+              requestedToVendorUUId: quotationDetails.vendorMasterUUId,//seller
               expectedDeliveryDate: deliveryDate,
               comments: comments,
               purchaseDetails: [mData],
@@ -220,10 +216,8 @@ const QrRecieved = (props) => {
             {
               quotationRequestId: qrUuid,
               requestFromVendorUUId: vendorDetails.vendorMasterUUId, //needs to be dynamic
-              requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", //needs to be dynamic
-              // quotationRequestId: "string",//needs to be dynamic
-              // purchaseRequestId: "string",//needs to be dynamic
-              status: constants.quotationStatus["hold"],
+              requestedToVendorUUId: quotationDetails.vendorMasterUUId, //needs to be dynamic
+              status: constants.quotationStatus[value],
               expectedDeliveryDate: deliveryDate,
               comments: comments,
               quotationDetails: [mData],
@@ -271,14 +265,14 @@ const QrRecieved = (props) => {
         inputData.push(mData);
       }
       let response;
-      if (vendorDetails.vendorType == 2) {
+      if (vendorDetails.vendorType == 2 && value == 'send') {
         response = await CommonApi.postData(
           `Purchase/vendor/request`,
           {},
           {
             quotationRequestUUId: qrUuid,
             requestFromVendorUUId: vendorDetails.vendorMasterUUId,
-            requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            requestedToVendorUUId: quotationDetails.vendorMasterUUId,
             expectedDeliveryDate: deliveryDate,
             comments: comments,
             purchaseDetails: [...inputData],
@@ -290,11 +284,10 @@ const QrRecieved = (props) => {
           {},
           {
             quotationRequestUUId: qrUuid,
-            requestFromVendorUUId: vendorDetails.vendorMasterUUId, //needs to be dynamic
-            requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", //needs to be dynamic
-            quotationRequestId: "string", //needs to be dynamic
+            requestFromVendorUUId: vendorDetails.vendorMasterUUId,
+            requestedToVendorUUId: quotationDetails.vendorMasterUUId,
             status: constants.quotationStatus[value],
-            expectedDeliveryDate: deliveryDate,
+            expectedDeliveryDate: deliveryDate==""?null:deliveryDate,
             comments: comments,
             quotationDetails: [...inputData],
           }
