@@ -4,7 +4,6 @@ import Pagenavigation from "@/components/Pagenavigation";
 import QuotationSend from "./QuotationSend";
 import CommonApi from "@/api/CommonApi";
 import { format } from "date-fns";
-import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 
 const Page = () => {
@@ -12,7 +11,6 @@ const Page = () => {
   const urlList = ["/", "/quotationsend"];
   const [sendRequest, setSendRequest] = useState([]);
   const [param,setParam]=useState('');
-  const searchParams = useSearchParams();
   const [quotationDetails,setQuotationDetails]=useState({});
   const [vendorDetails,setVendorDetails]=useState({});
   const Quotation = useSelector((state) => state.quotation.Quotation);

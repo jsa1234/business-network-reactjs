@@ -3,7 +3,6 @@ import CommonApi from "@/api/CommonApi";
 import Loader from "@/components/Loader";
 import QrPopup from "@/components/QrPopup";
 import TotalRate from "@/components/TotalRate";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Address from "../../../../public/assests/icons/address.svg";
 import Businessname from "../../../../public/assests/icons/businessname.svg";
@@ -11,12 +10,12 @@ import Contact from "../../../../public/assests/icons/contact.svg";
 import Contactperson from "../../../../public/assests/icons/contactperson.svg";
 import Email from "../../../../public/assests/icons/email.svg";
 import TickIcon from "../../../../public/assests/icons/tick-double.svg";
+import { useSelector } from "react-redux";
 
 function Trading({ activeTab }) {
   const [stock, setStock] = useState([]);
   const [details, setDetails] = useState([]);
   const [vendorMstrUID, setVendorMstrUID] = useState("");
-  const searchParams = useSearchParams();
   const [checkList, setCheckList] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
@@ -24,21 +23,37 @@ function Trading({ activeTab }) {
   const [deliveryDate, setDeliveryDate] = useState("");
   const [comments, setComments] = useState("");
   const [loading, setLoading] = useState();
-  const [qType, setQType] = useState("");
-  useEffect(() => {
-    const myProp = searchParams.get("uuid");
-    const mType= searchParams.get("type");
-    setQType(mType);
-    setVendorMstrUID(myProp);
-    getStock(myProp);
-    getDetails(myProp);
-  }, []);
+  const myNetwork = useSelector((state) => state.managenetwork.myNetwork);
+  const [networkDetails,setnetworkDetails]=useState({});
+  const [vendorDetails,setVendorDetails]=useState({});
 
-  async function getStock(uuid) {
+  useEffect(() => {
+    if (myNetwork) {
+      setnetworkDetails(myNetwork);
+    }
+  }, [myNetwork]);
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(networkDetails).length>0) {
+      // const myProp = searchParams.get("uuid");
+    
+      getStock();
+      getDetails();
+    }
+  }, [vendorDetails,networkDetails]); 
+  async function getStock() {
     try {      
       setLoading(true);
     let data = await CommonApi.getData(
-      `Stock/vendor/${uuid}/stock`,
+      `Stock/vendor/${networkDetails.vendorMstrUID}/stock`,
       {},
       {
         token:sessionStorage.getItem('token'),
@@ -73,9 +88,9 @@ function Trading({ activeTab }) {
       }
     });
   };
-  async function getDetails(uuid) {
+  async function getDetails() {
     let data = await CommonApi.getData(
-      `ManageNetwork/supplier/${uuid}/details`,
+      `ManageNetwork/supplier/${networkDetails.vendorMstrUID}/details`,
       {}
     );
     setDetails(data.data);

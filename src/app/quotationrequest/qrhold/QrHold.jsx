@@ -16,7 +16,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { format } from "date-fns";
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import Cancel from "../../../../public/assests/icons/cancel.svg";
 import TickIcon from "../../../../public/assests/icons/tick-double.svg";
@@ -28,7 +28,6 @@ const QrHold = () => {
   const [totalCount, setTotalCount] = React.useState(0);
   const [checkList, setCheckList] = React.useState([]);
   const [discount, setDiscount] = React.useState(0);
-  const searchParams = useSearchParams();
   const [qrUuid, setQrUuid] = React.useState("");
   const [modalShow, setModalShow] = React.useState(false);
   const [deliveryDate, setDeliveryDate] = React.useState("");

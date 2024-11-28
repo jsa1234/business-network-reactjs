@@ -40,20 +40,20 @@ const Page = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const validationErrors = validateForm();
-    // if (Object.keys(validationErrors).length > 0) {
-    //   setErrors(validationErrors);
-    //   return;
-    // }
-    // setErrors({});
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
     console.log("Vendor ID:", formData.userName);
     console.log("Password:", formData.password);
     let data = await LoginApi.login(
       "Vendor/login",
       {},
       {
-        username: "super@mail.com",
-        password: "123456",
+        username: formData.userName,
+        password: formData.password,
       }
     );
     if(data.success &&data.message=='success'){

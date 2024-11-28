@@ -13,6 +13,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePaginationActions from "@/components/TablePagination";
 import CommonApi from "@/api/CommonApi";
 import Loader from "@/components/Loader";
+import { useSelector } from "react-redux";
 function Quotationreject() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -57,8 +58,8 @@ function Quotationreject() {
           {
           }
         );
-        console.log("API Data:", response);
-        setRejectedQuotation(response || []);
+        // console.log("API Data:", response);
+        setRejectedQuotation(response.data);
        /*  setTotalCount(response?.totalCount || 0); */
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -111,7 +112,7 @@ function Quotationreject() {
                 <TableCell align="left">{row.quantity || "--"}</TableCell>
                 <TableCell align="right">{row.gst || "--"}</TableCell>
                 <TableCell align="right">{row.unitPrice || "--"}</TableCell>
-                <TableCell align="right">{row.totalPrice || "--"}</TableCell>
+                <TableCell align="right">{Number(row.quantity)*Number(row.unitPrice)}</TableCell>
               </TableRow>
            ))
           ) : (

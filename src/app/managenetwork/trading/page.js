@@ -6,20 +6,43 @@ import Trading from "./Trading";
 import Stockdetails from "../../../../public/assests/icons/stockdetails.svg";
 import Supplierdetails from "../../../../public/assests/icons/supplierdetails.svg";
 import CommonApi from "@/api/CommonApi";
-import { useSearchParams } from "next/navigation";
+import { useSelector } from "react-redux";
 
 function Page() {
   // Manage tab state in the Page component and pass it down as props
   const [activeTab, setActiveTab] = useState("approval");
-  const searchParams = useSearchParams();
   const [details, setDetails] = useState([]);
+  const myNetwork = useSelector((state) => state.managenetwork.myNetwork);
+  const [networkDetails,setnetworkDetails]=useState({});
+  const [vendorDetails,setVendorDetails]=useState({});
   useEffect(() => {
-    const myProp = searchParams.get("uuid");
-    getDetails(myProp);
+    if (myNetwork) {
+      setnetworkDetails(myNetwork);
+    }
+  }, [myNetwork]);
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
   }, []);
-  async function getDetails(uuid) {
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(networkDetails).length>0) {
+      // const myProp = searchParams.get("uuid");
+    
+    getDetails();
+    }
+  }, [vendorDetails,networkDetails]); 
+  // useEffect(() => {
+  //   const myProp = searchParams.get("uuid");
+  //   getDetails(myProp);
+  // }, []);
+  async function getDetails() {
     let data = await CommonApi.getData(
-      `ManageNetwork/supplier/${uuid}/details`,
+      `ManageNetwork/supplier/${networkDetails.vendorMstrUID}/details`,
       {       
       }
     );

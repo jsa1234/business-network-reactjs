@@ -13,7 +13,6 @@ import TableHead from "@mui/material/TableHead";
 import TablePaginationActions from "@/components/TablePagination";
 import CommonApi from "@/api/CommonApi";
 import Loader from "@/components/Loader";
-// import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 
 function QuotationSend() {
@@ -70,7 +69,6 @@ function QuotationSend() {
       setLoading(false);
     }
   };
-  // const searchParams = useSearchParams();
   // useEffect(() => {
   //   const myProp = searchParams.get("uuid");
   //   setParam(myProp);

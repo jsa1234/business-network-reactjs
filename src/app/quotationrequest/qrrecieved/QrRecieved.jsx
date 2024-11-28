@@ -15,7 +15,6 @@ import HoldIcon from "../../../../public/assests/icons/hold.svg";
 import { useEffect, useState } from "react";
 import TotalRate from "@/components/TotalRate";
 import CommonApi from "@/api/CommonApi";
-// import { useSearchParams } from "next/navigation";
 import QrPopup from "@/components/QrPopup";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
@@ -31,7 +30,6 @@ const QrRecieved = (props) => {
   const [totalCount, setTotalCount] = useState(0);
   const [checkList, setCheckList] = useState([]);
   const [discount, setDiscount] = useState(0);
-  // const searchParams = useSearchParams();
   const [qrUuid, setQrUuid] = useState("");
   const [modalShow, setModalShow] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState("");

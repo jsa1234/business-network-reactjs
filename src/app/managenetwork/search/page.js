@@ -1,14 +1,12 @@
 "use client";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import Pagenavigation from "@/components/Pagenavigation";
 import SearchTable from "./SearchTable";
 import Search from "../../../../public/assests/icons/search.svg";
 function Page() {
   const [param, setParam] = useState("");
-  const searchParams = useSearchParams();
   useEffect(() => {
-    const myProp = searchParams.get("myProp");
+    const myProp = '';
     setParam(atob(myProp));
     console.log(myProp);
   }, []);

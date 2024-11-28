@@ -3,26 +3,49 @@ import { useEffect, useState } from "react";
 import DetailsBuyer from "./DetailsBuyer";
 import Pagenavigation from "@/components/Pagenavigation";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import CommonApi from "@/api/CommonApi";
+import { useSelector } from "react-redux";
 function Page() {
   const breadcrumbItems = ["Dashboard", "Manage Networks"];
   const urlList = ["/", "/dashboard", ""];
   const [selectedOption, setSelectedOption] = useState("");
   const [activeTab, setActiveTab] = useState("stock");
-  const searchParams = useSearchParams();
   const [details, setDetails] = useState([]);
+  const myNetwork = useSelector((state) => state.managenetwork.myNetwork);
+  const [networkDetails,setnetworkDetails]=useState({});
+  const [vendorDetails,setVendorDetails]=useState({});
 
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
   useEffect(() => {
-    const myProp = searchParams.get("uuid");
-    getDetails(myProp);
+    if (myNetwork) {
+      setnetworkDetails(myNetwork);
+    }
+  }, [myNetwork]);
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
   }, []);
-  async function getDetails(uuid) {
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(networkDetails).length>0) {
+      // const myProp = searchParams.get("uuid");
+    
+    getDetails();
+    }
+  }, [vendorDetails,networkDetails]); 
+  // useEffect(() => {
+  //   const myProp = searchParams.get("uuid");
+  //   getDetails(myProp);
+  // }, []);
+  async function getDetails() {
     let data = await CommonApi.getData(
-      `ManageNetwork/supplier/${uuid}/details`,
+      `ManageNetwork/supplier/${networkDetails.vendorMstrUID}/details`,
       {       
       }
     );

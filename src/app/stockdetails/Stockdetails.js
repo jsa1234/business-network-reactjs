@@ -24,7 +24,6 @@ import { Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import TickIcon from "../../../public/assests/icons/tick-double.svg";
 import Search from "../../../public/assests/icons/search.svg";
-// import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import CommonApi from "@/api/CommonApi";
 import Loader from "@/components/Loader";
@@ -70,7 +69,7 @@ function Stockdetails() {
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
-  // const searchParams = useSearchParams();
+
   // useEffect(() => {
   //   const myProp = searchParams.get("status");
   //   setParam(myProp);
