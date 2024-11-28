@@ -1,7 +1,9 @@
-"use client";
+"use client"; // Ensures this component is a client-side component
 
 import Dashboard from "@/components/Dashboard";
 import Pagenavigation from "@/components/Pagenavigation";
+import { useRouter } from "next/navigation"; // Use next/navigation for router in app directory
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 function Page() {
@@ -9,6 +11,18 @@ function Page() {
     (state) => state.vendor.VendorMasterUUID
   );
   const urlList = ["/", "/dashboard", ""];
+  
+  const router = useRouter(); // Initialize router hook
+
+  useEffect(() => {
+    // Get token from sessionStorage
+    const token = sessionStorage.getItem("vendorDetails");
+
+    // If no token or token is an empty string, redirect to /login
+    if (!token || Object.keys(token).length==0) {
+      router.push("/login");
+    }
+  }, [router]); // Dependency array to ensure effect runs on mount
 
   return (
     <div className="bus__body w-full pl-9 mt-6 pr-3">
