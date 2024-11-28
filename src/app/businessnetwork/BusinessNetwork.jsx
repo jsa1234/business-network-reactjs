@@ -181,7 +181,7 @@ const BusinessNetwork = () => {
   async function getCategories() {
     try {
       const res = await CommonApi.getData(
-        "BusinessNetwork/vendor/product/categories",
+        "Vendor/segments",
         {},
         {}
       );
@@ -195,7 +195,7 @@ const BusinessNetwork = () => {
   async function getVendors() {
     try {
       const res = await CommonApi.getData(
-        "BusinessNetwork/vendor/categories",
+        "Vendor/segments",
         {},
         {}
       );
@@ -209,7 +209,7 @@ const BusinessNetwork = () => {
   async function getLocations() {
     try {
       const res = await CommonApi.getData(
-        "BusinessNetwork/vendor/locations",
+        "Vendor/locations",
         {},
         {}
       );
@@ -223,7 +223,7 @@ const BusinessNetwork = () => {
   async function getRatings() {
     try {
       const res = await CommonApi.getData(
-        "BusinessNetwork/vendor/ratings",
+        "Vendor/ratings",
         {},
         {}
       );
@@ -285,8 +285,8 @@ const BusinessNetwork = () => {
 
                 {productCategoryData.map((item, index) => {
                   return (
-                    <option value={item.categoryUUId} key={index}>
-                      {item.categoryName}
+                    <option value={item.segmentUUId} key={index}>
+                      {item.segmentName}
                     </option>
                   );
                 })}
@@ -302,8 +302,8 @@ const BusinessNetwork = () => {
                 <option value="">Select from the list</option>
                 {vendorCategoryData.map((item, index) => {
                   return (
-                    <option value={item.value} key={index}>
-                      {item.name}
+                    <option value={item.segmentUUId} key={index}>
+                      {item.segmentName}
                     </option>
                   );
                 })}
@@ -319,8 +319,8 @@ const BusinessNetwork = () => {
                 <option value="">Select from the list</option>
                 {locationsData.map((item, index) => {
                   return (
-                    <option value={item.value} key={index}>
-                      {item.name}
+                    <option value={item.locationId} key={index}>
+                      {item.location}
                     </option>
                   );
                 })}
