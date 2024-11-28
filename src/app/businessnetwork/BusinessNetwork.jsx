@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import ChevronIcon from "../../../public/assests/icons/chevron-right.svg";
 import SearchIcon from "../../../public/assests/icons/search_btn.svg";
+import TimesIcon from "../../../public/assests/icons/times.svg";
 import BNcard from "@/components/BNcard";
 import Popup from "@/components/Popup";
 import CommonApi from "@/api/CommonApi";
@@ -156,8 +157,7 @@ const BusinessNetwork = () => {
             PageNumber: page,
           }
         );
-        if(res.data && res.data.suggestionDetails){
-
+        if (res.data && res.data.suggestionDetails) {
           setData(res.data.suggestionDetails);
         }
         // console.log(res);
@@ -180,11 +180,7 @@ const BusinessNetwork = () => {
   // product category api
   async function getCategories() {
     try {
-      const res = await CommonApi.getData(
-        "Vendor/segments",
-        {},
-        {}
-      );
+      const res = await CommonApi.getData("Vendor/segments", {}, {});
       setProductCategoryData((prevState) => [...prevState, ...res.data]);
     } catch (error) {
       console.error("Error fetching network data:", error);
@@ -194,11 +190,7 @@ const BusinessNetwork = () => {
   // vendor category api
   async function getVendors() {
     try {
-      const res = await CommonApi.getData(
-        "Vendor/segments",
-        {},
-        {}
-      );
+      const res = await CommonApi.getData("Vendor/segments", {}, {});
       setVendorCategoryData((prevState) => [...prevState, ...res.data]);
     } catch (error) {
       console.error("Error fetching network data:", error);
@@ -208,11 +200,7 @@ const BusinessNetwork = () => {
   // vendor location api
   async function getLocations() {
     try {
-      const res = await CommonApi.getData(
-        "Vendor/locations",
-        {},
-        {}
-      );
+      const res = await CommonApi.getData("Vendor/locations", {}, {});
       setLoationsData((prevState) => [...prevState, ...res.data]);
     } catch (error) {
       console.error("Error fetching network data:", error);
@@ -222,11 +210,7 @@ const BusinessNetwork = () => {
   // vendor ratings api
   async function getRatings() {
     try {
-      const res = await CommonApi.getData(
-        "Vendor/ratings",
-        {},
-        {}
-      );
+      const res = await CommonApi.getData("Vendor/ratings", {}, {});
       setRatingsData((prevState) => [...prevState, ...res.data]);
     } catch (error) {
       console.error("Error fetching network data:", error);
@@ -235,16 +219,36 @@ const BusinessNetwork = () => {
 
   return (
     <div>
+      <div className="global__search">
+        <div className="global__search__input">
+          <select>
+          <option value="0">Select</option>
+            <option value="1">Product Match</option>
+            <option value="2">Service Match</option>
+            <option value="3">Business Match</option>
+          </select>
+          <div className="input__group">
+            <input
+              type="text"
+              placeholder="Search by name, mobile, location..."
+            ></input>
+            <SearchIcon />
+          </div>
+        </div>
+        <button className="outer__btn" onClick={() => handleMinimize()}>Advance Filter</button>
+      </div>
+      {showModal?(
       <div className="advance__filter">
         <div className="advance__filter__header">
           <h1>Advance Filter</h1>
-          <ChevronIcon
+          <TimesIcon
             onClick={() => handleMinimize()}
             className={!showModal ? "rotate" : ""}
           />
+          {/* &times; */}
         </div>
         <hr></hr>
-        {showModal ? (
+       
           <div className="advance__filter__body grid grid-cols-12 gap-4">
             <div className="input__group col-span-3">
               <label htmlFor="gstSrchInpt">By GST No.</label>
@@ -355,10 +359,10 @@ const BusinessNetwork = () => {
               </button>
             </div>
           </div>
-        ) : (
-          ""
-        )}
-      </div>
+       
+      </div> ) : (
+        ""
+      )}
       <div className="filter__results">
         <div className="filter__results__header">
           <h1>Networks</h1>
