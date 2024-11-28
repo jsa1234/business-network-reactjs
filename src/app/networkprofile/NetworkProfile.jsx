@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import CommonApi from "@/api/CommonApi";
+import { useSelector } from "react-redux";
 
 const NetworkProfile = () => {
   const [businessDomain, setBusinessDomain] = useState([]);
@@ -12,11 +13,15 @@ const NetworkProfile = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [previousData,setPreviousData]=useState({});
+  const [previousData, setPreviousData] = useState({});
   const [isDropdownOpenService, setIsDropdownOpenService] = useState(false);
 
   const [expanded, setExpanded] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const VendorMasterUUID = useSelector(
+    (state) => state.vendor.VendorMasterUUID
+  );
 
   const [companyDetails, setCompanyDetails] = useState({
     companyName: "",
@@ -25,6 +30,7 @@ const NetworkProfile = () => {
     contactNumber: "",
     email: "",
     address: "",
+    vendorType: "",
   });
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,6 +38,11 @@ const NetworkProfile = () => {
       ...prevDetails,
       [name]: value,
     }));
+  };
+
+  const handleDomainChange = (val) => {
+    setSelectedDomain(val);
+    console.log(val);
   };
 
   // Fetch business domain
@@ -50,9 +61,9 @@ const NetworkProfile = () => {
   const getBusinessSegment = async () => {
     try {
       const res = await CommonApi.getData(
-        `Vendor/C34E50DF-6B95-4228-85F0-14D7B7AC778B/business-segments`, // Use vendorMasterUUId here
+        `Vendor/${VendorMasterUUID}/business-segments`, // Use vendorMasterUUId here
         {},
-        { vendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B" }
+        { VendorMasterUUID }
       );
       console.log("Business Segment Response:", res.data);
       const segments = res.data.flatMap((item) => item.segmentDetails);
@@ -66,7 +77,7 @@ const NetworkProfile = () => {
   const getProducts = async () => {
     try {
       const res = await CommonApi.getData(
-        "Vendor/C34E50DF-6B95-4228-85F0-14D7B7AC778B/vendor-products",
+        `Vendor/${VendorMasterUUID}/vendor-products`,
         {}, // Additional payload if necessary
         {}
       );
@@ -103,14 +114,12 @@ const NetworkProfile = () => {
   const getServices = async () => {
     try {
       const res = await CommonApi.getData(
-        "Vendor/C34E50DF-6B95-4228-85F0-14D7B7AC778B/vendor-services",
+        `Vendor/${VendorMasterUUID}/vendor-services`,
         {}, // Additional payload if necessary
         {}
       );
 
-      const serviceData = res.data.flatMap(
-        (item) => item.serviceMasterDetails
-      );
+      const serviceData = res.data.flatMap((item) => item.serviceMasterDetails);
       setServices(serviceData);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -133,15 +142,12 @@ const NetworkProfile = () => {
   useEffect(() => {
     getBusinessDomain();
     getBusinessSegment();
-    let data=handleSegment();
+    let data = handleSegment();
     // setPreviousData(data);
     setSelectedDomain(data.domain);
     setSelectedSegment(data.segments);
     setProducts(data.productsData);
     setServices(data.productsData);
-    
-  
-    
   }, []);
   //submit//
 
@@ -151,7 +157,7 @@ const NetworkProfile = () => {
         "Vendor/preferences",
         {},
         {
-          vendorMasterUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          vendorMasterUUId,
           domainUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           vendorSegmentsDetail: [
             {
@@ -204,12 +210,12 @@ const NetworkProfile = () => {
   //company details//
 
   //new//
- /*  const handleCompanyDetails = async () => {
+  /*  const handleCompanyDetails = async () => {
     try {
       const response = await CommonApi.putData(
         "Vendor/company-details",
         {
-          vendorMasterUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          vendorMasterUUId,
           companyName: "string",
           contactPerson: "string",
           gstNo: "string",
@@ -237,9 +243,9 @@ const NetworkProfile = () => {
     fetchData();
   }, []);
    */
-  
+
   //end//
-   const handleCompanyDetails = async () => {
+  const handleCompanyDetails = async () => {
     try {
       const res = await CommonApi.postData(
         "Vendor/register",
@@ -251,328 +257,396 @@ const NetworkProfile = () => {
           businessType: 0,
           isOlopoUser: 0,
           companyName: companyDetails.companyName,
-          contactPerson: companyDetails.contactPerson, 
-          gstNo: companyDetails.gstNo, 
+          contactPerson: companyDetails.contactPerson,
+          gstNo: companyDetails.gstNo,
           contactNumber: companyDetails.contactNumber,
           email: "string",
-          address: companyDetails.address, 
+          address: companyDetails.address,
           rating: 0,
           password: "string",
           vendorERPStockAPIUrl: "string",
         }
       );
-    
 
       console.log("Response:", res);
     } catch (error) {
       console.error("Error:", error);
     }
-  }; 
+  };
 
   return (
     <>
-      <div className="w-full mt-6 table-container">
-        <div className="filter-group-secondary">
-          <h4 className="text-[18px] mt-4 font-semibold">Company Details</h4>
+      {/* form actions */}
+      <section className="py-4 px-8 rounded-2xl flex items-start justify-end gap-x-6 mb-8">
+        {/* save button */}
+        <button
+          className="text-[14px] w-[150px] bg-gray-950 px-4 py-4 text-white rounded-md hover:bg-black"
+          onClick={() => handleCompanyDetails()}
+        >
+          Save
+        </button>
+
+        {/* cancel button */}
+        <button className="px-4 py-4 text-[14px] w-[150px] text-gray-950 rounded-md hover:bg-gray-300 border border-gray-950">
+          Cancel
+        </button>
+      </section>
+
+      {/* section 1 */}
+      <section className="py-16 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
+        <div className="w-1/3">
+          <h2 className="text-2xl font-bold">Company Details</h2>
         </div>
-        <div className="grid grid-cols-12">
-          <div className="col-span-9">
-            <div className="grid grid-cols-12 gap-6 ml-8 mr-8 mb-8">
-              <div className="col-span-4">
-                <label
-                  htmlFor="businessDomain"
-                  className="block text-[14px] font-medium text-gray-700"
-                >
-                  CompanyName
-                </label>
-                <input
-                  type="text"
-                  name="companyName" 
-                  className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-                  value={companyDetails.companyName}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="col-span-4">
-                <label
-                  htmlFor="businessDomain"
-                  className="block text-[14px] font-medium text-gray-700"
-                >
-                  ContactPerson
-                </label>
-                <input
-                  type="text"
-                  name="contactPerson" 
-                  className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-                  value={companyDetails.contactPerson}
-                  onChange={handleInputChange}
-                />
-              </div>
+        <div className="w-2/3">
+          <div className="w-full flex items-start justify-center gap-x-6">
+            {/* company name */}
+            <div className="mb-8 w-1/2">
+              <label
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
+              >
+                Company Name
+              </label>
+              <input
+                type="text"
+                name="companyName"
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+                value={companyDetails.companyName}
+                onChange={handleInputChange}
+              />
+            </div>
 
-              <div className="col-span-4">
-                <label
-                  htmlFor="businessDomain"
-                  className="block text-[14px] font-medium text-gray-700"
-                >
-                  GstNo
-                </label>
-                <input
-                  type="text"
-                  name="gstNo" 
-                  className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-                  value={companyDetails.gstNo}
-                  onChange={handleInputChange}
-                />
-              </div>
+            {/* gst no. */}
+            <div className="mb-8 w-1/2">
+              <label
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
+              >
+                GST No.
+              </label>
+              <input
+                type="text"
+                name="gstNo"
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+                value={companyDetails.gstNo}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
 
-              <div className="col-span-4">
-                <label
-                  htmlFor="businessDomain"
-                  className="block text-[14px] font-medium text-gray-700"
-                >
-                  ContactNumber
-                </label>
+          <div className="w-full flex items-start justify-start gap-x-6 mt-6">
+            <div className="mb-8 w-1/2">
+              <p className="block text-[14px] text-xl font-medium text-black mb-2">
+                Are you a seller or buyer?
+              </p>
+              <div className="flex items-center justify-start gap-x-4">
                 <input
-                  type="text"
-                  name="contactNumber" 
-                  className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-                  value={companyDetails.contactNumber}
-                  onChange={handleInputChange} 
-                />
-              </div>
-              <div className="col-span-4">
-                <label
-                  htmlFor="businessDomain"
-                  className="block text-[14px] font-medium text-gray-700"
-                >
-                  Email
-                </label>
-                <input
-                  type="text"
-                  name="email" 
-                  className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-                  value={companyDetails.email}
+                  type="radio"
+                  id="buyer"
+                  name="vendorType"
+                  value="buyer"
+                  checked={companyDetails.vendorType === "buyer"}
                   onChange={handleInputChange}
                 />
-              </div>
+                <label
+                  htmlFor="buyer"
+                  className="block text-[14px] text-xl font-medium text-black"
+                >
+                  Buyer
+                </label>
 
-              <div className="col-span-4">
-                <label
-                  htmlFor="businessDomain"
-                  className="block text-[14px] font-medium text-gray-700"
-                >
-                  Address
-                </label>
                 <input
-                 name="address" 
-                  type="text"
-                  className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-                  value={companyDetails.address}
+                  type="radio"
+                  id="seller"
+                  name="vendorType"
+                  value="seller"
+                  checked={companyDetails.vendorType === "seller"}
                   onChange={handleInputChange}
                 />
+                <label
+                  htmlFor="seller"
+                  className="block text-[14px] text-xl font-medium text-black"
+                >
+                  Seller
+                </label>
               </div>
             </div>
           </div>
-          <div className="col-span-3">
-            <p>logo</p>
-          </div>
         </div>
-        <div className=" ml-8 mb-8 flex justify-start gap-3">
-          <button
-              className="px-6 py-2 text-[14px] w-[150px] bg-orange-500 h-[30px] text-white rounded-md hover:bg-orange-600"
-            onClick={() => handleCompanyDetails()}
-          >
-            Save
-          </button>
-        </div>
-      </div>
-      <div className="w-full mt-6 table-container">
-        <div className="filter-group-secondary">
-          <h4 className="text-[18px] mt-4 font-semibold">Profile Details</h4>
-        </div>
-        <div className="grid grid-cols-12 gap-6 ml-8 mr-8 mb-8">
-          {/* Business Domain Dropdown */}
-          <div className="col-span-6">
-            <label
-              htmlFor="businessDomain"
-              className="block text-[14px] font-medium text-gray-700"
-            >
-              Business Domain
-            </label>
-            <select
-              id="businessDomain"
-              value={selectedDomain}
-              onChange={(e) => setSelectedDomain(e.target.value)}
-              className="mt-1 w-full px-3 py-4 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-            >
-              <option value="" disabled>
-                Select a business domain
-              </option>
-              {businessDomain.length > 0 ? (
-                businessDomain.map((domain, index) => (
-                  <option key={index} value={domain.domainUUId}>
-                    {domain.domainName}
-                  </option>
-                ))
-              ) : (
-                <option value="" disabled>
-                  Loading...
-                </option>
-              )}
-            </select>
-          </div>
+      </section>
 
-          {/* Business Segment Dropdown */}
-          <div className="col-span-6">
-            <label
-              htmlFor="businessSegment"
-              className="block text-[14px] font-medium text-gray-700"
-            >
-              Business Segment
-            </label>
-            <select
-              id="businessSegment"
-              value={selectedSegment}
-              onChange={(e) => setSelectedSegment(e.target.value)}
-              className="mt-1 w-full px-3 py-4 text-[14px] border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-            >
-              <option value="" disabled>
-                Select a segment
-              </option>
-              {businessSegment.length > 0 ? (
-                businessSegment.map((segment, index) => (
-                  <option key={index} value={segment.segmentUUId}>
-                    {segment.segmentName}
-                  </option>
-                ))
-              ) : (
-                <option value="" disabled>
-                  Loading...
-                </option>
-              )}
-            </select>
-          </div>
-
-          {/* Products Dropdown */}
-          <div className="col-span-6 relative">
-            <label
-              htmlFor="products"
-              className="block text-[14px] font-medium text-gray-700"
-            >
-              Products
-            </label>
-            <div
-              onClick={handleToggleDropdown}
-              className="mt-1 w-full px-3 py-4 text-[14px] border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-            >
-              {selectedProducts.length > 0
-                ? `Selected: ${selectedProducts.length} product(s)`
-                : "Click to select products"}
+      {/* section 2 */}
+      <section className="py-16 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
+        <div className="w-1/3">
+          <h2 className="text-2xl font-bold">Contact Details</h2>
+        </div>
+        <div className="w-2/3">
+          <div className="w-full flex items-start justify-center gap-x-6">
+            {/* contact person */}
+            <div className="mb-8 w-full">
+              <label
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
+              >
+                Contact Person
+              </label>
+              <input
+                type="text"
+                name="contactPerson"
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+                value={companyDetails.contactPerson}
+                onChange={handleInputChange}
+              />
             </div>
 
-            {/* Dropdown with checkboxes */}
-            {isDropdownOpen && (
-              <div className=" mt-2 w-full border border-gray-300 rounded-md bg-white shadow-lg max-h-64 overflow-y-auto">
-                {products.length > 0 ? (
-                  products.map((product) => (
-                    <div
-                      key={product.productUUId}
-                      className="flex items-center px-4 py-2"
-                    >
-                      <input
-                        type="checkbox"
-                        id={product.productUUId}
-                        value={product.productUUId}
-                        checked={selectedProducts.includes(product.productUUId)}
-                        onChange={() =>
-                          handleCheckboxChange(product.productUUId)
-                        }
-                        className="mr-2 h-6 w-6 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                      />
-                      <label
-                        htmlFor={product.productUUId}
-                        className="text-gray-700 cursor-pointer"
-                      >
-                        {product.productName}
-                      </label>
-                    </div>
+            {/* contact number */}
+            <div className="mb-8 w-full">
+              <label
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
+              >
+                Contact Number
+              </label>
+              <input
+                type="text"
+                name="contactNumber"
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+                value={companyDetails.contactNumber}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          <div className="w-full flex items-start justify-center gap-x-6">
+            {/* email */}
+            <div className="mb-8 w-full">
+              <label
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
+              >
+                Email
+              </label>
+              <input
+                type="text"
+                name="email"
+                className="mt-1 w-1/2 px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+                value={companyDetails.email}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          <div className="w-full flex items-start justify-center gap-x-6">
+            {/* address */}
+            <div className="mb-8 w-full">
+              <label
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
+              >
+                Address
+              </label>
+
+              <textarea
+                rows={4}
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+              ></textarea>
+              {/* <input
+              name="address"
+              type="text"
+              className=""
+              value={companyDetails.address}
+              onChange={handleInputChange}
+            /> */}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* section 3 */}
+      <section className="py-16 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
+        <div className="w-1/3">
+          <h2 className="text-2xl font-bold">Company Details</h2>
+        </div>
+        <div className="w-2/3">
+          <div className="w-full flex items-start justify-center gap-x-6">
+            <div className="mb-8 w-full">
+              <label
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
+              >
+                Business Domain
+              </label>
+              <select
+                id="businessDomain"
+                value={selectedDomain}
+                onChange={(e) => handleDomainChange(e.target.value)}
+                className="mt-1 w-full px-3 py-4 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+              >
+                <option value="" disabled>
+                  Select a business domain
+                </option>
+                {businessDomain.length > 0 ? (
+                  businessDomain.map((domain, index) => (
+                    <option key={index} value={domain.domainUUId}>
+                      {domain.domainName}
+                    </option>
                   ))
                 ) : (
-                  <p className="text-gray-500 px-4 py-2">
-                    No products available
-                  </p>
+                  <option value="" disabled>
+                    Loading...
+                  </option>
                 )}
-              </div>
-            )}
-          </div>
-
-          <div className="col-span-6">
-            <label
-              htmlFor="businessDomain"
-              className="block text-[14px] font-medium text-gray-700"
-            >
-              Services
-            </label>
-            <div
-              onClick={handleToggleDropdownServices}
-              className="mt-1 w-full px-3 py-4 text-[14px] border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-            >
-              {selectedServices.length > 0
-                ? `Selected: ${selectedServices.length} product(s)`
-                : "Click to select services"}
+              </select>
             </div>
-
-            {isDropdownOpenService && (
-              <div className=" mt-2 w-full border border-gray-300 rounded-md bg-white shadow-lg max-h-64 overflow-y-auto">
-                {services.length > 0 ? (
-                  services.map((services) => (
-                    <div
-                      key={services.serviceUUId}
-                      className="flex items-center px-4 py-2"
-                    >
-                      <input
-                        type="checkbox"
-                        id={services.serviceUUId}
-                        value={services.serviceUUId}
-                        checked={selectedServices.includes(
-                          services.serviceUUId
-                        )}
-                        onChange={() =>
-                          handleCheckboxChangeServices(services.serviceUUId)
-                        }
-                        className="mr-2 h-6 w-6 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                      />
-                      <label
-                        htmlFor={services.serviceUUId}
-                        className="text-gray-700 cursor-pointer"
-                      >
-                        {services.serviceName}
-                      </label>
-                    </div>
+            <div className="mb-8 w-full">
+              <label
+                htmlFor="businessSegment"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
+              >
+                Business Segment
+              </label>
+              <select
+                id="businessSegment"
+                value={selectedSegment}
+                onChange={(e) => setSelectedSegment(e.target.value)}
+                className="mt-1 w-full px-3 py-4 text-[14px] border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+              >
+                <option value="" disabled>
+                  Select a segment
+                </option>
+                {businessSegment.length > 0 ? (
+                  businessSegment.map((segment, index) => (
+                    <option key={index} value={segment.segmentUUId}>
+                      {segment.segmentName}
+                    </option>
                   ))
                 ) : (
-                  <p className="text-gray-500 px-4 py-2">
-                    No services available
-                  </p>
+                  <option value="" disabled>
+                    Loading...
+                  </option>
                 )}
+              </select>
+            </div>
+          </div>
+          <div className="w-full flex items-start justify-center gap-x-6">
+            <div className="mb-8 w-full">
+              <label
+                htmlFor="products"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
+              >
+                Products
+              </label>
+              <div
+                onClick={handleToggleDropdown}
+                className="mt-1 w-full px-3 py-4 text-[14px] border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+              >
+                {selectedProducts.length > 0
+                  ? `Selected: ${selectedProducts.length} product(s)`
+                  : "Click to select products"}
               </div>
-            )}
+
+              {/* Dropdown with checkboxes */}
+              {isDropdownOpen && (
+                <div className=" mt-2 w-full border border-gray-300 rounded-md bg-white shadow-lg max-h-64 overflow-y-auto">
+                  {products.length > 0 ? (
+                    products.map((product) => (
+                      <div
+                        key={product.productUUId}
+                        className="flex items-center px-4 py-2"
+                      >
+                        <input
+                          type="checkbox"
+                          id={product.productUUId}
+                          value={product.productUUId}
+                          checked={selectedProducts.includes(
+                            product.productUUId
+                          )}
+                          onChange={() =>
+                            handleCheckboxChange(product.productUUId)
+                          }
+                          className="mr-2 h-6 w-6 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                        />
+                        <label
+                          htmlFor={product.productUUId}
+                          className="text-gray-700 cursor-pointer"
+                        >
+                          {product.productName}
+                        </label>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 px-4 py-2">
+                      No products available
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="mb-8 w-full">
+              <label
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
+              >
+                Services
+              </label>
+              <div
+                onClick={handleToggleDropdownServices}
+                className="mt-1 w-full px-3 py-4 text-[14px] border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
+              >
+                {selectedServices.length > 0
+                  ? `Selected: ${selectedServices.length} product(s)`
+                  : "Click to select services"}
+              </div>
+
+              {isDropdownOpenService && (
+                <div className=" mt-2 w-full border border-gray-300 rounded-md bg-white shadow-lg max-h-64 overflow-y-auto">
+                  {services.length > 0 ? (
+                    services.map((services) => (
+                      <div
+                        key={services.serviceUUId}
+                        className="flex items-center px-4 py-2"
+                      >
+                        <input
+                          type="checkbox"
+                          id={services.serviceUUId}
+                          value={services.serviceUUId}
+                          checked={selectedServices.includes(
+                            services.serviceUUId
+                          )}
+                          onChange={() =>
+                            handleCheckboxChangeServices(services.serviceUUId)
+                          }
+                          className="mr-2 h-6 w-6 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                        />
+                        <label
+                          htmlFor={services.serviceUUId}
+                          className="text-gray-700 cursor-pointer"
+                        >
+                          {services.serviceName}
+                        </label>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 px-4 py-2">
+                      No services available
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Action Buttons */}
-        <div className="mt-8 ml-8 mb-8 flex justify-start gap-3">
-          <button
-            className="px-6 py-2 text-[14px] w-[150px] bg-orange-500 h-[30px] text-white rounded-md hover:bg-orange-600"
-            onClick={() => handleSegment()}
-          >
-            Save
-          </button>
-          {/*   <button className="px-6 py-2 text-[14px] w-[150px] h-[30px] text-orange-500 rounded-md hover:bg-gray-300 border border-orange-500">
+      <button
+        className="px-6 py-2 text-[14px] w-[150px] bg-orange-500 h-[30px] text-white rounded-md hover:bg-orange-600"
+        onClick={() => handleSegment()}
+      >
+        Save
+      </button>
+      {/*   <button className="px-6 py-2 text-[14px] w-[150px] h-[30px] text-orange-500 rounded-md hover:bg-gray-300 border border-orange-500">
             Cancel
           </button> */}
-        </div>
-      </div>
     </>
   );
 };
