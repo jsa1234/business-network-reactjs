@@ -19,9 +19,11 @@ const NetworkProfile = () => {
   const [expanded, setExpanded] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
 
-  const VendorMasterUUID = useSelector(
-    (state) => state.vendor.VendorMasterUUID
-  );
+  // const VendorMasterUUID = useSelector(
+  //   (state) => state.vendor.VendorMasterUUID
+  // );
+
+  const VendorMasterUUID = "C34E50DF-6B95-4228-85F0-14D7B7AC778B";
 
   const [companyDetails, setCompanyDetails] = useState({
     companyName: "",
@@ -36,7 +38,7 @@ const NetworkProfile = () => {
     const { name, value } = e.target;
     setCompanyDetails((prevDetails) => ({
       ...prevDetails,
-      [name]: value,
+      [name]: name === "vendorType" ? parseInt(value, 10) : value, // Convert to number for vendorType
     }));
   };
 
@@ -63,7 +65,7 @@ const NetworkProfile = () => {
       const res = await CommonApi.getData(
         `Vendor/${VendorMasterUUID}/business-segments`, // Use vendorMasterUUId here
         {},
-        { VendorMasterUUID }
+        { vendorMasterUUId: VendorMasterUUID }
       );
       console.log("Business Segment Response:", res.data);
       const segments = res.data.flatMap((item) => item.segmentDetails);
@@ -81,15 +83,14 @@ const NetworkProfile = () => {
         {}, // Additional payload if necessary
         {}
       );
-  
-     
-      const productsData = res.data; 
+
+      const productsData = res.data;
       setProducts(productsData);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
-  
+
   // Fetch products on component mount
   useEffect(() => {
     getProducts();
@@ -109,6 +110,27 @@ const NetworkProfile = () => {
     );
   };
 
+  // get vendor details api
+  const getVendorDetails = async () => {
+    try {
+      const res = await CommonApi.getData(
+        `Vendor/${VendorMasterUUID}/details`,
+        {},
+        {}
+      );
+
+      console.log("vendordetails", res.data);
+
+      setCompanyDetails((prev) => {
+        return { ...prev, ...res.data };
+      });
+
+      console.log("companydetails", companyDetails);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
   //services//
   const getServices = async () => {
     try {
@@ -126,6 +148,7 @@ const NetworkProfile = () => {
   };
   useEffect(() => {
     getServices();
+    getVendorDetails();
   }, []);
   const handleToggleDropdownServices = () => {
     setIsDropdownOpenService((prevState) => !prevState);
@@ -156,7 +179,7 @@ const NetworkProfile = () => {
         "Vendor/preferences",
         {},
         {
-          vendorMasterUUId,
+          vendorMasterUUId: VendorMasterUUID,
           domainUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           vendorSegmentsDetail: [
             {
@@ -214,7 +237,7 @@ const NetworkProfile = () => {
       const response = await CommonApi.putData(
         "Vendor/company-details",
         {
-          vendorMasterUUId,
+          vendorMasterUUId:VendorMasterUUID,
           companyName: "string",
           contactPerson: "string",
           gstNo: "string",
@@ -273,9 +296,6 @@ const NetworkProfile = () => {
     }
   };
 
-
-
-
   return (
     <>
       {/* form actions */}
@@ -295,7 +315,7 @@ const NetworkProfile = () => {
       </section>
 
       {/* section 1 */}
-      <section className="py-16 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
+      <section className="pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
         <div className="w-1/3">
           <h2 className="text-2xl font-bold">Company Details</h2>
         </div>
@@ -346,8 +366,8 @@ const NetworkProfile = () => {
                   type="radio"
                   id="buyer"
                   name="vendorType"
-                  value="buyer"
-                  checked={companyDetails.vendorType === "buyer"}
+                  value={2}
+                  checked={companyDetails.vendorType === 2}
                   onChange={handleInputChange}
                 />
                 <label
@@ -361,8 +381,8 @@ const NetworkProfile = () => {
                   type="radio"
                   id="seller"
                   name="vendorType"
-                  value="seller"
-                  checked={companyDetails.vendorType === "seller"}
+                  value={1}
+                  checked={companyDetails.vendorType === 1}
                   onChange={handleInputChange}
                 />
                 <label
@@ -372,14 +392,13 @@ const NetworkProfile = () => {
                   Seller
                 </label>
               </div>
-              
             </div>
           </div>
         </div>
       </section>
 
       {/* section 2 */}
-      <section className="py-16 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
+      <section className="pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
         <div className="w-1/3">
           <h2 className="text-2xl font-bold">Contact Details</h2>
         </div>
@@ -450,9 +469,13 @@ const NetworkProfile = () => {
               </label>
 
               <textarea
+                onChange={handleInputChange}
                 rows={4}
+                value={companyDetails.address}
                 className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
-              ></textarea>
+              >
+                
+              </textarea>
               {/* <input
               name="address"
               type="text"
@@ -466,7 +489,7 @@ const NetworkProfile = () => {
       </section>
 
       {/* section 3 */}
-      <section className="py-16 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
+      <section className="pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
         <div className="w-1/3">
           <h2 className="text-2xl font-bold">Company Details</h2>
         </div>
