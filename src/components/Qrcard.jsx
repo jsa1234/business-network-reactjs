@@ -2,9 +2,9 @@ import Image from "next/image";
 import React from "react";
 import ChevronIcon from "../../public/assests/icons/chevron-right-icon.svg";
 
-const Qrcard = ({ mode,name, date, status, qritems, qrId ,cardClick,qrUUID}) => {
+const Qrcard = ({ mode,name, date, status, qritems, qrId ,cardClick,qrUUID,vMstrid}) => {
   const handleClick=()=>{
-    cardClick(qrUUID);
+    cardClick(qrUUID,vMstrid);
   }
   return (
     <div className={`qrcard ${mode=='request'?'qr_request':mode=='send'?'qr_send':mode=='hold'?'qr_hold':'qr_reject'} col-span-4`}onClick={handleClick}>

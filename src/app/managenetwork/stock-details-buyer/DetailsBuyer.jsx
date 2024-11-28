@@ -2,7 +2,7 @@
 import CommonApi from "@/api/CommonApi";
 import Loader from "@/components/Loader";
 import QrPopup from "@/components/QrPopup";
-import TotalRate from "@/components/TotalRate";
+import SubmitCard from "@/components/SubmitCard";
 import { useEffect, useState } from "react";
 import Address from "../../../../public/assests/icons/address.svg";
 import Businessname from "../../../../public/assests/icons/businessname.svg";
@@ -12,7 +12,7 @@ import Email from "../../../../public/assests/icons/email.svg";
 import TickIcon from "../../../../public/assests/icons/tick-double.svg";
 import { useSelector } from "react-redux";
 
-function Trading({ activeTab }) {
+function DetailsBuyer({ activeTab }) {
   const [stock, setStock] = useState([]);
   const [details, setDetails] = useState([]);
   const [vendorMstrUID, setVendorMstrUID] = useState("");
@@ -26,7 +26,12 @@ function Trading({ activeTab }) {
   const myNetwork = useSelector((state) => state.managenetwork.myNetwork);
   const [networkDetails,setnetworkDetails]=useState({});
   const [vendorDetails,setVendorDetails]=useState({});
-
+  // useEffect(() => {
+  //   const myProp = searchParams.get("uuid");
+  //   setVendorMstrUID(myProp);
+  //   getStock(myProp);
+  //   // getDetails(myProp);
+  // }, []);
   useEffect(() => {
     if (myNetwork) {
       setnetworkDetails(myNetwork);
@@ -46,12 +51,13 @@ function Trading({ activeTab }) {
       // const myProp = searchParams.get("uuid");
     
       getStock();
-      getDetails();
+      // getDetails();
     }
   }, [vendorDetails,networkDetails]); 
   async function getStock() {
-    try {      
+    try {
       setLoading(true);
+
     let data = await CommonApi.getData(
       `Stock/vendor/${networkDetails.vendorMstrUID}/stock`,
       {},
@@ -66,18 +72,17 @@ function Trading({ activeTab }) {
   } catch (error) {
       
   }finally{
-    setLoading(false);
+    setLoading(false)
   }
+  
   }
   const handleRowclick = (row) => {
     console.log(checkList);
     if (
-      !row.ofPrice ||
-      !row.ogPrice ||
-      row.ofPrice == "" ||
-      row.ogPrice == ""
+      !row.rqQty ||
+      row.rqQty == ""
     ) {
-      alert("Enter the both Original Price and Offer Price");
+      alert("Enter the Required Quantity!");
       return;
     }
     setCheckList((checkList) => {
@@ -88,12 +93,20 @@ function Trading({ activeTab }) {
       }
     });
   };
-  async function getDetails() {
+  async function getDetails(uuid) {
+    try {
+      setLoading(true);
     let data = await CommonApi.getData(
-      `ManageNetwork/supplier/${networkDetails.vendorMstrUID}/details`,
+      `ManageNetwork/supplier/${uuid}/details`,
       {}
     );
     setDetails(data.data);
+  } catch (error) {
+      
+  }finally{
+    setLoading(false)
+  }
+  
   }
   const handleRowEdit = (value, key, row, index) => {
     let data = [...stock];
@@ -136,8 +149,8 @@ function Trading({ activeTab }) {
         mData = {
           productUUId: element.productUUId,
           productName: element.productName,
-          unitPrice: element.ogPrice,
-          offerPrice: element.ofPrice,
+          quantity: element.rqQty,
+          
         };
         if (checkList.includes(element.productUUId)) {
           mData.status = 2;
@@ -179,78 +192,7 @@ function Trading({ activeTab }) {
     console.log(comments);
   };
   const renderTableData = () => {
-    if (activeTab === "request") {
-      return (
-        <div className="flex flex-col ml-[4rem] mr-[4rem] pt-4 pb-4">
-          {Object.keys(details).length > 0 ? (
-            <>
-              {/* Business Name */}
-              <div className="flex flex-row border-b border-gray-300 p-4">
-                <h1 className="text-xl w-[100px]">
-                  <Businessname />
-                </h1>
-                <h2 className="w-[150px] text-lg font-semibold">
-                  Business Name:
-                </h2>
-                <h3 className="text-md w-[400px] text-lg">
-                  {details.companyName || "--"}
-                </h3>
-              </div>
-
-              {/* Address */}
-              <div className="flex flex-row border-b border-gray-300 p-4">
-                <h1 className="text-xl w-[100px]">
-                  <Address />
-                </h1>
-                <h2 className="w-[150px] text-lg font-semibold">Address:</h2>
-                <h3 className="text-md w-[400px] text-lg">
-                  {details.address || "--"}
-                </h3>
-              </div>
-
-              {/* Contact Number */}
-              <div className="flex flex-row border-b border-gray-300 p-4">
-                <h1 className="text-xl w-[100px]">
-                  <Contact />
-                </h1>
-                <h2 className="w-[150px] text-lg font-semibold">Contact No:</h2>
-                <h3 className="text-md w-[400px] text-lg">
-                  {details.contactNo || "--"}
-                </h3>
-              </div>
-
-              {/* Contact Person */}
-              <div className="flex flex-row border-b border-gray-300 p-4">
-                <h1 className="text-xl w-[100px]">
-                  <Contactperson />
-                </h1>
-                <h2 className="w-[150px] text-lg font-semibold">
-                  Contact Person:
-                </h2>
-                <h3 className="text-md w-[400px] text-lg">
-                  {details.contactPerson || "--"}
-                </h3>
-              </div>
-
-              {/* Email ID */}
-              <div className="flex flex-row border-b border-gray-300 p-4">
-                <h1 className="text-xl w-[100px]">
-                  <Email />
-                </h1>
-                <h2 className="w-[150px] text-lg font-semibold">Email ID:</h2>
-                <h3 className="text-md w-[400px] text-lg">
-                  {details.email || "--"}
-                </h3>
-              </div>
-            </>
-          ) : (
-            <div className="p-4 text-center">No Details Available</div>
-          )}
-        </div>
-      );
-    }
-
-    return (
+       return (
       <>
         {loading ? <Loader /> : ""}
         <table className="table w-full rounded-tr-lg mb-40">
@@ -258,8 +200,7 @@ function Trading({ activeTab }) {
             <tr>
               <th>Product Name</th>
               <th>Remaining Qty</th>
-              <th>Original Price</th>
-              <th>Offer Price</th>
+              <th>Required Quantity</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -273,26 +214,11 @@ function Trading({ activeTab }) {
                     <input
                       type="number"
                       className="table__input"
-                      value={stockDetails?.ogPrice || ""}
+                      value={stockDetails?.rqQty || ""}
                       onChange={(e) =>
                         handleRowEdit(
                           e.target.value,
-                          "ogPrice",
-                          stockDetails,
-                          index
-                        )
-                      }
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      className="table__input"
-                      value={stockDetails?.ofPrice || ""}
-                      onChange={(e) =>
-                        handleRowEdit(
-                          e.target.value,
-                          "ofPrice",
+                          "rqQty",
                           stockDetails,
                           index
                         )
@@ -326,11 +252,8 @@ function Trading({ activeTab }) {
           </tbody>
         </table>
 
-        <TotalRate
-          subTotal={totalPrice}
+        <SubmitCard
           selectedCount={checkList.length}
-          total={totalPrice - discount}
-          discountChange={handleDiscountChange}
           submitClick={handleSubmitClick}
         />
         <QrPopup
@@ -348,4 +271,4 @@ function Trading({ activeTab }) {
   return <div className="w-full table-container2">{renderTableData()}</div>;
 }
 
-export default Trading;
+export default DetailsBuyer;

@@ -21,6 +21,8 @@ function Sidebar() {
   };
 
   return (
+    <>
+    {pathName!='/login'?
     <div>
       <nav className="left__navbar">
         <ul>
@@ -159,7 +161,8 @@ function Sidebar() {
           </li>
         </ul>
       </nav>
-    </div>
+    </div>:''}
+    </>
   );
 }
 export default Sidebar;

@@ -18,6 +18,7 @@ import CommonApi from "@/api/CommonApi";
 import { format } from "date-fns";
 import TableFooter from "@mui/material/TableFooter";
 import { Typography } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const PurchaseDetails = () => {
   const [page, setPage] = React.useState(0);
@@ -27,11 +28,32 @@ const PurchaseDetails = () => {
   const [purchasedetails, setPurchaseDetails] = useState([]);
   const [purchaseRequest, setPurchaseRequest] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState(""); // Tracks dropdown selection
-
+  const [vendorDetails,setVendorDetails]=useState({});
+  const [purchase,setPurchase]=useState({});
+  const PurchaseData = useSelector((state) => state.purchase.PurchaseData);
   // Fetch initial purchase request data
   useEffect(() => {
-    getPurchaseRequest();
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
   }, []);
+  useEffect(() => {
+    if (PurchaseData) {
+      setPurchase(PurchaseData);
+    }
+  }, [PurchaseData]);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(purchase).length>0) {
+      getPurchaseRequest();
+    }
+  }, [vendorDetails,purchase]); 
+  // useEffect(() => {
+  //   getPurchaseRequest();
+  // }, []);
 
   const getPurchaseRequest = async () => {
     try {
@@ -39,8 +61,8 @@ const PurchaseDetails = () => {
         "Purchase/vendor/purchase-request",
         {},
         {
-          vendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
-          PurchaseRequestUUId: "F309B9B2-AA91-401A-9BAF-0926E47F8CD5",
+          vendorMasterUUId: vendorDetails.vendorMasterUUId,
+          PurchaseRequestUUId: purchase.purchaseRequestUUId,
         }
       );
       setPurchaseRequest(data.data);
@@ -51,16 +73,18 @@ const PurchaseDetails = () => {
 
   // Fetch purchase details data for the table
   useEffect(() => {
-    fetchData(page, rowsPerPage);
-  }, [page, rowsPerPage]);
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(purchase).length>0) {
+      fetchData(page, rowsPerPage);
+    }
+  }, [vendorDetails,purchase,page, rowsPerPage]);
 
   const fetchData = async (currentPage, rowsPerPage) => {
     try {
       const response = await CommonApi.getData(
-        "Purchase/vendor/F309B9B2-AA91-401A-9BAF-0926E47F8CD5/request-details",
+        `Purchase/vendor/${purchase.purchaseRequestUUId}/request-details`,
         {},
         {
-          VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+          VendorUUId: vendorDetails.vendorMasterUUId,
           Status: 2,
         }
       );

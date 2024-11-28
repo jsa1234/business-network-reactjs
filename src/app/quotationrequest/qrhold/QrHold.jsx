@@ -1,25 +1,26 @@
 "use client"
-import * as React from 'react';
+import CommonApi from "@/api/CommonApi";
+import { constants } from "@/api/constants";
+import Loader from '@/components/Loader';
+import QrPopup from "@/components/QrPopup";
+import TotalRate from '@/components/TotalRate';
+import Alert from "@mui/material/Alert";
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
+import Paper from '@mui/material/Paper';
+import Snackbar from "@mui/material/Snackbar";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import TableHead from '@mui/material/TableHead';
-import TickIcon from "../../../../public/assests/icons/tick-double.svg";
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import QrPopup from "@/components/QrPopup";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
-import TotalRate from '@/components/TotalRate';
-import { useRouter, useSearchParams } from 'next/navigation';
+import TableRow from '@mui/material/TableRow';
 import { format } from "date-fns";
-import { constants } from "@/api/constants";
-import CommonApi from "@/api/CommonApi";
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
 import Cancel from "../../../../public/assests/icons/cancel.svg";
-import Loader from '@/components/Loader';
+import TickIcon from "../../../../public/assests/icons/tick-double.svg";
+import { useSelector } from "react-redux";
 const QrHold = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -27,7 +28,6 @@ const QrHold = () => {
   const [totalCount, setTotalCount] = React.useState(0);
   const [checkList, setCheckList] = React.useState([]);
   const [discount, setDiscount] = React.useState(0);
-  const searchParams = useSearchParams();
   const [qrUuid, setQrUuid] = React.useState("");
   const [modalShow, setModalShow] = React.useState(false);
   const [deliveryDate, setDeliveryDate] = React.useState("");
@@ -40,33 +40,65 @@ const QrHold = () => {
   const [selectRow, setSelectedRow] = React.useState({});
   const [totalGSTAmount, setTotalGSTAmount] = React.useState(0);
   const [loading,setLoading]=React.useState(false);
+  const [vendorDetails,setVendorDetails]=React.useState({});
+  const [quotationDetails,setQuotationDetails]=React.useState({});
+  const Quotation = useSelector((state) => state.quotation.Quotation);
   const router = useRouter();
+  // const VendorType = useSelector(
+  //   (state) => state.vendor.VendorType
+  // );
+  // React.useEffect(() => {
+  //   const myProp = searchParams.get("uuid");
+  //   setQrUuid(myProp);
+  //   fetchData(myProp);
+  // }, []);
   React.useEffect(() => {
-    const myProp = searchParams.get("uuid");
-    setQrUuid(myProp);
-    fetchData(myProp);
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
   }, []);
+  React.useEffect(() => {
+    if (Quotation) {
+      setQuotationDetails(Quotation);
+    }
+  }, [Quotation]);
+  React.useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(quotationDetails).length>0) {
+      // const myProp = searchParams.get("uuid");
+    setQrUuid(quotationDetails.qrUuid);
+    fetchData();
+    }
+  }, [vendorDetails,quotationDetails]); 
   const handleClose = () => {
     setOpen(false);
   };
-  const fetchData = async (qrUuid) => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       let data = await CommonApi.getData(
-        `Quotation/vendor/${qrUuid}/details`,
+        `Quotation/vendor/${quotationDetails.qrUuid}/details`,
         {},
-        { status: 3 }
+        { }
       );
       if (data.data.length > 0) {
-        setData(data.data);
+        let tData=[...data.data];
+        for(const element of tData){
+          element.totalPrice=element.quantity*element.unitPrice;
+          element.gst=12;
+        }
+        setData(tData);
       }
 
       let hData = await CommonApi.getData(
         `Quotation/vendor/quotation-request`,
         {},
         {
-          QuotationRequestUUId:qrUuid,
-          VendorMasterUUId: "4bf53476-c156-4aac-b49c-3f5044c66540",
+          QuotationRequestUUId:quotationDetails.qrUuid,
+          VendorMasterUUId: vendorDetails.vendorMasterUUId,
          }
       );
       setHeadData(hData.data);
@@ -100,8 +132,8 @@ const QrHold = () => {
         totalGST += (Number(element.gst) / 100) * Number(element.totalPrice);
       }
     }
-console.log(total);
-console.log(totalGST);
+    console.log(total);
+    console.log(totalGST);
     setTotalAmount(total);
     setTotalGSTAmount(totalGST);
   }
@@ -181,11 +213,38 @@ console.log(totalGST);
         deliverydate: deliveryDate,
         discount: discount,
       };
-      let response = await CommonApi.putData(
-        `Quotation/vendor/${qrUuid}/quotation`,
+      let response;
+      if(vendorDetails.vendorType
+==2){
+        response = await CommonApi.postData(
+          `Purchase/vendor/request`,
+          {},
+          {
+            "quotationRequestUUId": quotationDetails.qrUuid,
+            "requestFromVendorUUId": vendorDetails.vendorMasterUUId,
+            "requestedToVendorUUId": quotationDetails.vendorMasterUUId,
+            "expectedDeliveryDate": deliveryDate,
+            "comments": "",
+            "quotationDetails": [mData]
+          }
+        );
+      } else{
+      response = await CommonApi.putData(
+        `Quotation/vendor/quotation`,
         {},
-        [mData]
+        {
+          quotationRequestUUId: quotationDetails.qrUuid,
+          requestFromVendorUUId: vendorDetails.vendorMasterUUId,//needs to be dynamic 
+          requestedToVendorUUId:  quotationDetails.vendorMasterUUId,//needs to be dynamic
+          quotationRequestId: "string",//needs to be dynamic
+          purchaseRequestId: "string",//needs to be dynamic
+          // status: constants.quotationStatus["hold"],
+          expectedDeliveryDate: deliveryDate,
+          comments: comments,
+          quotationDetails: [mData],
+        }
       );
+    }
       if (response.status == "success") {
         setToastMsg("Quotation Hold Submitted SuccessFully!");
         setOpen(true);
@@ -235,11 +294,39 @@ console.log(totalGST);
 
       inputData.push(mData);
     }
-    let response = await CommonApi.putData(
-      `Quotation/vendor/${qrUuid}/quotation`,
-      {},
-      inputData
-    );
+    let response;
+    if(vendorDetails.vendorType
+==2){
+      response = await CommonApi.postData(
+        `Purchase/vendor/request`,
+        {},
+        {
+          "quotationRequestUUId": qrUuid,
+          "requestFromVendorUUId": vendorDetails.vendorMasterUUId,
+          "requestedToVendorUUId":  quotationDetails.vendorMasterUUId,
+          "expectedDeliveryDate": deliveryDate,
+          "comments": comments,
+          "quotationDetails": [...inputData]
+        }
+      );
+    } else{
+
+      response = await CommonApi.putData(
+        `Quotation/vendor/${qrUuid}/quotation`,
+        {},
+        {
+          quotationRequestUUId: qrUuid,
+          requestFromVendorUUId: vendorDetails.vendorMasterUUId,//needs to be dynamic 
+          requestedToVendorUUId:  quotationDetails.vendorMasterUUId,//needs to be dynamic
+          quotationRequestId: "string",//needs to be dynamic
+          purchaseRequestId: "string",//needs to be dynamic
+          // status: constants.quotationStatus["hold"],
+          expectedDeliveryDate: deliveryDate,
+          comments: comments,
+          quotationDetails: [...inputData],
+        }
+      );
+    } 
     if (response.status == "success") {
       // alert("success");
       if (value == "send") {
@@ -327,6 +414,8 @@ console.log(totalGST);
             </TableCell>
             <TableCell align="left">{row.quantity}</TableCell>
             <TableCell align="left"><select
+            disabled={vendorDetails.vendorType
+ === 2}
                     className="table__input"
                     value={row.gst}
                     onChange={(e) =>
@@ -339,6 +428,8 @@ console.log(totalGST);
                     <option value="28">28 %</option>
                   </select></TableCell>
             <TableCell align="left"><input
+            disabled={vendorDetails.vendorType
+ === 2}
                     className="table__input"
                     value={row.unitPrice}
                     onChange={(e) =>

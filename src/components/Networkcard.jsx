@@ -3,15 +3,40 @@ import { useEffect, useState } from "react";
 import CommonApi from "@/api/CommonApi";
 import ChevronIcon from "../../public/assests/icons/chevron-right-icon.svg";
 import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import { setmyNetwork } from "@/store/manageNetworkSlice";
 const Networkcard = ({ vendorMstrUID,name, gst, contact, address, vender }) => {
+  const dispatch = useDispatch();
+  const router=useRouter();
   const [value, setValue] = useState(null);
-  const handleClick = () => {
-    if (!gst) {
-      console.log("No value provided.");
-      return;
+  // const VendorType = useSelector(
+  //   (state) => state.vendor.VendorType
+  // );
+  const [vendorDetails,setVendorDetails]=useState({});
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
     }
+  }, []);
+  const handleClick = async () => {
+// href={VendorType==1 ? `/managenetwork/trading?uuid=${vendorMstrUID}` : `/managenetwork/stock-details-buyer?uuid=${vendorMstrUID}`}
 
-    setValue(gst);
+    // setValue(gst);
+    if(vendorDetails.vendorType==2){
+      await dispatch(setmyNetwork({
+        vendorMstrUID,
+      }));
+      router.push(`/managenetwork/trading`)
+    }else{
+      await dispatch(setmyNetwork({
+        vendorMstrUID,
+      }));
+      router.push(`/managenetwork/stock-details-buyer`)
+    }
   };
 
   return (
@@ -30,12 +55,12 @@ const Networkcard = ({ vendorMstrUID,name, gst, contact, address, vender }) => {
         <div className="flex items-center gap-3">
           <h1>{name}</h1>
           <div className="qrcard__details_2">
-            <Link
-              href={gst ? `/managenetwork/trading?uuid=${vendorMstrUID}` : "#"}
+            <button
+              // href={VendorType==1 ? `/managenetwork/trading?uuid=${vendorMstrUID}` : `/managenetwork/stock-details-buyer?uuid=${vendorMstrUID}`}
               onClick={handleClick}
             >
               <ChevronIcon />
-            </Link>
+            </button>
           </div>
         </div>
       </div>

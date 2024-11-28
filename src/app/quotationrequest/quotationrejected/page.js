@@ -4,26 +4,50 @@ import Pagenavigation from "@/components/Pagenavigation";
 import Quotationreject from "./quotationreject";
 import CommonApi from "@/api/CommonApi";
 import { format } from "date-fns";
+import { useSelector } from "react-redux";
 
 const Page = () => {
   const breadcrumbItems = ["Dashboard", "Quotation Request Reject "];
   const urlList = ["/", "/quotationrejected"];
   const [rejectRequest, setRejectRequest] = useState([]);
-
+  const [quotationDetails,setQuotationDetails]=useState({});
+  const [vendorDetails,setVendorDetails]=useState({});
+  const Quotation = useSelector((state) => state.quotation.Quotation);
   useEffect(() => {
-    console.log(process.env.API_URL);
-    getRejectRequest();
+    if (Quotation) {
+      setQuotationDetails(Quotation);
+    }
+  }, [Quotation]);
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
   }, []);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(quotationDetails).length>0) {
+
+    getRejectRequest();
+    }
+  }, [vendorDetails,quotationDetails]); 
+    // useEffect(() => {
+    //   console.log(process.env.API_URL);
+    //   getRejectRequest();
+    // }, []);
   async function getRejectRequest() {
     let data = await CommonApi.getData(
-      "Quotation/vendor/{a8a50e1f-2e61-4008-933b-61cf2bdc6659}/request",
+      "Quotation/vendor/quotation-request",
       {},
       {
-        VendorUUId: "21C7586F-9F29-457B-8E3D-4C75213183DF",
+        QuotationRequestUUId:quotationDetails.qrUuid,
+        VendorMasterUUId: vendorDetails.vendorMasterUUId,
       }
     );
     console.log("MG.jsx", data);
-    setRejectRequest(data);
+    setRejectRequest(data.data);
   }
 
   return (

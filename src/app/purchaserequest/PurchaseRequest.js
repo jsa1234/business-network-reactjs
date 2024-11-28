@@ -5,15 +5,18 @@ import Search from "../../../public/assests/icons/search.svg";
 import Datepicker from "@/components/Datepicker";
 import { useRouter } from "next/navigation";
 import CommonApi from "@/api/CommonApi";
+import { useDispatch } from "react-redux";
+import { setPurchase } from "@/store/purchaseSlice";
 
 const PurchaseRequest = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [purchaseRequest, setPurchaseRequest] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy,setSortBy]=useState(0)
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
-
+  const [vendorDetails,setVendorDetails]=useState({});
   const dateProps = {
     selectedStartDate,
     setSelectedStartDate,
@@ -25,17 +28,31 @@ const PurchaseRequest = () => {
   const handleError = (error) => {
     console.error("Error fetching purchase requests:", error);
   };
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+  // useEffect(() => {
+  //   // This effect will run when vendorDetails is updated
+  //   if (vendorDetails && vendorDetails.vendorMasterUUId) {
 
-
+  //   fetchData();
+  //   }
+  // }, [vendorDetails]); 
 
   useEffect(() => {
+    
     const fetchPurchaseRequests = async () => {
       try {
         const data = await CommonApi.getData(
           "Purchase/vender/requests",
           {},
           {
-            VendorMasterUUId : "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+            VendorMasterUUId : vendorDetails.vendorMasterUUId,
             searchString: searchTerm,
             expectedDeliveryFromDate: selectedStartDate,
             expectedDeliveryToDate: selectedEndDate,
@@ -49,13 +66,17 @@ const PurchaseRequest = () => {
         console.error("Error fetching network data:", error);
       }
     };
-  
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
     fetchPurchaseRequests(); // Call the async function here without passing data
-  
-  }, [searchTerm, selectedStartDate, selectedEndDate, sortBy]); // Dependencies that will trigger the effect
+    }
+  }, [vendorDetails,searchTerm, selectedStartDate, selectedEndDate, sortBy]); // Dependencies that will trigger the effect
   
 
-  const handleClick = () => {
+  const handleClick = async(row) => {
+    await dispatch(setPurchase({
+      vendorMasterUUId:vendorDetails.vendorMasterUUId,
+      ...row
+    }));
     router.push("/purchaserequest/purchasedetails");
   };
 
@@ -102,7 +123,7 @@ const PurchaseRequest = () => {
               deliverydate={purchaseRequests.expectedDeliveryDate}
               prdate={purchaseRequests.purchaseRequestedDate}
              /*  status={request.status} */
-              cardClick={handleClick}
+              cardClick={()=>handleClick(purchaseRequests)}
             />
           ))
         ) : (

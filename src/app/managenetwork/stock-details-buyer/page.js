@@ -1,20 +1,23 @@
 "use client";
-import Image from "next/image";
-import Pagenavigation from "@/components/Pagenavigation";
 import { useEffect, useState } from "react";
-import Trading from "./Trading";
-import Stockdetails from "../../../../public/assests/icons/stockdetails.svg";
-import Supplierdetails from "../../../../public/assests/icons/supplierdetails.svg";
+import DetailsBuyer from "./DetailsBuyer";
+import Pagenavigation from "@/components/Pagenavigation";
+import Image from "next/image";
 import CommonApi from "@/api/CommonApi";
 import { useSelector } from "react-redux";
-
 function Page() {
-  // Manage tab state in the Page component and pass it down as props
-  const [activeTab, setActiveTab] = useState("approval");
+  const breadcrumbItems = ["Dashboard", "Manage Networks"];
+  const urlList = ["/", "/dashboard", ""];
+  const [selectedOption, setSelectedOption] = useState("");
+  const [activeTab, setActiveTab] = useState("stock");
   const [details, setDetails] = useState([]);
   const myNetwork = useSelector((state) => state.managenetwork.myNetwork);
   const [networkDetails,setnetworkDetails]=useState({});
   const [vendorDetails,setVendorDetails]=useState({});
+
+  const handleChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
   useEffect(() => {
     if (myNetwork) {
       setnetworkDetails(myNetwork);
@@ -50,8 +53,8 @@ function Page() {
   }
   return (
     
-      <div className="bus__body w-full pl-9 mt-6 pr-3 pb-9">
-        <div className="flex justify-between">
+    <div className="bus__body w-full pl-9 mt-6 pr-3">
+    <div className="flex justify-between">
           <div className="w-full md:w-1/2">
             <div className="flex items-center mr-2">
               <Image
@@ -68,38 +71,39 @@ function Page() {
             </p>
           </div>
         </div>
-        <div>
-          {/* Tab buttons */}
-          <div className="flex mt-6 background">
-            <button
-              className={`tab flex items-center justify-center gap-2 p-2 rounded-md ${
-                activeTab === "approval"
-                  ? "bg-white text-orange-500 border-b-2 border-b-orange-500 active"
-                  : ""
-              }`}
-              onClick={() => setActiveTab("approval")}
-            >
-              <Stockdetails />
-              <span>Stock Details</span>
-            </button>
-            <button
-              className={`tab flex items-center justify-center p-2 rounded-md gap-2 ${
-                activeTab === "request"
-                  ? "bg-white text-orange-500 border-b-2 border-b-orange-500 active"
-                  : ""
-              }`}
-              onClick={() => setActiveTab("request")}
-            >
-              <Supplierdetails />
-              <span>Supplier Details</span>
-            </button>
-          </div>
+    
+    <div className="flex mt-6 background">
+        <button
+          className={`tab flex items-center justify-center gap-2 p-2 rounded-md relative ${
+            activeTab === "stock"
+              ? "bg-white text-orange-500 border-b-2 border-b-orange-500 active"
+              : ""
+          }`}
+          onClick={() => setActiveTab("stock")}
+        >
+          {/* <DocIcon /> */}
+          <span className="relative">
+            Stock Details{" "}
+          </span>
+        </button>
+        {/* <button
+          className={`tab flex items-center justify-center p-2 rounded-md gap-2 relative ${
+            activeTab === "send"
+              ? "bg-white text-orange-500 border-b-2 border-b-orange-500 active"
+              : ""
+          }`}
+          onClick={() => setActiveTab("send")}
+        >        
+          <span className="relative">
+            QR Send
+           
+          </span>
+        </button> */}
 
-          {/* Pass the activeTab as props to the Trading component */}
-          <Trading activeTab={activeTab} />
-        </div>
       </div>
-   
+      <DetailsBuyer/>
+      </div>
+    
   );
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import Connect from "../../public/assests/icons/connect.svg";
 import { useSelector } from "react-redux";
 
@@ -14,9 +14,18 @@ const BNcard = ({
   buttonClick,
   vendorUUID,
 }) => {
-  const VendorMasterUUID = useSelector(
-    (state) => state.vendor.VendorMasterUUID
-  );
+  const [vendorDetails,setVendorDetails]=useState({});
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+  // const VendorMasterUUID = useSelector(
+  //   (state) => state.vendor.VendorMasterUUID
+  // );
 
   return (
     <div className="bncard col-span-12 md:col-span-6 lg:col-span-4">
@@ -35,7 +44,7 @@ const BNcard = ({
           <h1>{name}</h1>
           <button
             className="secondary__btn pl-9 pr-9"
-            onClick={() => buttonClick(VendorMasterUUID, vendorUUID)}
+            onClick={() => buttonClick(vendorDetails.vendorMasterUUId, vendorUUID)}
           >
             <Connect />
             Connect

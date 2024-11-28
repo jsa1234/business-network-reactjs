@@ -112,11 +112,54 @@ const DashBoardChart = () => {
 
   const [productUUID, setProductUUID] = useState()
   const [supplierUUID, setSupplierUUID] = useState()
-
+  const [vendorDetails,setVendorDetails]=useState({});
   useEffect(() => {
-    getSuppliers()
-    getProducts()
-  }, [])
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      getSuppliers();
+      getProducts();
+      async function fetchInitialData() {
+        try {
+          // Fetch suppliers and set the first one as the default
+          const supplierRes = await CommonApi.getData(
+            `Vendor/${vendorDetails.vendorMasterUUId}/suppliers`,
+            {},
+            {}
+          )
+          setSuppliers(supplierRes.data)
+          if (supplierRes.data.length > 0) {
+            setSupplierUUID(supplierRes.data[0].supplierUUId)
+          }
+  
+          // Fetch products and set the first one as the default
+          const productRes = await CommonApi.getData(
+            `Vendor/${vendorDetails.vendorMasterUUId}/products`,
+            {},
+            {}
+          )
+          setProducts(productRes.data)
+          if (productRes.data.length > 0) {
+            setProductUUID(productRes.data[0].productUUId)
+          }
+        } catch (error) {
+          console.error("Error fetching initial data:", error)
+        }
+      }
+  
+      fetchInitialData()
+    }
+  }, [vendorDetails]); 
+  // useEffect(() => {
+  //   getSuppliers()
+  //   getProducts()
+  // }, [])
 
   useEffect(() => {
     if (productUUID) getSaleByProduct()
@@ -163,7 +206,7 @@ const DashBoardChart = () => {
       const res = await CommonApi.getData(
         `Stock/get-sale-by-product`,
         {},
-        { VendorMasterUUID, productUUID }
+        { VendorMasterUUID:vendorDetails.vendorMasterUUId, productUUID }
       )
       setSaleByProductData(res.data || [])
     } catch (error) {
@@ -176,7 +219,7 @@ const DashBoardChart = () => {
       const res = await CommonApi.getData(
         `Stock/get-sales-by-buyer`,
         {},
-        { VendorMasterUUID, supplierUUID }
+        { VendorMasterUUID:vendorDetails.vendorMasterUUId, supplierUUID }
       )
       setSaleByBuyersData(res.data || [])
     } catch (error) {
@@ -187,7 +230,7 @@ const DashBoardChart = () => {
   async function getSuppliers() {
     try {
       const res = await CommonApi.getData(
-        `Vendor/${VendorMasterUUID}/suppliers`,
+        `Vendor/${vendorDetails.vendorMasterUUId}/suppliers`,
         {},
         {}
       )
@@ -200,7 +243,7 @@ const DashBoardChart = () => {
   async function getProducts() {
     try {
       const res = await CommonApi.getData(
-        `Vendor/${VendorMasterUUID}/products`,
+        `Vendor/${vendorDetails.vendorMasterUUId}/products`,
         {},
         {}
       )
@@ -211,38 +254,12 @@ const DashBoardChart = () => {
   }
 
   // select first product and first supplier in charts on initial load
-  useEffect(() => {
-    async function fetchInitialData() {
-      try {
-        // Fetch suppliers and set the first one as the default
-        const supplierRes = await CommonApi.getData(
-          `Vendor/${VendorMasterUUID}/suppliers`,
-          {},
-          {}
-        )
-        setSuppliers(supplierRes.data)
-        if (supplierRes.data.length > 0) {
-          setSupplierUUID(supplierRes.data[0].supplierUUId)
-        }
-
-        // Fetch products and set the first one as the default
-        const productRes = await CommonApi.getData(
-          `Vendor/${VendorMasterUUID}/products`,
-          {},
-          {}
-        )
-        setProducts(productRes.data)
-        if (productRes.data.length > 0) {
-          setProductUUID(productRes.data[0].productUUId)
-        }
-      } catch (error) {
-        console.error("Error fetching initial data:", error)
-      }
-    }
-
-    fetchInitialData()
-  }, [VendorMasterUUID])
-
+  // useEffect(() => {
+    
+  // }, [vendorDetails])
+  // if (Object.keys(vendorDetails).length==0) {
+  //   return <div>Loading...</div>;  // Handle loading state or error
+  // }
   return (
     <div className='charts grid grid-cols-12 gap-4 h-full'>
       <div className='charts-item col-span-6'>

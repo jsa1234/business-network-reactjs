@@ -7,12 +7,10 @@ import Popup from "@/components/Popup";
 import CommonApi from "@/api/CommonApi";
 
 import { useSelector } from "react-redux";
-import { useSearchParams } from "next/navigation";
 
 const BusinessNetwork = () => {
-  const searchParams = useSearchParams();
-  const hasQueryParam = searchParams.has("search-keyword");
-  const [searchKeyword, setSearchKeyword] = searchParams.get("search-keyword");
+  const hasQueryParam = false;
+  const [searchKeyword, setSearchKeyword] = "";
 
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);

@@ -24,7 +24,6 @@ import { Typography } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import TickIcon from "../../../public/assests/icons/tick-double.svg";
 import Search from "../../../public/assests/icons/search.svg";
-import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import CommonApi from "@/api/CommonApi";
 import Loader from "@/components/Loader";
@@ -40,39 +39,63 @@ function Stockdetails() {
   const [checkList, setCheckList] = useState([]);
   const [param,setParam]=useState('');
   const [loading,setLoading]=useState(false);
-  const VendorMasterUUID = useSelector(
-    (state) => state.vendor.VendorMasterUUID
-  );
+  const [stockDetails,setStockDetails]=useState({});
+  const [vendorDetails,setVendorDetails]=useState({});
+  const StockData = useSelector((state) => state.stock.StockData);
+  // const VendorMasterUUID = useSelector(
+  //   (state) => state.vendor.VendorMasterUUID
+  // );
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+  useEffect(() => {
+    if (StockData) {
+      setStockDetails(StockData);
+    }
+  }, [StockData]);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(stockDetails).length>0) {
+      // const myProp = searchParams.get("uuid");
+      setParam(stockDetails.stockStatus);
+        fetchData()
+    }
+  }, [vendorDetails,stockDetails]); 
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
-  const searchParams = useSearchParams();
-  useEffect(() => {
-    const myProp = searchParams.get("status");
-    setParam(myProp);
-    fetchData(myProp)
-  }, []);
-  const fetchData = async (status) => {
+
+  // useEffect(() => {
+  //   const myProp = searchParams.get("status");
+  //   setParam(myProp);
+  //   fetchData(myProp)
+  // }, []);
+  const fetchData = async () => {
     try {
       setLoading(true);
       let data={data:[]};
-      if(status=='low'){
+      if(stockDetails.stockStatus=='low'){
         data = await CommonApi.getData(
-          `Stock/vendor/${VendorMasterUUID}/get-status-of-less-stock-details`,
+          `Stock/vendor/${vendorDetails.vendorMasterUUId}/get-status-of-less-stock-details`,
           {},
           { }
         );
         console.log(data)
-      } else if(status=='medium'){
+      } else if(stockDetails.stockStatus=='medium'){
         data = await CommonApi.getData(
-          `Stock/vendor/${VendorMasterUUID}/get-status-of-average-stock-details`,
+          `Stock/vendor/${vendorDetails.vendorMasterUUId}/get-status-of-average-stock-details`,
           {},
           { }
         );
       }
-      else if(status=='high'){
+      else if(stockDetails.stockStatus=='high'){
         data = await CommonApi.getData(
-          `Stock/vendor/${VendorMasterUUID}/get-status-of-high-stock-details`,
+          `Stock/vendor/${vendorDetails.vendorMasterUUId}/get-status-of-high-stock-details`,
           {},
           { }
         );

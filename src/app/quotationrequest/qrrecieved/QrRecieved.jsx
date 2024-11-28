@@ -15,7 +15,6 @@ import HoldIcon from "../../../../public/assests/icons/hold.svg";
 import { useEffect, useState } from "react";
 import TotalRate from "@/components/TotalRate";
 import CommonApi from "@/api/CommonApi";
-import { useSearchParams } from "next/navigation";
 import QrPopup from "@/components/QrPopup";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
@@ -31,7 +30,6 @@ const QrRecieved = (props) => {
   const [totalCount, setTotalCount] = useState(0);
   const [checkList, setCheckList] = useState([]);
   const [discount, setDiscount] = useState(0);
-  const searchParams = useSearchParams();
   const [qrUuid, setQrUuid] = useState("");
   const [modalShow, setModalShow] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState("");
@@ -43,41 +41,65 @@ const QrRecieved = (props) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [selectRow, setSelectedRow] = useState({});
   const [totalGSTAmount, setTotalGSTAmount] = useState(0);
-  const [loading,setLoading]=useState(false);
-  const VendorMasterUUID = useSelector(
-    (state) => state.vendor.VendorMasterUUID
-  );
+  const [loading, setLoading] = useState(false);
+  const [vendorDetails,setVendorDetails]=useState({});
+  const [quotationDetails,setQuotationDetails]=useState({});
+  const Quotation = useSelector((state) => state.quotation.Quotation);
   useEffect(() => {
-    const myProp = searchParams.get("uuid");
-    setQrUuid(myProp);
-    fetchData(myProp);
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
   }, []);
+  useEffect(() => {
+    if (Quotation) {
+      setQuotationDetails(Quotation);
+    }
+  }, [Quotation]);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId && Object.keys(quotationDetails).length>0) {
+      // const myProp = searchParams.get("uuid");
+    setQrUuid(quotationDetails.qrUuid);
+    fetchData();
+    }
+  }, [vendorDetails,quotationDetails]); 
+  
   const handleClose = () => {
     setOpen(false);
   };
-  const fetchData = async (qrUuid) => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       let data = await CommonApi.getData(
-        `Quotation/vendor/${qrUuid}/details`,
+        `Quotation/vendor/${quotationDetails.qrUuid}/details`,
         {},
-        { status: 1 }
+        {}
       );
       if (data.data.length > 0) {
+        let tData = data.data;
+        for (let i = 0; i < tData.length; i++) {
+          tData[i].totalPrice = tData[i].quantity * tData[i].unitPrice;
+        }
         setData(data.data);
       }
 
       let hData = await CommonApi.getData(
-        `Quotation/vendor/${qrUuid}/request`,
+        `Quotation/vendor/quotation-request`,
         {},
-        { status: 1 }
+        {
+          QuotationRequestUUId: quotationDetails.qrUuid,
+          VendorMasterUUId: vendorDetails.vendorMasterUUId,
+        }
       );
-      setHeadData(hData);
+      setHeadData(hData.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -131,25 +153,23 @@ const QrRecieved = (props) => {
         if (key == "gst") element.gst = value;
       }
     }
-
     if (key == "unitPrice") setData(tData);
   };
-  const calculateTotal=()=>{
+  const calculateTotal = () => {
     let total = 0;
     let totalGST = 0;
     let tData = data;
     for (const element of tData) {
-      if(checkList.includes(element.productUUId)){
-        
+      if (checkList.includes(element.productUUId)) {
         total += element.totalPrice;
         totalGST += (Number(element.gst) / 100) * Number(element.totalPrice);
       }
     }
-console.log(total);
-console.log(totalGST);
+    console.log(total);
+    console.log(totalGST);
     setTotalAmount(total);
     setTotalGSTAmount(totalGST);
-  }
+  };
   const handleModal = (value) => {
     console.log(checkList);
     modalShow ? setSelectedRow({}) : "";
@@ -167,98 +187,140 @@ console.log(totalGST);
   };
 
   const submitQuotation = async (value) => {
-    try{
-    setModalShow(!modalShow);
-    if (Object.keys(selectRow).length > 0) {
-      let mData = {};
-      mData = {
-        ...selectRow,
-        status: constants.quotationStatus["hold"],
-        reason: comments,
-        comments: comments,
-        deliverydate: deliveryDate,
-        discount: discount,
-      };
-      let response = await CommonApi.putData(
-        `Quotation/vendor/${qrUuid}/quotation`,
-        {},
-        [mData]
-      );
+    try {
+      setModalShow(!modalShow);
+      if (Object.keys(selectRow).length > 0) {
+        let mData = {};
+        mData = {
+          ...selectRow,
+          // status: constants.quotationStatus["hold"],
+          // reason: comments,
+          // comments: comments,
+          // deliverydate: deliveryDate,
+          // discount: discount,
+        };
+        let response;
+        if (vendorDetails.vendorType == 2) {
+          response = await CommonApi.postData(
+            `Purchase/vendor/request`,
+            {},
+            {
+              quotationRequestUUId: qrUuid,
+              requestFromVendorUUId:vendorDetails.vendorMasterUUId,//buyer who is logged in
+              requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",//seller
+              expectedDeliveryDate: deliveryDate,
+              comments: comments,
+              purchaseDetails: [mData],
+            }
+          );
+        } else {
+          response = await CommonApi.putData(
+            `Quotation/vendor/quotation`,
+            {},
+            {
+              quotationRequestId: qrUuid,
+              requestFromVendorUUId: vendorDetails.vendorMasterUUId, //needs to be dynamic
+              requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", //needs to be dynamic
+              // quotationRequestId: "string",//needs to be dynamic
+              // purchaseRequestId: "string",//needs to be dynamic
+              status: constants.quotationStatus["hold"],
+              expectedDeliveryDate: deliveryDate,
+              comments: comments,
+              quotationDetails: [mData],
+            }
+          );
+        }
+        if (response.status == "success") {
+          setToastMsg("Quotation Hold Submitted SuccessFully!");
+          setOpen(true);
+        } else {
+          setToastMsg("Quotation Request Failed!");
+          setOpen(true);
+        }
+        setSelectedRow({});
+        return;
+      }
+      let inputData = [];
+      for (const element of data) {
+        let mData = {};
+        if (
+          (value == "send" || value == "reject" || value == "hold") &&
+          checkList.includes(element.productUUId)
+        ) {
+          //selected products will have a status of 2 if submit quotation is clicked
+          if (vendorDetails.vendorType == 2){
+            mData = {
+              quotationRequestDetailUUId:element.quotationRequestDetailUUId,
+              status: 2,
+            };
+          }else
+          mData = {
+            ...element,
+            status: 2,
+          };
+        } else if (
+          (value == "send" || value == "reject" || value == "hold") &&
+          !checkList.includes(element.productUUId)
+        ) {
+          //not-selected products will have a status of 1 if submit quotation is clicked or same for if reject is clicked
+          mData = {
+            ...element,
+            status: 1,
+          };
+        }
+        inputData.push(mData);
+      }
+      let response;
+      if (vendorDetails.vendorType == 2) {
+        response = await CommonApi.postData(
+          `Purchase/vendor/request`,
+          {},
+          {
+            quotationRequestUUId: qrUuid,
+            requestFromVendorUUId: vendorDetails.vendorMasterUUId,
+            requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            expectedDeliveryDate: deliveryDate,
+            comments: comments,
+            purchaseDetails: [...inputData],
+          }
+        );
+      } else {
+        response = await CommonApi.putData(
+          `Quotation/vendor/quotation`,
+          {},
+          {
+            quotationRequestUUId: qrUuid,
+            requestFromVendorUUId: vendorDetails.vendorMasterUUId, //needs to be dynamic
+            requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", //needs to be dynamic
+            quotationRequestId: "string", //needs to be dynamic
+            status: constants.quotationStatus[value],
+            expectedDeliveryDate: deliveryDate,
+            comments: comments,
+            quotationDetails: [...inputData],
+          }
+        );
+      }
       if (response.status == "success") {
-        setToastMsg("Quotation Hold Submitted SuccessFully!");
-        setOpen(true);
+        // alert("success");
+        if (value == "send") {
+          setToastMsg("Quotation Request Submitted SuccessFully!");
+          setOpen(true);
+        } else if (value == "hold") {
+          setToastMsg("Quotation Hold Submitted SuccessFully!");
+          setOpen(true);
+        } else if (value == "reject") {
+          setToastMsg("Quotation Reject Submitted SuccessFully!");
+          setOpen(true);
+        }
       } else {
         setToastMsg("Quotation Request Failed!");
         setOpen(true);
       }
-      return;
+      console.log(response.status);
+    } catch (error) {
+    } finally {
+      setLoading(false);
     }
-    let inputData = [];
-    for (const element of data) {
-      let mData = {};
-      if (
-        value == "send" &&
-        checkList.includes(element.quotationRequestDetailUUId)
-      ) {
-        //selected products will have a status of SEND if submit quotation is clicked
-        mData = {
-          ...element,
-          status: constants.quotationStatus[value],
-          reason: comments,
-          comments: comments,
-          deliverydate: deliveryDate,
-          discount: discount,
-        };
-      } else if (value == "send" || value == "reject") {
-        //not-selected products will have a status of REJECT if submit quotation is clicked or same for if reject is clicked
-        mData = {
-          ...element,
-          status: constants.quotationStatus["reject"],
-          reason: comments,
-          comments: comments,
-          deliverydate: deliveryDate,
-          discount: discount,
-        };
-      } else if (value == "hold") {
-        mData = {
-          ...element,
-          status: constants.quotationStatus["hold"],
-          reason: comments,
-          comments: comments,
-          deliverydate: deliveryDate,
-          discount: discount,
-        };
-      }
-
-      inputData.push(mData);
-    }
-    let response = await CommonApi.putData(
-      `Quotation/vendor/${qrUuid}/quotation`,
-      {},
-      inputData
-    );
-    if (response.status == "success") {
-      // alert("success");
-      if (value == "send") {
-        setToastMsg("Quotation Request Submitted SuccessFully!");
-        setOpen(true);
-      } else if (value == "hold") {
-        setToastMsg("Quotation Hold Submitted SuccessFully!");
-        setOpen(true);
-      } else if (value == "reject") {
-        setToastMsg("Quotation Reject Submitted SuccessFully!");
-        setOpen(true);
-      }
-    } else {
-      setToastMsg("Quotation Request Failed!");
-      setOpen(true);
-    }
-    console.log(response.status);
-  } catch (error) {
-      
-  }finally{
-    setLoading(false)
-  }
   };
 
   const holdRowItem = async (row) => {
@@ -268,9 +330,7 @@ console.log(totalGST);
 
   return (
     <>
-    {
-      loading?<Loader/>:''
-    }
+      {loading ? <Loader /> : ""}
       <div className="filter-group-secondary">
         <h1>
           QR ID <span>{headData.quotationRequestId}</span>
@@ -329,6 +389,7 @@ console.log(totalGST);
 
                 <TableCell align="left">
                   <select
+                    disabled={vendorDetails.vendorType == 2}
                     className="table__input"
                     value={row.gst}
                     onChange={(e) =>
@@ -343,6 +404,7 @@ console.log(totalGST);
                 </TableCell>
                 <TableCell align="left">
                   <input
+                    disabled={vendorDetails.vendorType == 2}
                     className="table__input"
                     value={row.unitPrice}
                     onChange={(e) =>
@@ -358,23 +420,19 @@ console.log(totalGST);
                         ? "secondary__btn__light"
                         : "secondary__btn"
                     }
-                    onClick={() =>
-                      handleRowclick(row.productUUId)
-                    }
+                    onClick={() => handleRowclick(row.productUUId)}
                   >
                     <TickIcon />
-                    {!checkList.includes(row.productUUId)
-                      ? "Select"
-                      : ""}
+                    {!checkList.includes(row.productUUId) ? "Select" : ""}
                   </button>
                   &nbsp;&nbsp;
-                  <button
+                  {/* <button
                     className="secondary__btn__light"
                     onClick={() => holdRowItem(row)}
                   >
                     <HoldIcon />
                     Hold
-                  </button>
+                  </button> */}
                 </TableCell>
                 <TableCell />
               </TableRow>

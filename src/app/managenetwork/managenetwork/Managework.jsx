@@ -78,7 +78,7 @@ const filteredApproval = approvalData.filter((request) => {
         "ManageNetwork/vendor/search-connected-networks",
         {},
         {
-          VendorMasterUUId: "4BF53476-C156-4AAC-B49C-3F5044C66540",
+          VendorMasterUUId: "b228cf6f-5db5-47dd-b74c-aa481b3aacb2",
           Status: 2,
           VendorType: 2,
           PageSize: 5,
