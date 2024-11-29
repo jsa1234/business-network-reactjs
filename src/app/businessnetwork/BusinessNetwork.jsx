@@ -20,6 +20,8 @@ const BusinessNetwork = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [connectClick, setconnectClick] = useState(false);
   const [vendorDetails,setVendorDetails]=useState({});
+  const [globalSearch, setGlobalSearch] = useState("");
+  const [globalMatch, setGlobalMatch] = useState("");
 
   useEffect(() => {
     // Load vendorDetails from sessionStorage when the component mounts
@@ -48,7 +50,7 @@ const BusinessNetwork = () => {
         {
           createdAt: formattedDate,
           modifiedAt: formattedDate,
-          requestFromVendorUUId: VendorMasterUUID,
+          requestFromVendorUUId: vendorDetails.vendorMasterUUId,
           requestedToVendorUUId: vendorUUID,
         }
       );
@@ -57,7 +59,27 @@ const BusinessNetwork = () => {
       console.error("Error fetching network data:", error);
     }
   };
-
+const handleGlobalSearch=async ()=>{
+  try {
+    const res = await CommonApi.getData(
+      "BusinessNetwork/vendor/global-search",
+      {},
+      {
+        VendorMasterUUId: vendorDetails.vendorMasterUUId,
+        SearchKey: globalSearch,
+        SearchFilter: globalMatch==""?null:globalMatch,
+        VendorType: vendorDetails.vendorType,
+        FilterType: productCategory,
+        PageSize :10,
+        PageNumber :1,
+      }
+    );
+    // setData(res.data.suggestionDetails);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    // Handle error, e.g., display error message to the user
+  }
+}
   const handleModalClose = () => {
     hasQueryParam && searchKeyword !== "" ? basicSearch() : fetchData();
 
@@ -88,8 +110,11 @@ const BusinessNetwork = () => {
         }
       );
       // console.log("suggestion: ", res);
-      setData(res.data.suggestionDetails);
-      setTotalCount(5);
+      if(res.data.suggestionDetails){
+
+        setData(res.data.suggestionDetails);
+        setTotalCount(5);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       // Handle error, e.g., display error message to the user
@@ -102,7 +127,7 @@ const BusinessNetwork = () => {
         "BusinessNetwork/vendor/basic-search",
         {},
         {
-          VendorMasterUUID: VendorMasterUUID,
+          VendorMasterUUID: vendorDetails.vendorMasterUUId,
           searchKey: searchKeyword,
           VendorType: VendorType,
           Status: 3,
@@ -124,9 +149,9 @@ const BusinessNetwork = () => {
     return category ? category.name : "Unknown"; // Default to "Unknown" if no match is found
   };
 
-  const VendorMasterUUID = useSelector(
-    (state) => state.vendor.VendorMasterUUID
-  );
+  // const VendorMasterUUID = useSelector(
+  //   (state) => state.vendor.VendorMasterUUID
+  // );
 
   const VendorType = useSelector((state) => state.vendor.VendorType);
 
@@ -142,6 +167,7 @@ const BusinessNetwork = () => {
   const [vendorCategoryData, setVendorCategoryData] = useState([]);
   const [locationsData, setLoationsData] = useState([]);
   const [ratingsData, setRatingsData] = useState([]);
+
   // Handle input changes
   const handleInputChange = (e, setterFunction) => {
     setterFunction(e.target.value);
@@ -231,12 +257,16 @@ const BusinessNetwork = () => {
       console.error("Error fetching network data:", error);
     }
   }
-
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleGlobalSearch();
+    }
+  };
   return (
     <div>
       <div className="global__search">
         <div className="global__search__input">
-          <select>
+          <select onChange={(e)=>setGlobalMatch(e.target.value)} >
           <option value="0">Select</option>
             <option value="1">Product Match</option>
             <option value="2">Service Match</option>
@@ -246,8 +276,10 @@ const BusinessNetwork = () => {
             <input
               type="text"
               placeholder="Search by name, mobile, location..."
+              onChange={(e)=>setGlobalSearch(e.target.value)}
+              onKeyDown={handleKeyDown}
             ></input>
-            <SearchDarkIcon className="cursor-pointer"/>
+            <SearchDarkIcon className="cursor-pointer" onClick={handleGlobalSearch}/>
           </div>
         </div>
         <button className="outer__btn" onClick={() => handleMinimize()}>Advance Filter</button>
