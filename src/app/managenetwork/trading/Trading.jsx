@@ -54,9 +54,8 @@ function Trading({ activeTab }) {
       setLoading(true);
     let data = await CommonApi.getData(
       `Stock/vendor/${networkDetails.vendorMstrUID}/stock`,
-      {},
+      {Authorization: `Bearer ${sessionStorage.getItem("token")}`},
       {
-        token:sessionStorage.getItem('token'),
         PageSize: 10, //need to be dynamic
         PageNumber: 1, //need to be dynamic
       }
@@ -150,11 +149,10 @@ function Trading({ activeTab }) {
         "Quotation/vendor/quotation",
         {},
         {
-          quotationRequestUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          requestFromVendorUUId: details.vendorMasterUUID,
-          requestedToVendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          status: 0,
-          expectedDeliveryDate: "2024-11-22T09:58:00.066Z",
+          requestFromVendorUUId: vendorDetails.vendorMasterUUId,
+          requestedToVendorUUId: networkDetails.vendorMstrUID,
+          status: 1,
+          expectedDeliveryDate: deliveryDate,
           quotationDetails: [...inputData],
         }
       );

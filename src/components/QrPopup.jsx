@@ -38,9 +38,13 @@ const QrPopup = ({mode, showModal, handleModalClose,handleSubmit,dateChange,comm
           mode=='hold'?
           <select onChange={(e)=>{commentsChange(e.target.value)}}>
             <option>Choose</option>
+            <option>Price to High</option>
+            <option>Stock Not Acceptable</option>
           </select>:
           <select onChange={(e)=>{commentsChange(e.target.value)}}>
             <option>Choose</option>
+            <option>Price to High</option>
+            <option>Stock Not Acceptable</option>
           </select>
           }
         </div>

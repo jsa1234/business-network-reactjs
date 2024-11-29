@@ -293,7 +293,7 @@ const QrRecieved = (props) => {
           }
         );
       }
-      if (response.status == "success") {
+      if (response?.success||response?.status=="success") {
         // alert("success");
         if (value == "send") {
           setToastMsg("Quotation Request Submitted SuccessFully!");

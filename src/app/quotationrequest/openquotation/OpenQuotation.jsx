@@ -77,12 +77,12 @@ const OpenQuotation = () => {
     <div className='table-container'>
         <div className="filter-group">
           <div className="form">
-            <Search className="fa fa-search"></Search>
+            {/* <Search className="fa fa-search"></Search>
             <input
               type="text"
               className="form-control form-input"
               placeholder="Search Product Name..."
-            />
+            /> */}
             {/* &nbsp;&nbsp;
             <label className="dropdown-list" htmlFor="dropdown">
               Sort by
