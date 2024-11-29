@@ -5,8 +5,6 @@ import CommonApi from "@/api/CommonApi"
 import Image from "next/image"
 
 const Page = () => {
-  const VendorMasterUUID = "C34E50DF-6B95-4228-85F0-14D7B7AC778B"
-
   const [companyDetails, setCompanyDetails] = useState({
     companyName: "",
     contactPerson: "",
@@ -24,18 +22,31 @@ const Page = () => {
   const [products, setProducts] = useState([])
   const [vendorLocation, setVendorLocation] = useState("")
   const [vendorDomain, setVendorDomain] = useState("")
+  const [vendorDetails, setVendorDetails] = useState({})
   // const [vendorDomainUUId, setVendorDomainUUId] = useState("")
   const [vendorServices, setVendorSrvices] = useState([])
-
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails")
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails)) // Parse if it's a JSON string
+    }
+  }, [])
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      getVendorDetails()
+    }
+  }, [vendorDetails])
   const getVendorDetails = async () => {
     try {
       const res = await CommonApi.getData(
-        `Vendor/${VendorMasterUUID}/details`,
+        `Vendor/${vendorDetails.vendorMasterUUId}/details`,
         {},
         {}
       )
 
-      console.log(res.data)
+      // console.log(res.data)
 
       setCompanyDetails((prev) => {
         return { ...prev, ...res.data }
@@ -43,6 +54,9 @@ const Page = () => {
 
       getLocations(res.data.locationId)
       getBusinessDomains(res.data.vendorDomainUUId)
+      // console.log("vendor", res.data.vendorDomainUUId)
+      getProducts(res.data.vendorDomainUUId)
+      getBusinessSegments()
     } catch (error) {
       console.error("Error fetching vendor details:", error)
     }
@@ -51,7 +65,7 @@ const Page = () => {
   const getBusinessDomains = async (domainId) => {
     try {
       const res = await CommonApi.getData(`Vendor/business-domain`, {}, {})
-      console.log("Business Domains Response:", res.data)
+      // console.log("Business Domains Response:", res.data)
 
       // Normalize to lowercase for comparison, handle undefined
       const normalizedDomainId = domainId?.toLowerCase?.() || ""
@@ -60,6 +74,8 @@ const Page = () => {
       )
 
       setVendorDomain(domain ? domain.domainName : "Invalid domain")
+
+      // console.log("domain", domain)
 
       // If domain is valid, fetch services
       if (domain) {
@@ -87,24 +103,36 @@ const Page = () => {
       const res = await CommonApi.getData(
         `Vendor/business-segments`,
         {},
-        { vendorMasterUUId: VendorMasterUUID }
+        { vendorMasterUUId: vendorDetails.vendorMasterUUId }
       )
 
-      setBusinessSegment(res.data[0]?.vendorSegments || [])
+      console.log("segments", res.data[0].vendorSegments)
+
+      setBusinessSegment(res.data[0].vendorSegments)
     } catch (error) {
       console.error("Error fetching business segments:", error)
     }
   }
 
-  const getProducts = async () => {
+  const getProducts = async (domainId) => {
     try {
       const res = await CommonApi.getData(
-        `Vendor/${VendorMasterUUID}/products`,
+        `Vendor/vendor-products`,
         {},
-        {}
+        {
+          vendorMasterUUId: vendorDetails.vendorMasterUUId,
+          domainUUId: domainId,
+        }
       )
 
-      setProducts(res.data)
+      console.log({
+        vendorMasterUUId: vendorDetails.vendorMasterUUId,
+        domainUUId: domainId,
+      })
+
+      console.log("products", res.data)
+
+      setProducts(res.data[0].vendorProducts)
     } catch (error) {
       console.error("Error fetching products:", error)
     }
@@ -115,21 +143,15 @@ const Page = () => {
       const res = await CommonApi.getData(
         `Vendor/vendor-services`,
         {},
-        { vendorMasterUUId: VendorMasterUUID, domainUUId: domain }
+        { vendorMasterUUId: vendorDetails.vendorMasterUUId, domainUUId: domain }
       )
 
-      console.log("services", res.data)
+      // console.log("services", res.data[0].vendorServices)
+      setVendorSrvices(res.data[0].vendorServices)
     } catch (error) {
       console.error("Error fetching business segments:", error)
     }
   }
-
-  useEffect(() => {
-    getVendorDetails()
-    getBusinessSegments()
-    getProducts()
-    getBusinessDomains()
-  }, [])
 
   const urlList = ["/", "/editprofile"]
 
@@ -159,12 +181,15 @@ const Page = () => {
                 <p className='pt-2 text-2xl mb-8'>{companyDetails.gstNo}</p>
               </div>
               <div>
-                <a
+                {/* <a
                   href='companyprofile/editprofile'
                   className='text-2xl font-semibold bg-orange-500  px-6 py-4 text-white rounded-md hover:bg-orange-500'
                 >
                   Edit Profile
-                </a>
+                </a> */}
+                <button className='text-2xl font-semibold bg-orange-500  px-6 py-4 text-white rounded-md hover:bg-orange-500'>
+                  Edit Profile
+                </button>
               </div>
             </div>
           </div>
@@ -214,16 +239,20 @@ const Page = () => {
             <div className='w-1/2'>
               <h2 className='text-3xl font-medium mb-8'>Business Segments</h2>
               <div className='flex flex-wrap gap-6'>
-                {businessSegment.map((segment, index) => (
-                  <div
-                    key={index}
-                    className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
-                  >
-                    <h3 className='text-xl font-semibold'>
-                      {segment.segmentName}
-                    </h3>
-                  </div>
-                ))}
+                {businessSegment.length === 0 ? (
+                  <p className='text-2xl font-semibold'>No Segments selected</p>
+                ) : (
+                  businessSegment.map((segment, index) => (
+                    <div
+                      key={index}
+                      className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
+                    >
+                      <h3 className='text-xl font-semibold'>
+                        {segment.segmentName}
+                      </h3>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -233,16 +262,20 @@ const Page = () => {
           <div className='  rounded-2xl bg-white mb-8'>
             <h2 className='text-3xl font-medium mb-8'>Services</h2>
             <div className='flex flex-wrap gap-6'>
-              {vendorServices.map((service, index) => (
-                <div
-                  key={index}
-                  className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
-                >
-                  <h3 className='text-xl font-semibold'>
-                    {service.serviceName}
-                  </h3>
-                </div>
-              ))}
+              {vendorServices.length === 0 ? (
+                <p className='text-2xl font-semibold'>No services selected</p>
+              ) : (
+                vendorServices.map((service, index) => (
+                  <div
+                    key={index}
+                    className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
+                  >
+                    <h3 className='text-xl font-semibold'>
+                      {service.serviceName}
+                    </h3>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </section>
@@ -250,16 +283,20 @@ const Page = () => {
           <div className='  rounded-2xl bg-white mb-8'>
             <h2 className='text-3xl font-medium mb-8'>Products</h2>
             <div className='flex flex-wrap gap-6'>
-              {products.map((product, index) => (
-                <div
-                  key={index}
-                  className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
-                >
-                  <h3 className='text-xl font-semibold'>
-                    {product.productName}
-                  </h3>
-                </div>
-              ))}
+              {products.length === 0 ? (
+                <p className='text-2xl font-semibold'>No products</p>
+              ) : (
+                products.map((product, index) => (
+                  <div
+                    key={index}
+                    className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
+                  >
+                    <h3 className='text-xl font-semibold'>
+                      {product.productName}
+                    </h3>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </section>

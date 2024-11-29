@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"; 
@@ -8,15 +8,6 @@ import Buttons from "./Buttons/Buttons";
 const Navbar = () => {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [vendorDetails,setVendorDetails]=useState({});
-
-  useEffect(() => {
-    // Load vendorDetails from sessionStorage when the component mounts
-    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
-    if (storedVendorDetails) {
-      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
-    }
-  }, []);
 const router=useRouter()
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -79,7 +70,7 @@ const router=useRouter()
                 <p>
                   Hello,{" "}
                   <span className="text-[#464255] text-lg font-semibold leading-normal">
-                    {vendorDetails?.companyName}
+                    MS Market
                   </span>
                 </p>
               </div>
@@ -111,13 +102,13 @@ const router=useRouter()
                        Logout
                      </button>
                    </li>
-                   <li className="px-4 py-2 hover:bg-gray-100 pb-4">
+                  {/*  <li className="px-4 py-2 hover:bg-gray-100 pb-4">
                      <button
                        className="block w-full text-center  text-white py-2 rounded header-button"
                      >
                        Update
                      </button>
-                   </li>
+                   </li> */}
                  </ul>
                </div>
                

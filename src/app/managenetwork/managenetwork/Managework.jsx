@@ -21,14 +21,14 @@ function Managework(props) {
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
   };
-  const [vendorDetails,setVendorDetails]=useState({});
+  const [vendorDetails, setVendorDetails] = useState({});
   useEffect(() => {
     // Load vendorDetails from sessionStorage when the component mounts
-    const storedVendorDetails = sessionStorage.getItem("vendorDetails");    
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
     if (storedVendorDetails) {
-      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+      setVendorDetails(JSON.parse(storedVendorDetails)); // Parse if it's a JSON string
     }
-  }, []); 
+  }, []);
   //open popup//
   const [modalShow, setModalShow] = useState(false);
 
@@ -41,7 +41,7 @@ function Managework(props) {
 
   useEffect(() => {
     console.log(process.env.API_URL);
- /*    getApprovalPending(); */
+    /*    getApprovalPending(); */
     const fetchApprovalPending = async () => {
       try {
 const  data = await CommonApi.getData(
@@ -56,31 +56,22 @@ const  data = await CommonApi.getData(
         searchString: searchTerm,
         sortBy: sortBy
       }
-    );
-    console.log("MG.jsx", data);
-    setApprovalData(data.data.vendorDetails || []);
-  } catch (error) {
-    console.error("Error fetching network data:", error);
-  }
-   
-  };
-/*   useEffect(() => {
+    };
+    /*   useEffect(() => {
     getApprovalPending();
   }, []); */
-  if (vendorDetails && vendorDetails.vendorMasterUUId) {
-    fetchApprovalPending(); // Call the function inside the effect
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      fetchApprovalPending(); // Call the function inside the effect
     }
-}, [searchTerm, sortBy,vendorDetails]); 
-const filteredApproval = approvalData.filter((request) => {
-  return (
-    request.companyName &&
-    request.companyName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-});
-
+  }, [searchTerm, sortBy, vendorDetails]);
+  const filteredApproval = approvalData.filter((request) => {
+    return (
+      request.companyName &&
+      request.companyName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   useEffect(() => {
-
     const fetchNetworks = async () => {
     try {
       const data = await CommonApi.getData(
@@ -97,24 +88,21 @@ const filteredApproval = approvalData.filter((request) => {
         }
       );
 
-      setNetworkData(data.data.vendorDetails || []);
-    } catch (error) {
-      console.error("Error fetching network data:", error);
+        setNetworkData(data.data.vendorDetails || []);
+      } catch (error) {
+        console.error("Error fetching network data:", error);
+      }
+    };
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      fetchNetworks(); // Call the function inside the effect
     }
-  };
-  if (vendorDetails && vendorDetails.vendorMasterUUId) {
-    fetchNetworks(); // Call the function inside the effect
-    
-  }
-}, [searchTerm, sortBy,vendorDetails]); 
-const filteredMynetwork = networkData.filter((request) => {
-  return (
-    request.companyName &&
-    request.companyName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-});
-  
-
+  }, [searchTerm, sortBy, vendorDetails]);
+  const filteredMynetwork = networkData.filter((request) => {
+    return (
+      request.companyName &&
+      request.companyName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   useEffect(() => {
     const fetchRequestPending = async () => {
@@ -129,7 +117,7 @@ const filteredMynetwork = networkData.filter((request) => {
             PageSize: 5,
             PageNumber: 1,
             searchString: searchTerm,
-            sortBy: sortBy // Make sure to include sorting if it's necessary
+            sortBy: sortBy, // Make sure to include sorting if it's necessary
           }
         );
         setRequestPending(data.data.vendorDetails || []);
@@ -138,11 +126,9 @@ const filteredMynetwork = networkData.filter((request) => {
       }
     };
     if (vendorDetails && vendorDetails.vendorMasterUUId) {
-    
       fetchRequestPending(); // Call the function inside the effect
     }
-
-  }, [searchTerm, sortBy,vendorDetails]); 
+  }, [searchTerm, sortBy, vendorDetails]);
   const filteredRequests = requestPending.filter((request) => {
     return (
       request.companyName &&
@@ -175,7 +161,6 @@ const filteredMynetwork = networkData.filter((request) => {
       alert("Error approving connection. Please try again.");
     }
   };
-  
 
   //end//
 
@@ -201,7 +186,10 @@ const filteredMynetwork = networkData.filter((request) => {
             <th>Vendor Category</th>
             <th>Action</th>
           </tr>
-        ) : props.activeTab === "network" ? ( // Add your new tab condition here
+        ) : props.activeTab === "network" ? ( 
+          
+          
+          // Add your new tab condition here
           <tr>
             <th>
               <div className="quotationwraper">
@@ -215,10 +203,11 @@ const filteredMynetwork = networkData.filter((request) => {
 
                 <div className="grid grid-cols-12 gap-4">
                   {filteredMynetwork.length > 0 ? (
-                   filteredMynetwork.map((vendorDetails, index) => (
+                    filteredMynetwork.map((vendorDetails, index) => (
                       <Networkcard
                         key={index}
-                        vendorMstrUID={vendorDetails.vendorMasterUUID}
+                        
+                        vendorMstrUID={vendorDetails.vendorMasterUUID}                                      
                         name={vendorDetails.companyName || "--"}
                         gst={vendorDetails.gstNo || "--"}
                         contact={vendorDetails.contactNo || "--"}
@@ -228,7 +217,7 @@ const filteredMynetwork = networkData.filter((request) => {
                       />
                     ))
                   ) : (
-                    <p>No networks available</p> 
+                    <p>No networks available</p>
                   )}
                 </div>
               </div>
@@ -241,7 +230,7 @@ const filteredMynetwork = networkData.filter((request) => {
     const tableBodyContent = (
       <tbody className="text-left">
         {props.activeTab === "approval" &&
-         filteredApproval.map((vendorDetails, index) => (
+          filteredApproval.map((vendorDetails, index) => (
             <tr key={`approval_${index}`}>
               <td>{vendorDetails.gstNo || "--"}</td>
               <td>{vendorDetails.companyName || "--"}</td>
@@ -255,7 +244,8 @@ const filteredMynetwork = networkData.filter((request) => {
                     handleApprove(vendorDetails.businessNetworkUUID)
                   }
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2"
+                  >
                     <TickIcon />
                     Approval
                   </div>
@@ -273,7 +263,10 @@ const filteredMynetwork = networkData.filter((request) => {
                 </button>
 
                 {modalShow && (
-                  <Rejectpopup handleModalClose={handleModalToggle} busid={vendorDetails.businessNetworkUUID}/>
+                  <Rejectpopup
+                    handleModalClose={handleModalToggle}
+                    busid={vendorDetails.businessNetworkUUID}
+                  />
                 )}
               </td>
             </tr>
@@ -291,9 +284,7 @@ const filteredMynetwork = networkData.filter((request) => {
                 <td>{vendorDetails.contactNo || "--"}</td>
                 <td>{vendorDetails.vendorType || "--"}</td>
                 <td>
-                  <button className="status-approvel"
-                   
-                  >
+                  <button className="status-approvel">
                     Waiting for approval
                   </button>
                 </td>
@@ -303,7 +294,7 @@ const filteredMynetwork = networkData.filter((request) => {
             // Show a message when there are no pending requests
             <tr>
               <td colSpan="6" className="text-center">
-                No pending requests available
+                No pending requests available                    
               </td>
             </tr>
           ))}
