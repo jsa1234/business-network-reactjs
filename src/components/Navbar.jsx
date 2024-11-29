@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"; 
@@ -8,15 +8,6 @@ import Buttons from "./Buttons/Buttons";
 const Navbar = () => {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [vendorDetails,setVendorDetails]=useState({});
-
-  useEffect(() => {
-    // Load vendorDetails from sessionStorage when the component mounts
-    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
-    if (storedVendorDetails) {
-      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
-    }
-  }, []);
 const router=useRouter()
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -79,7 +70,7 @@ const router=useRouter()
                 <p>
                   Hello,{" "}
                   <span className="text-[#464255] text-lg font-semibold leading-normal">
-                    {vendorDetails?.companyName}
+                    MS Market
                   </span>
                 </p>
               </div>
@@ -99,7 +90,7 @@ const router=useRouter()
                  <div className="absolute right-0 mt-4 mb-4 bg-white  rounded-[10px] w-[300px] text-center  profile-header">
                  <ul className="text-lg">
                    <li className="px-4 py-2 pt-4  hover:bg-gray-100">
-                     <Link href="/companyprofile" className="block w-full text-center  text-white py-2 rounded header-button">
+                     <Link href="/companyprofile" className="block">
                        Company Profile
                      </Link>
                    </li>
@@ -112,11 +103,11 @@ const router=useRouter()
                      </button>
                    </li>
                   {/*  <li className="px-4 py-2 hover:bg-gray-100 pb-4">
-                      <button
+                     <button
                        className="block w-full text-center  text-white py-2 rounded header-button"
                      >
                        Update
-                     </button> 
+                     </button>
                    </li> */}
                  </ul>
                </div>
