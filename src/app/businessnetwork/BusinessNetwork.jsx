@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import ChevronIcon from "../../../public/assests/icons/chevron-right.svg";
 import SearchIcon from "../../../public/assests/icons/search_btn.svg";
+import SearchDarkIcon from "../../../public/assests/icons/search-dark.svg";
 import TimesIcon from "../../../public/assests/icons/times.svg";
 import BNcard from "@/components/BNcard";
 import Popup from "@/components/Popup";
@@ -18,7 +19,21 @@ const BusinessNetwork = () => {
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [connectClick, setconnectClick] = useState(false);
+  const [vendorDetails,setVendorDetails]=useState({});
 
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      
+    }
+  }, [vendorDetails]); 
   const handlebuttonClick = async (VendorMasterUUID, vendorUUID) => {
     const today = new Date();
     const formattedDate = today.toISOString().split("T")[0];
@@ -143,15 +158,15 @@ const BusinessNetwork = () => {
           "BusinessNetwork/vendor/search/networks",
           {},
           {
-            VendorMasterUUID: VendorMasterUUID,
+            VendorMasterUUID:  vendorDetails.vendorMasterUUId,
+            VendorType: vendorDetails.vendorType,
             gstNo: gstNo,
             mobileNo: mobileNo,
             businessName: businessName,
             productCategory: productCategory,
-            vendorCategory: vendorCategory,
+            VendorSegment: vendorCategory,
             location: location,
             rating: rating,
-            VendorType: VendorType,
             Status: 3,
             PageSize: rowsPerPage,
             PageNumber: page,
@@ -232,7 +247,7 @@ const BusinessNetwork = () => {
               type="text"
               placeholder="Search by name, mobile, location..."
             ></input>
-            <SearchIcon />
+            <SearchDarkIcon className="cursor-pointer"/>
           </div>
         </div>
         <button className="outer__btn" onClick={() => handleMinimize()}>Advance Filter</button>
@@ -243,7 +258,7 @@ const BusinessNetwork = () => {
           <h1>Advance Filter</h1>
           <TimesIcon
             onClick={() => handleMinimize()}
-            className={!showModal ? "rotate" : ""}
+            className={!showModal ? "rotate cursor-pointer" : "cursor-pointer"}
           />
           {/* &times; */}
         </div>
@@ -297,7 +312,7 @@ const BusinessNetwork = () => {
               </select>
             </div>
             <div className="input__group col-span-3">
-              <label htmlFor="VendorInpt">By Vendor Category</label>
+              <label htmlFor="VendorInpt">By Vendor Segement</label>
               <select
                 id="VendorInpt"
                 value={vendorCategory}
