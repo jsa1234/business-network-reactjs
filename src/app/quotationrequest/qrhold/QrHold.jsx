@@ -273,8 +273,7 @@ const QrHold = () => {
       inputData.push(mData);
     }
     let response;
-    if(vendorDetails.vendorType
-==2){
+    if(vendorDetails.vendorType==2 && value == "send"){
       response = await CommonApi.postData(
         `Purchase/vendor/request`,
         {},
@@ -290,20 +289,20 @@ const QrHold = () => {
     } else{
 
       response = await CommonApi.putData(
-        `Quotation/vendor/${qrUuid}/quotation`,
+        `Quotation/vendor/quotation`,
         {},
         {
           quotationRequestUUId: qrUuid,
-          requestFromVendorUUId: vendorDetails.vendorMasterUUId,//needs to be dynamic 
-          requestedToVendorUUId:  quotationDetails.vendorMasterUUId,//needs to be dynamic
+          requestFromVendorUUId: vendorDetails.vendorMasterUUId,
+          requestedToVendorUUId: quotationDetails.vendorMasterUUId,
           status: constants.quotationStatus[value],
-          expectedDeliveryDate: deliveryDate,
+          expectedDeliveryDate: deliveryDate==""?null:deliveryDate,
           comments: comments,
           quotationDetails: [...inputData],
         }
       );
     } 
-    if (response.status == "success") {
+    if (response?.success||response?.status=="success") {
       // alert("success");
       if (value == "send") {
         setToastMsg("Quotation Request Submitted SuccessFully!");

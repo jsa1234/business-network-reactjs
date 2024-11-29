@@ -95,7 +95,7 @@ const PurchaseRequest = () => {
           <input
             type="text"
             className="form-control form-input"
-            placeholder="Search Product Name..."
+            placeholder="Search Name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
           />

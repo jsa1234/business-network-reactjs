@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"; 
@@ -8,6 +8,15 @@ import Buttons from "./Buttons/Buttons";
 const Navbar = () => {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [vendorDetails,setVendorDetails]=useState({});
+
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
 const router=useRouter()
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -70,7 +79,7 @@ const router=useRouter()
                 <p>
                   Hello,{" "}
                   <span className="text-[#464255] text-lg font-semibold leading-normal">
-                    MS Market
+                    {vendorDetails?.companyName}
                   </span>
                 </p>
               </div>

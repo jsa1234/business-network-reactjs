@@ -5,7 +5,7 @@ class CommonAPI {
   defaultHeaders = {
     "Content-Type": "application/json",
     // You can add other common headers here
-    Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`, // If you need an Authorization token
+ // If you need an Authorization token
   };
   getData(url, headers = {},params = {}) {
     // console.log(process.env.NEXT_PUBLIC_API_URL);
