@@ -157,7 +157,7 @@ const Page = () => {
               <div>
                 <a
                   href='companyprofile/editprofile'
-                  className='text-2xl font-semibold bg-gray-950 px-6 py-4 text-white rounded-md hover:bg-black'
+                  className='text-2xl font-semibold bg-orange-500  px-6 py-4 text-white rounded-md hover:bg-orange-500'
                 >
                   Edit Profile
                 </a>
