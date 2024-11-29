@@ -210,12 +210,10 @@ const Page = () => {
                   <div style={{ flex: 1 }}>{companyDetails.contactNumber}</div>
                 </div>
                 <div className='flex mb-4'>
-                  <p style={{ flex: 1 }} className='font-medium break-words'>
+                  <div style={{ flex: 1 }} className='font-medium'>
                     Email:
-                  </p>
-                  <p className='break-words' style={{ flex: 1 }}>
-                    {companyDetails.email}
-                  </p>
+                  </div>
+                  <div style={{ flex: 1 }}>{companyDetails.email}</div>
                 </div>
                 <div className='flex mb-4'>
                   <div style={{ flex: 1 }} className='font-medium'>
