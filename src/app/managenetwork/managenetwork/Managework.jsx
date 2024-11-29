@@ -50,7 +50,7 @@ const  data = await CommonApi.getData(
       {
         VendorMasterUUId: vendorDetails.vendorMasterUUId, //need to be dynamic
         Status: 1, //need to be dynamic
-        VendorType: 2, //need to be dynamic
+        VendorType: vendorDetails.vendorType, //need to be dynamic
         PageSize: 5, //need to be dynamic
         PageNumber: 1, //need to be dynamic
         searchString: searchTerm,
@@ -89,7 +89,7 @@ const filteredApproval = approvalData.filter((request) => {
         {
           VendorMasterUUId: vendorDetails.vendorMasterUUId,
           Status: 2,
-          VendorType: 2,
+          VendorType: vendorDetails.vendorType,
           PageSize: 5,
           PageNumber: 1,                                                                                                                                                                                                     
           searchString: searchTerm,
@@ -125,7 +125,7 @@ const filteredMynetwork = networkData.filter((request) => {
           {
             VendorMasterUUId: vendorDetails.vendorMasterUUId,
             Status: 1,
-            VendorType: 1,
+            VendorType: vendorDetails.vendorType,
             PageSize: 5,
             PageNumber: 1,
             searchString: searchTerm,
@@ -161,7 +161,7 @@ const filteredMynetwork = networkData.filter((request) => {
           status: 2,
           businessNetworkUUId: busid,
            comment: "string",
-           reasonId: 0,
+           reasonId: null,
           
         }
       );
@@ -277,8 +277,10 @@ const filteredMynetwork = networkData.filter((request) => {
                 )}
               </td>
             </tr>
-          ))}
-
+          ))
+          
+          }
+{props.activeTab === "approval" &&filteredApproval.length==0? <tr className="col-span-12 text-center"><td colSpan={6}>No Pending Approvals Found</td></tr>:""}
         {props.activeTab === "request" &&
           (filteredRequests.length > 0 ? (
             filteredRequests.map((vendorDetails, index) => (

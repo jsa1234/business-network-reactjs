@@ -108,18 +108,18 @@ const PurchaseDetails = () => {
       const statusMapping = {
         "Order Requested": {
           status: 1,
-          PurchaseRequestUUId: "DBC7B93D-AFB1-4432-87EE-DE5A7508A821",
-          VendorMasterUUId: "C34E50DF-6B95-4228-85F0-14D7B7AC778B",
+          PurchaseRequestUUId: purchase.purchaseRequestUUId,
+          VendorMasterUUId: vendorDetails.vendorMasterUUId,
         },
         "Order Shipped": {
           status: 2,
-          PurchaseRequestUUId: "F309B9B2-AA91-401A-9BAF-0926E47F8CD5",
-          VendorMasterUUId: "C82ACA22-8F7F-4F62-AF48-94005850C5E4",
+          PurchaseRequestUUId: purchase.purchaseRequestUUId,
+          VendorMasterUUId: vendorDetails.vendorMasterUUId,
         },
         "Estimated Delivery": {
           status: 3,
-          PurchaseRequestUUId: "FC660FE4-FC2F-4383-9DF6-022F3020394F",
-          VendorMasterUUId: "3D05C3A6-581A-487B-A798-471107312D66",
+          PurchaseRequestUUId: purchase.purchaseRequestUUId,
+          VendorMasterUUId: vendorDetails.vendorMasterUUId,
         },
       };
 

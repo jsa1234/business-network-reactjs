@@ -74,7 +74,7 @@ const handleGlobalSearch=async ()=>{
         PageNumber :1,
       }
     );
-    // setData(res.data.suggestionDetails);
+    setData(res.data.suggestionDetails);
   } catch (error) {
     console.error("Error fetching data:", error);
     // Handle error, e.g., display error message to the user
@@ -162,7 +162,7 @@ const handleGlobalSearch=async ()=>{
   const [vendorCategory, setVendorCategory] = useState("");
   const [location, setLocation] = useState("");
   const [rating, setRating] = useState("");
-  const [showModal, setshowModal] = useState(true);
+  const [showModal, setshowModal] = useState(false);
   const [productCategoryData, setProductCategoryData] = useState([]);
   const [vendorCategoryData, setVendorCategoryData] = useState([]);
   const [locationsData, setLoationsData] = useState([]);
