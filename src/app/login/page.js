@@ -81,7 +81,7 @@ const Page = () => {
       <div className="w-1/2 h-full flex flex-col items-center justify-center">
         <div className="w-[400px] mb-20">
           <Image
-            src="/logo.svg"
+            src="/assests/olopo-logo.png"
             alt="Logo"
             width={120}
             height={45}
