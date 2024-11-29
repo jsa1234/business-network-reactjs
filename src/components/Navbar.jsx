@@ -46,8 +46,8 @@ const router=useRouter()
               <Image
                 src="/assests/olopo-logo.png"
                 alt="Logo"
-                width={120}
-                height={45}
+                width={86}
+                height={30}
               />
             </Link>
 
