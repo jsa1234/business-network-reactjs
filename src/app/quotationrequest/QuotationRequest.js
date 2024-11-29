@@ -25,6 +25,7 @@ const QuotationRequest = () => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [vendorDetails,setVendorDetails]=useState({});
+
   const handleClose = () => {
     setOpen(false);
   };

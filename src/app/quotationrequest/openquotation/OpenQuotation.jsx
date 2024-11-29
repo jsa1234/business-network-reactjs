@@ -15,6 +15,7 @@ const OpenQuotation = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [vendorDetails,setVendorDetails]=useState({});
   const [loading,setLoading]=useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [totalCount, setTotalCount] = useState(0);
     const [data,setData]=useState([
     ]);
@@ -73,6 +74,7 @@ const OpenQuotation = () => {
         setLoading(false)
       }
     };
+
   return (
     <div className='table-container'>
         <div className="filter-group">
