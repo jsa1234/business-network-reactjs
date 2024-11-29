@@ -144,17 +144,7 @@ function QuotationSend() {
           </TableFooter>
         </Table>
 
-        <div className="reason">
-          <p>
-            <span>Reason:</span>
-          </p>
-          <p>
-            All products meet our high standards of quality and safety before
-            they are shipped. We want to make sure you receive the best possible
-            item. We appreciate your patience and understanding, and we expect
-            to resolve this shortly. Thank you for your support!
-          </p>
-        </div>
+        
       </TableContainer>
     </>
   );

@@ -109,6 +109,14 @@ const Page = () => {
 
         {/* Render the QuotationSend component */}
         <QuotationSend />
+        <div className="reason">
+          <p>
+            <span>Reason:</span>
+          </p>
+          <p>
+            {sendRequest.comments}
+          </p>
+        </div>
       </div>
     </div>
   );

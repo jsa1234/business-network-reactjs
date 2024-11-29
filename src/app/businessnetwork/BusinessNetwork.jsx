@@ -31,7 +31,7 @@ const BusinessNetwork = () => {
   useEffect(() => {
     // This effect will run when vendorDetails is updated
     if (vendorDetails && vendorDetails.vendorMasterUUId) {
-      
+      hasQueryParam && searchKeyword !== "" ? basicSearch() : fetchData();
     }
   }, [vendorDetails]); 
   const handlebuttonClick = async (VendorMasterUUID, vendorUUID) => {
@@ -63,9 +63,9 @@ const BusinessNetwork = () => {
 
     setconnectClick(!connectClick);
   };
-  useEffect(() => {
-    hasQueryParam && searchKeyword !== "" ? basicSearch() : fetchData();
-  }, [page, rowsPerPage, searchKeyword]);
+  // useEffect(() => {
+  //   hasQueryParam && searchKeyword !== "" ? basicSearch() : fetchData();
+  // }, [page, rowsPerPage, searchKeyword]);
 
   const fetchData = async () => {
     try {
@@ -73,7 +73,7 @@ const BusinessNetwork = () => {
         "BusinessNetwork/vendor/suggestions",
         {},
         {
-          VendorMasterUUID: VendorMasterUUID,
+          VendorMasterUUID: vendorDetails.vendorMasterUUId,
           gstNo: gstNo,
           mobileNo: mobileNo,
           businessName: businessName,
@@ -81,8 +81,8 @@ const BusinessNetwork = () => {
           vendorCategory: vendorCategory,
           location: location,
           rating: rating,
-          VendorType: VendorType,
-          Status: 3,
+          VendorType: vendorDetails.vendorType,
+          Status: 1,
           PageSize: rowsPerPage,
           PageNumber: page,
         }

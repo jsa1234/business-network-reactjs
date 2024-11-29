@@ -23,7 +23,15 @@ const NetworkProfile = () => {
   //   (state) => state.vendor.VendorMasterUUID
   // );
 
-  const VendorMasterUUID = "C34E50DF-6B95-4228-85F0-14D7B7AC778B"
+  const [vendorDetails, setVendorDetails] = useState({})
+
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails")
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails)) // Parse if it's a JSON string
+    }
+  }, [])
 
   const [companyDetails, setCompanyDetails] = useState({
     companyName: "",
@@ -33,7 +41,18 @@ const NetworkProfile = () => {
     email: "",
     address: "",
     vendorType: "",
+    locationId: "",
+    domainUUId: "",
+    logo: "",
   })
+
+  const [vendorLocation, setVendorLocation] = useState("")
+  const [vendorDomain, setVendorDomain] = useState("")
+  // const [vendorDomainUUId, setVendorDomainUUId] = useState("")
+  const [vendorServices, setVendorSrvices] = useState([])
+
+  const [locations, setLocations] = useState([])
+
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setCompanyDetails((prevDetails) => ({
@@ -48,12 +67,24 @@ const NetworkProfile = () => {
   }
 
   // Fetch business domain
-  const getBusinessDomain = async () => {
+  const getBusinessDomains = async (domainId) => {
     try {
-      const res = await CommonApi.getData("Vendor/business-domain", {}, {})
-      console.log("Business Domain Response:", res.data) // Debugging
-      const domain = res.data.flatMap((item) => item)
-      setBusinessDomain(domain)
+      const res = await CommonApi.getData(`Vendor/business-domain`, {}, {})
+      // console.log("Business Domains Response:", res.data)
+
+      // Normalize to lowercase for comparison, handle undefined
+      const normalizedDomainId = domainId?.toLowerCase?.() || ""
+      const domain = res.data.find(
+        (dom) => dom.domainUUId?.toLowerCase() === normalizedDomainId
+      )
+
+      setVendorDomain(domain ? domain.vendorDomainName : "Invalid domain")
+      console.log
+
+      // If domain is valid, fetch services
+      // if (domain) {
+      //   getServices(domain.domainUUId)
+      // }
     } catch (error) {
       console.error("Error fetching business domains:", error)
     }
@@ -63,13 +94,13 @@ const NetworkProfile = () => {
   const getBusinessSegment = async () => {
     try {
       const res = await CommonApi.getData(
-        `Vendor/${VendorMasterUUID}/business-segments`, // Use vendorMasterUUId here
+        `Vendor/business-segments`, // Use vendorMasterUUId here
         {},
-        { vendorMasterUUId: VendorMasterUUID }
+        { vendorMasterUUId: vendorDetails.vendorMasterUUId }
       )
-      console.log("Business Segment Response:", res.data)
-      const segments = res.data.flatMap((item) => item.segmentDetails)
-      setBusinessSegment(segments)
+      // console.log("Business Segment Response:", res.data[0].segmentDetails)
+      
+      setBusinessSegment(res.data[0].segmentDetails)
     } catch (error) {
       console.error("Error fetching business segments:", error)
     }
@@ -94,8 +125,10 @@ const NetworkProfile = () => {
 
   // Fetch products on component mount
   useEffect(() => {
-    getProducts()
-  }, [])
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      getProducts()
+    }
+  }, [vendorDetails])
 
   // Toggles the visibility of the dropdown
   const handleToggleDropdown = () => {
@@ -115,7 +148,7 @@ const NetworkProfile = () => {
   const getVendorDetails = async () => {
     try {
       const res = await CommonApi.getData(
-        `Vendor/${VendorMasterUUID}/details`,
+        `Vendor/${vendorDetails.vendorMasterUUId}/details`,
         {},
         {}
       )
@@ -126,9 +159,26 @@ const NetworkProfile = () => {
         return { ...prev, ...res.data }
       })
 
+      getLocations(res.data.locationId)
+      getBusinessDomains(res.data.vendorDomainUUId)
+
       console.log("companydetails", companyDetails)
     } catch (error) {
       console.error("Error fetching products:", error)
+    }
+  }
+
+  const getLocations = async (locationId) => {
+    try {
+      const res = await CommonApi.getData("Vendor/locations", {}, {})
+
+      setLocations(res.data)
+
+      // Find the location based on the given locationId
+      const location = res.data.find((loc) => loc.locationId === locationId)
+      setVendorLocation(location ? location.location : "Location not found")
+    } catch (error) {
+      console.error("Error fetching locations:", error)
     }
   }
 
@@ -149,9 +199,12 @@ const NetworkProfile = () => {
     }
   }
   useEffect(() => {
-    getServices()
-    getVendorDetails()
-  }, [])
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      getServices()
+      getVendorDetails()
+    }
+  }, [vendorDetails])
+
   const handleToggleDropdownServices = () => {
     setIsDropdownOpenService((prevState) => !prevState)
   }
@@ -164,15 +217,16 @@ const NetworkProfile = () => {
   }
   //end//
   useEffect(() => {
-    getBusinessDomain()
-    getBusinessSegment()
-    let data = handleSegment()
-    // setPreviousData(data);
-    setSelectedDomain(data.domain)
-    setSelectedSegment(data.segments)
-    setProducts(data.productsData)
-    setServices(data.productsData)
-  }, [])
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      getBusinessSegment()
+      let data = handleSegment()
+      // setPreviousData(data);
+      setSelectedDomain(data.domain)
+      setSelectedSegment(data.segments)
+      setProducts(data.productsData)
+      setServices(data.productsData)
+    }
+  }, [vendorDetails])
   //submit//
 
   const handleSegment = async () => {
@@ -181,7 +235,7 @@ const NetworkProfile = () => {
         "Vendor/preferences",
         {},
         {
-          vendorMasterUUId: VendorMasterUUID,
+          vendorMasterUUId: vendorDetails.vendorMasterUUId,
           domainUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           vendorSegmentsDetail: [
             {
@@ -231,44 +285,7 @@ const NetworkProfile = () => {
       console.error("Error while updating preferences:", error)
     }
   }
-  //company details//
 
-  //new//
-  /*  const handleCompanyDetails = async () => {
-    try {
-      const response = await CommonApi.putData(
-        "Vendor/company-details",
-        {
-          vendorMasterUUId:VendorMasterUUID,
-          companyName: "string",
-          contactPerson: "string",
-          gstNo: "string",
-          contactNumber: "string",
-          email: "string",
-          address: "string",
-          rating: 0,
-          locationId: 0,
-          vendorERPStockAPIUrl: "string",
-        }
-      );
-      console.log("Response:", response);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  
-  useEffect(() => {
-    // Create a wrapper function to handle async calls
-    const fetchData = async () => {
-      await handleCompanyDetails();
-    };
-  
-    fetchData();
-  }, []);
-   */
-
-  //end//
   const handleCompanyDetails = async () => {
     try {
       const res = await CommonApi.postData(
@@ -404,7 +421,7 @@ const NetworkProfile = () => {
               </label>
               <select
                 id='businessDomain'
-                value={selectedDomain}
+                value={vendorDomain}
                 onChange={(e) => handleDomainChange(e.target.value)}
                 className='mt-1 w-full px-3 py-4 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
               >
@@ -472,7 +489,7 @@ const NetworkProfile = () => {
 
           <div className='w-full flex items-start justify-center gap-x-6'>
             {/* email */}
-            <div className='mb-8 w-full'>
+            <div className='mb-8 w-1/2'>
               <label
                 htmlFor='businessDomain'
                 className='block text-[14px] text-xl font-medium text-black mb-2'
@@ -482,10 +499,40 @@ const NetworkProfile = () => {
               <input
                 type='text'
                 name='email'
-                className='mt-1 w-1/2 px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
+                className='mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
                 value={companyDetails.email}
                 onChange={handleInputChange}
               />
+            </div>
+
+            <div className='mb-8 w-1/2'>
+              <label
+                htmlFor='businessDomain'
+                className='block text-[14px] text-xl font-medium text-black mb-2'
+              >
+                Location
+              </label>
+              <select
+                id='businessDomain'
+                value={vendorLocation}
+                onChange={(e) => handleDomainChange(e.target.value)}
+                className='mt-1 w-full px-3 py-4 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
+              >
+                <option value='' disabled>
+                  Select your location
+                </option>
+                {locations.length > 0 ? (
+                  locations.map((loc, index) => (
+                    <option key={index} value={loc.locationUUId}>
+                      {loc.location}
+                    </option>
+                  ))
+                ) : (
+                  <option value='' disabled>
+                    Loading...
+                  </option>
+                )}
+              </select>
             </div>
           </div>
 
@@ -505,13 +552,6 @@ const NetworkProfile = () => {
                 value={companyDetails.address}
                 className='mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
               ></textarea>
-              {/* <input
-              name="address"
-              type="text"
-              className=""
-              value={companyDetails.address}
-              onChange={handleInputChange}
-            /> */}
             </div>
           </div>
         </div>
@@ -538,78 +578,29 @@ const NetworkProfile = () => {
                   </div>
                 ))}
               </div>
-              {/* <label
-                htmlFor='businessSegment'
-                className='block text-[14px] text-xl font-medium text-black mb-2'
-              >
-                Business Segment
-              </label>
-              <select
-                id='businessSegment'
-                value={selectedSegment}
-                onChange={(e) => setSelectedSegment(e.target.value)}
-                className='mt-1 w-full px-3 py-4 text-[14px] border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
-              >
-                <option value='' disabled>
-                  Select a segment
-                </option>
-                {businessSegment.length > 0 ? (
-                  businessSegment.map((segment, index) => (
-                    <option key={index} value={segment.segmentUUId}>
-                      {segment.segmentName}
-                    </option>
-                  ))
-                ) : (
-                  <option value='' disabled>
-                    Loading...
-                  </option>
-                )}
-              </select> */}
             </div>
           </div>
           <div className='w-full flex items-start justify-center gap-x-6'>
             <div className='mb-8 w-full'>
               <h2 className='text-3xl font-medium mb-8'>Products</h2>
-              <div className='flex flex-wrap gap-6'>
-                {/* {products.map((product, index) => (
-                  <div
-                    key={index}
-                    className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
-                  >
-                    <h3 className='text-xl font-semibold'>
-                      {product.productName}
-                    </h3>
-                  </div>
-                ))} */}
-              </div>
+              <div className='flex flex-wrap gap-6'></div>
             </div>
           </div>
           <div className='w-full flex items-start justify-center gap-x-6'>
             <div className='mb-8 w-full'>
               <h2 className='text-3xl font-medium mb-8'>Services</h2>
-              <div className='flex flex-wrap gap-6'>
-                {/* {services.map((product, index) => (
-                  <div
-                    key={index}
-                    className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
-                  >
-                    <h3 className='text-xl font-semibold'>
-                      {product.productName}
-                    </h3>
-                  </div>
-                ))} */}
-              </div>
+              <div className='flex flex-wrap gap-6'></div>
             </div>
           </div>
         </div>
       </section>
 
-      <button
+      {/* <button
         className='px-6 py-2 text-[14px] w-[150px] bg-orange-500 h-[30px] text-white rounded-md hover:bg-orange-600'
         onClick={() => handleSegment()}
       >
         Save
-      </button>
+      </button> */}
       {/*   <button className="px-6 py-2 text-[14px] w-[150px] h-[30px] text-orange-500 rounded-md hover:bg-gray-300 border border-orange-500">
             Cancel
           </button> */}

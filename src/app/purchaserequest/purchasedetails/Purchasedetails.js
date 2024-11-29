@@ -141,7 +141,7 @@ const PurchaseDetails = () => {
         payload
       );
 
-      if (response.success) {
+      if (response?.success ||response.status=="success") {
         alert(`Order status updated to: ${selectedStatus}`);
         
       

@@ -135,11 +135,11 @@ function Sidebar() {
                 You can find the current supply chain by using GST/ Name / Phone
                 number
               </p>
-              <input
+              {/* <input
                 placeholder="Enter Here"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-              ></input>
+              ></input> */}
               <button className="primary__btn" onClick={handleGlobalSearch}>
                 Search Now{" "}
                 <svg
