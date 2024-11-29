@@ -74,7 +74,7 @@ const Page = () => {
                 <div style={{ flex: 1 }}>test@gmail.com</div>
               </div>
               <div style={{ display: "flex" }}>
-                <div style={{ flex: 1 }} className=" font-medium ">
+                <div style={{ flex: 1 }} className=" font-medium "> 
                   Business Domain:
                 </div>
                 <div style={{ flex: 1 }}>test@gmail.com</div>
