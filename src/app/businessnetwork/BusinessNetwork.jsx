@@ -164,10 +164,9 @@ const BusinessNetwork = () => {
             mobileNo: mobileNo,
             businessName: businessName,
             productCategory: productCategory,
-            vendorCategory: vendorCategory,
+            VendorSegment: vendorCategory,
             location: location,
             rating: rating,
-            VendorType: VendorType,
             Status: 3,
             PageSize: rowsPerPage,
             PageNumber: page,
@@ -313,7 +312,7 @@ const BusinessNetwork = () => {
               </select>
             </div>
             <div className="input__group col-span-3">
-              <label htmlFor="VendorInpt">By Vendor Category</label>
+              <label htmlFor="VendorInpt">By Vendor Segement</label>
               <select
                 id="VendorInpt"
                 value={vendorCategory}
