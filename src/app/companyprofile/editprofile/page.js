@@ -11,7 +11,7 @@ const Page = () => {
     <div className="bus__body w-full pl-9 mt-6 pr-3 pb-9">
       <div className="flex justify-between">
         <div className="w-full md:w-1/2">
-          <Pagenavigation pageName="My Network Profile"
+          <Pagenavigation pageName="Edit Profile"
        
            
             urlList={urlList}/>
