@@ -18,7 +18,21 @@ const BusinessNetwork = () => {
   const [data, setData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [connectClick, setconnectClick] = useState(false);
+  const [vendorDetails,setVendorDetails]=useState({});
 
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+  useEffect(() => {
+    // This effect will run when vendorDetails is updated
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      
+    }
+  }, [vendorDetails]); 
   const handlebuttonClick = async (VendorMasterUUID, vendorUUID) => {
     const today = new Date();
     const formattedDate = today.toISOString().split("T")[0];
@@ -143,7 +157,7 @@ const BusinessNetwork = () => {
           "BusinessNetwork/vendor/search/networks",
           {},
           {
-            VendorMasterUUID: VendorMasterUUID,
+            VendorMasterUUID:  vendorDetails.vendorMasterUUId,
             gstNo: gstNo,
             mobileNo: mobileNo,
             businessName: businessName,
