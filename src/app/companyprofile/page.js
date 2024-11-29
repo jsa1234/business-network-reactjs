@@ -24,7 +24,8 @@ const Page = () => {
   const [products, setProducts] = useState([])
   const [vendorLocation, setVendorLocation] = useState("")
   const [vendorDomain, setVendorDomain] = useState("")
-  const [vendorDomainUUId, setVendorDomainUUId] = useState("")
+  // const [vendorDomainUUId, setVendorDomainUUId] = useState("")
+  const [vendorServices, setVendorSrvices] = useState([])
 
   const getVendorDetails = async () => {
     try {
@@ -34,33 +35,36 @@ const Page = () => {
         {}
       )
 
+      console.log(res.data)
+
       setCompanyDetails((prev) => {
         return { ...prev, ...res.data }
       })
 
       getLocations(res.data.locationId)
-      getBusinessDomains(res.data.domainUUId)
+      getBusinessDomains(res.data.vendorDomainUUId)
     } catch (error) {
       console.error("Error fetching vendor details:", error)
     }
   }
 
-  const getBusinessDomains = async (
-    domainId 
-  ) => {
+  const getBusinessDomains = async (domainId) => {
     try {
       const res = await CommonApi.getData(`Vendor/business-domain`, {}, {})
+      console.log("Business Domains Response:", res.data)
 
-      // Normalize to lowercase for comparison
-      const normalizedDomainId = domainId.toLowerCase()
+      // Normalize to lowercase for comparison, handle undefined
+      const normalizedDomainId = domainId?.toLowerCase?.() || ""
       const domain = res.data.find(
-        (dom) => dom.domainUUId.toLowerCase() === normalizedDomainId
+        (dom) => dom.domainUUId?.toLowerCase() === normalizedDomainId
       )
 
-      setVendorDomainUUId(domain ? domain.domainUUId : "")
       setVendorDomain(domain ? domain.domainName : "Invalid domain")
 
-      getServices(domain.domainUUId)
+      // If domain is valid, fetch services
+      if (domain) {
+        getServices(domain.domainUUId)
+      }
     } catch (error) {
       console.error("Error fetching business domains:", error)
     }
@@ -114,7 +118,7 @@ const Page = () => {
         { vendorMasterUUId: VendorMasterUUID, domainUUId: domain }
       )
 
-      console.log(res.data)
+      console.log("services", res.data)
     } catch (error) {
       console.error("Error fetching business segments:", error)
     }
@@ -157,7 +161,7 @@ const Page = () => {
               <div>
                 <a
                   href='companyprofile/editprofile'
-                  className='text-2xl font-semibold bg-gray-950 px-6 py-4 text-white rounded-md hover:bg-black'
+                  className='text-2xl font-semibold bg-orange-500  px-6 py-4 text-white rounded-md hover:bg-orange-500'
                 >
                   Edit Profile
                 </a>
@@ -227,14 +231,16 @@ const Page = () => {
 
         <section className='py-16 px-16 rounded-2xl bg-white flex items-start justify-between mb-8'>
           <div className='  rounded-2xl bg-white mb-8'>
-            <h2 className='text-3xl font-medium mb-8'> Services</h2>
+            <h2 className='text-3xl font-medium mb-8'>Services</h2>
             <div className='flex flex-wrap gap-6'>
-              {products.map((product, index) => (
+              {vendorServices.map((service, index) => (
                 <div
                   key={index}
                   className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
                 >
-                  <h3 className='text-xl font-semibold'>{product.name}</h3>
+                  <h3 className='text-xl font-semibold'>
+                    {service.serviceName}
+                  </h3>
                 </div>
               ))}
             </div>
