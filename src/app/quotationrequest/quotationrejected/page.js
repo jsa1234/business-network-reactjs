@@ -108,6 +108,14 @@ const Page = () => {
           )}
         </div>
         <Quotationreject />
+        <div className="reason">
+          <p>
+            <span>Reason:</span>
+          </p>
+          <p>
+            {rejectRequest.comments}
+          </p>
+        </div>
       </div>
     </div>
   );
