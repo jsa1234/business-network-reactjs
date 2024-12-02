@@ -40,37 +40,32 @@ function Managework(props) {
   //end//
 
   useEffect(() => {
-    console.log(process.env.API_URL);
- /*    getApprovalPending(); */
-    const fetchApprovalPending = async () => {
-      try {
-const  data = await CommonApi.getData(
-      "ManageNetwork/vendor/search-pending-approvals",
-      {},
-      {
-        VendorMasterUUId: vendorDetails.vendorMasterUUId, //need to be dynamic
-        Status: 1, //need to be dynamic
-        VendorType: vendorDetails.vendorType, //need to be dynamic
-        PageSize: 5, //need to be dynamic
-        PageNumber: 1, //need to be dynamic
-        searchString: searchTerm,
-        sortBy: sortBy
-      }
-    );
-    console.log("MG.jsx", data);
-    setApprovalData(data.data.vendorDetails || []);
-  } catch (error) {
-    console.error("Error fetching network data:", error);
-  }
-   
-  };
-/*   useEffect(() => {
-    getApprovalPending();
-  }, []); */
   if (vendorDetails && vendorDetails.vendorMasterUUId) {
     fetchApprovalPending(); // Call the function inside the effect
     }
 }, [searchTerm, sortBy,vendorDetails]); 
+const fetchApprovalPending = async () => {
+  try {
+  const  data = await CommonApi.getData(
+  "ManageNetwork/vendor/search-pending-approvals",
+  {},
+  {
+    VendorMasterUUId: vendorDetails.vendorMasterUUId, //need to be dynamic
+    Status: 1, //need to be dynamic
+    VendorType: vendorDetails.vendorType, //need to be dynamic
+    PageSize: 5, //need to be dynamic
+    PageNumber: 1, //need to be dynamic
+    searchString: searchTerm,
+    sortBy: sortBy
+  }
+);
+console.log("MG.jsx", data);
+setApprovalData(data.data.vendorDetails || []);
+} catch (error) {
+console.error("Error fetching network data:", error);
+}
+
+};
 const filteredApproval = approvalData.filter((request) => {
   return (
     request.companyName &&
@@ -165,10 +160,9 @@ const filteredMynetwork = networkData.filter((request) => {
           
         }
       );
-
       if (response.success) {
         alert("Approval successful!");
-        getApprovalPending();
+        fetchApprovalPending();
       }
     } catch (error) {
       console.error("Error approving connection:", error);
@@ -203,8 +197,8 @@ const filteredMynetwork = networkData.filter((request) => {
           </tr>
         ) : props.activeTab === "network" ? ( // Add your new tab condition here
           <tr>
-            <th>
-              <div className="quotationwraper">
+            <td>
+              <div className="">
                 {/* <Networkcard
                   name="Earthly Delights Trading"
                   gst="#29GGGGG1314R400"
@@ -228,11 +222,11 @@ const filteredMynetwork = networkData.filter((request) => {
                       />
                     ))
                   ) : (
-                    <p>No networks available</p> 
+                    "No networks available"
                   )}
                 </div>
               </div>
-            </th>
+            </td>
           </tr>
         ) : null}
       </thead>

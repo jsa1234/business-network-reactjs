@@ -44,7 +44,7 @@ class CommonAPI {
         .then((response) => {
           // console.log("PUT response data:", response);
           if(response.status==200){
-            return {status:"success"};
+            return response.data;
           }
           else{
             return {status:"Failed"};
