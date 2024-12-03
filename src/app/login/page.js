@@ -65,6 +65,7 @@ const Page = () => {
       console.log(data.data);
       // await dispatch(setVendorMasterUUID(data.data));
       sessionStorage.setItem("vendorDetails",JSON.stringify(data.data));
+      sessionStorage.setItem("token",data.data.token);
       router.push('/');
     }
   } catch (error) {
