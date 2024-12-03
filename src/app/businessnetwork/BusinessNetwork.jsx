@@ -98,7 +98,7 @@ const handleGlobalSearch=async ()=>{
           VendorMasterUUID: vendorDetails.vendorMasterUUId,
           gstNo: gstNo,
           mobileNo: mobileNo,
-          businessName: businessName,
+          CompanyName: businessName,
           productCategory: productCategory,
           vendorCategory: vendorCategory,
           location: location,
@@ -188,7 +188,7 @@ const handleGlobalSearch=async ()=>{
             VendorType: vendorDetails.vendorType,
             gstNo: gstNo,
             mobileNo: mobileNo,
-            businessName: businessName,
+            CompanyName: businessName,
             productCategory: productCategory,
             VendorSegment: vendorCategory,
             location: location,
@@ -221,7 +221,7 @@ const handleGlobalSearch=async ()=>{
   // product category api
   async function getCategories() {
     try {
-      const res = await CommonApi.getData("Vendor/segments", {}, {});
+      const res = await CommonApi.getData("Vendor/product/categories", {}, {});
       setProductCategoryData((prevState) => [...prevState, ...res.data]);
     } catch (error) {
       console.error("Error fetching network data:", error);
@@ -336,8 +336,8 @@ const handleGlobalSearch=async ()=>{
 
                 {productCategoryData.map((item, index) => {
                   return (
-                    <option value={item.segmentUUId} key={index}>
-                      {item.segmentName}
+                    <option value={item.categoryUUId} key={index}>
+                      {item.categoryName}
                     </option>
                   );
                 })}
@@ -423,7 +423,7 @@ const handleGlobalSearch=async ()=>{
               gst_number={row.gstNo}
               contact={row.contactNumber}
               address={row.address}
-              vendor={mapVendorCategory(row.vendorType)}
+              vendor={row.vendorType==1?"Seller":"Buyer"}
               buttonClick={handlebuttonClick}
               vendorUUID={row.vendorMasterUUId}
             />

@@ -3,15 +3,13 @@
 import Dashboard from "@/components/Dashboard";
 import Pagenavigation from "@/components/Pagenavigation";
 import { useRouter } from "next/navigation"; // Use next/navigation for router in app directory
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 function Page() {
-  const VendorMasterUUID = useSelector(
-    (state) => state.vendor.VendorMasterUUID
-  );
+const [auth,setAuth]=useState(false);
   const urlList = ["/", "/dashboard", ""];
-  
+  const [vendorDetails,setVendorDetails]=useState({});
   const router = useRouter(); // Initialize router hook
 
   useEffect(() => {
@@ -21,20 +19,29 @@ function Page() {
     // If no token or token is an empty string, redirect to /login
     if (!token || Object.keys(token).length==0) {
       router.push("/login");
+    }else{
+      setAuth(true);
     }
   }, [router]); // Dependency array to ensure effect runs on mount
-
+  useEffect(() => {
+    // Load vendorDetails from sessionStorage when the component mounts
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
+    }
+  }, []);
+if(!auth){
+return(<h1>Loading...</h1>)
+}
   return (
     <div className="bus__body w-full pl-9 mt-6 pr-3">
-      <div>
-        <h1>VendorMasterUUID: {VendorMasterUUID}</h1>
-      </div>
 
       <div className="flex justify-between">
         <div className="w-full md:w-1/2">
           <Pagenavigation
             pageName="Dashboard"
-            message="Hi, MS Market. Welcome back to Olopo"
+            message={`Hi, ${vendorDetails.companyName}. Welcome back to Olopo`}
           />
         </div>
       </div>

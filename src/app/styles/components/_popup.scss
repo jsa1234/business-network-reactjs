@@ -17,7 +17,6 @@
     height: 39.5rem;
     gap: 0px;
     border-radius: 1.9rem;
-    opacity: 0px;
 
     background: radial-gradient(
       99.17% 99.17% at 49.01% 0.83%,
@@ -77,7 +76,6 @@
       padding: 10px 12px 10px 12px;
       gap: 8px;
       border-radius: 8px;
-      opacity: 0px;
       text-align: center;
       font-size: 1.4rem;
     }
@@ -131,7 +129,6 @@
     width: 42.2rem;
     min-height: 28.3rem;
     gap: 0px;
-    opacity: 0px;
     // overflow-y: scroll;
     position: relative;
     display: flex;
@@ -177,7 +174,6 @@
     width: 45.3rem;
     min-height: 28.3rem;
     gap: 0px;
-    opacity: 0px;
     // overflow-y: scroll;
     position: relative;
     display: flex;
@@ -246,5 +242,8 @@
 
 }
 .profile-header{
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  ul li:not(:last-child) {
+   border-bottom: 1px solid sandybrown; /* Add a bottom margin to all li elements except the last one */
+  }
 }

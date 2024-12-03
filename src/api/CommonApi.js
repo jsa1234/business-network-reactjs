@@ -5,7 +5,7 @@ class CommonAPI {
   defaultHeaders = {
     "Content-Type": "application/json",
     // You can add other common headers here
- // If you need an Authorization token
+    Authorization: `Bearer ${sessionStorage.getItem("token")}`,
   };
   getData(url, headers = {},params = {}) {
     // console.log(process.env.NEXT_PUBLIC_API_URL);
@@ -44,7 +44,7 @@ class CommonAPI {
         .then((response) => {
           // console.log("PUT response data:", response);
           if(response.status==200){
-            return {status:"success"};
+            return response.data;
           }
           else{
             return {status:"Failed"};

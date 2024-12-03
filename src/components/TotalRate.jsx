@@ -17,7 +17,7 @@ const TotalRate = ({
     discountChange(e.target.value);
   };
   return (
-    <div className="total_container">
+    <div className="total_container justify-between">
       <h1>
         Sub Total:<span>{subTotal}</span>
       </h1>
