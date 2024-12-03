@@ -21,6 +21,9 @@ steps:
     displayName: 'Clean, Install' 
   - script: 
       npm run build
+      ls -al
+      pwd
+
     displayName: 'Build'
 
   # - task: PublishBuildArtifacts@1
