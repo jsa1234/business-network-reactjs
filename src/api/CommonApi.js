@@ -5,7 +5,7 @@ class CommonAPI {
   defaultHeaders = {
     "Content-Type": "application/json",
     // You can add other common headers here
-    Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    // Authorization: `Bearer ${sessionStorage.getItem("token")||''}`,
   };
   getData(url, headers = {},params = {}) {
     // console.log(process.env.NEXT_PUBLIC_API_URL);
