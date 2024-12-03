@@ -20,7 +20,26 @@ const Navbar = () => {
       setVendorDetails(JSON.parse(storedVendorDetails));  // Parse if it's a JSON string
     }
   }, []);
-  
+  useEffect(() => {
+    // Function to update state with sessionStorage data
+    const updateVendorDetails = () => {
+      const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+      if (storedVendorDetails) {
+        setVendorDetails(JSON.parse(storedVendorDetails));  // Parse the string to an object
+      }
+    };
+
+    // Set initial vendor details when the component mounts
+    updateVendorDetails();
+
+    // Add event listener to listen for changes in sessionStorage
+    window.addEventListener("storage", updateVendorDetails);
+
+    // Clean up the event listener when the component unmounts
+    // return () => {
+    //   window.removeEventListener("storage", updateVendorDetails);
+    // };
+  }, []);
   const toggleDropdown = (e) => {
       setIsDropdownOpen(!isDropdownOpen);
     

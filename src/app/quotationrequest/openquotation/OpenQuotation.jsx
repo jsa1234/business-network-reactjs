@@ -113,6 +113,11 @@ const OpenQuotation = () => {
               qrUUID={row.quotationRequestUUId}
             />
           ))}
+          {data.length==0?
+          <div className='col-span-12 flex align-center justify-center'>
+            <h1 className='text-2xl font-medium'>No Open Quotation Found.</h1>
+          </div>:""
+        }
         </div>
     </div>
   )

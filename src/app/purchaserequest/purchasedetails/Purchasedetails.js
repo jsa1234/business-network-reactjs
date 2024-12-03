@@ -43,6 +43,7 @@ const PurchaseDetails = () => {
   useEffect(() => {
     if (PurchaseData) {
       setPurchase(PurchaseData);
+      console.log(PurchaseData);
     }
   }, [PurchaseData]);
   useEffect(() => {
@@ -130,8 +131,8 @@ const PurchaseDetails = () => {
       }
 
       const payload = {
-        PurchaseRequestUUId: selected.PurchaseRequestUUId,
-        VendorMasterUUId: selected.VendorMasterUUId,
+        PurchaseRequestUUId: purchase.purchaseRequestUUId,
+        VendorMasterUUId: vendorDetails.vendorMasterUUId,
         Status: selected.status,
       };
 

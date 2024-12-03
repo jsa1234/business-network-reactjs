@@ -191,9 +191,9 @@ const filteredMynetwork = networkData.filter((request) => {
             <th>Business name</th>
             <th>Contact No.</th>
             <th>Address</th>
-            <th></th>
             <th>Vendor Category</th>
             <th>Action</th>
+            <th></th>
           </tr>
         ) : props.activeTab === "network" ? ( // Add your new tab condition here
           <tr>
@@ -217,7 +217,7 @@ const filteredMynetwork = networkData.filter((request) => {
                         gst={vendorDetails.gstNo || "--"}
                         contact={vendorDetails.contactNo || "--"}
                         address={vendorDetails.address || "--"}
-                        vender={vendorDetails.vendorType || "--"}
+                        vender={vendorDetails.vendorType ==1?"Seller": "Buyer"}
                         className="col-span-4"
                       />
                     ))
@@ -241,7 +241,7 @@ const filteredMynetwork = networkData.filter((request) => {
               <td>{vendorDetails.companyName || "--"}</td>
               <td>{vendorDetails.contactNo || "--"}</td>
               <td>{vendorDetails.address || "--"}</td>
-              <td>{vendorDetails.vendorType || "--"}</td>
+              <td>{vendorDetails.vendorType ==1?"Seller": "Buyer"}</td>
               <td>
                 <button
                   className="secondary__btn"
