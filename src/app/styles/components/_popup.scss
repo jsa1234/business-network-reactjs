@@ -165,6 +165,16 @@
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
   .modal-content {
+    input,
+      select {
+        width: 37rem;
+        height: 40px;
+        padding: 8px 12px 8px 12px;
+        gap: 4px;
+        border-radius: 8px;
+        border: 1px solid rgba(197, 198, 201, 1);
+        // background-color: rgb(244, 251, 251);
+      }
     z-index: 20;
     padding: 3rem;
     border-radius: 0.8rem;
