@@ -120,6 +120,8 @@ const NetworkProfile = () => {
   };
 
   const saveDetails = async () => {
+    console.log(companyDetails);
+    // return
     // Extract only the necessary fields
     const {
       vendorMasterUUId,
@@ -131,6 +133,7 @@ const NetworkProfile = () => {
       address,
       vendorType,
       locationId,
+      vendorERPStockAPIUrl,
     } = companyDetails;
 
     // Create a FormData object
@@ -144,6 +147,7 @@ const NetworkProfile = () => {
     formData.append("Address", address);
     formData.append("VendorType", vendorType);
     formData.append("LocationId", locationId);
+    formData.append("VendorERPStockAPIUrl", vendorERPStockAPIUrl);
 
     try {
       // Set the headers for form-data
