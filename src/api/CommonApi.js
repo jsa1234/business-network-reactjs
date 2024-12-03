@@ -2,6 +2,7 @@
 import axios from "axios";
 
 class CommonAPI {
+  
   defaultHeaders = {
     "Content-Type": "application/json",
     // You can add other common headers here
