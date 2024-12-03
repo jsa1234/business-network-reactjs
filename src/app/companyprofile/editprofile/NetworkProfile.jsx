@@ -1,37 +1,38 @@
-"use client"
-import React, { useState, useEffect } from "react"
-import CommonApi from "@/api/CommonApi"
-import { useSelector } from "react-redux"
+"use client";
+import React, { useState, useEffect } from "react";
+import CommonApi from "@/api/CommonApi";
+import { useSelector } from "react-redux";
 
 const NetworkProfile = () => {
-  const [businessDomain, setBusinessDomain] = useState([])
-  const [businessSegment, setBusinessSegment] = useState([])
-  const [selectedDomain, setSelectedDomain] = useState("")
-  const [selectedSegment, setSelectedSegment] = useState("")
-  const [products, setProducts] = useState([])
-  const [services, setServices] = useState([])
-  const [selectedProducts, setSelectedProducts] = useState([])
-  const [selectedServices, setSelectedServices] = useState([])
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [previousData, setPreviousData] = useState({})
-  const [isDropdownOpenService, setIsDropdownOpenService] = useState(false)
+  const [businessDomain, setBusinessDomain] = useState([]);
+  const [businessSegment, setBusinessSegment] = useState([]);
+  const [selectedDomain, setSelectedDomain] = useState("");
+  const [selectedSegment, setSelectedSegment] = useState("");
+  const [products, setProducts] = useState([]);
+  const [services, setServices] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [previousData, setPreviousData] = useState({});
+  const [isDropdownOpenService, setIsDropdownOpenService] = useState(false);
 
-  const [expanded, setExpanded] = useState(false)
-  const [selectedOptions, setSelectedOptions] = useState([])
+  const [expanded, setExpanded] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedSegments, setSelectedSegments] = useState([]);
 
   // const VendorMasterUUID = useSelector(
   //   (state) => state.vendor.VendorMasterUUID
   // );
 
-  const [vendorDetails, setVendorDetails] = useState({})
+  const [vendorDetails, setVendorDetails] = useState({});
 
   useEffect(() => {
     // Load vendorDetails from sessionStorage when the component mounts
-    const storedVendorDetails = sessionStorage.getItem("vendorDetails")
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
     if (storedVendorDetails) {
-      setVendorDetails(JSON.parse(storedVendorDetails)) // Parse if it's a JSON string
+      setVendorDetails(JSON.parse(storedVendorDetails));
     }
-  }, [])
+  }, []);
 
   const [companyDetails, setCompanyDetails] = useState({
     companyName: "",
@@ -44,67 +45,86 @@ const NetworkProfile = () => {
     locationId: "",
     domainUUId: "",
     logo: "",
-  })
+  });
 
-  const [vendorLocation, setVendorLocation] = useState("")
-  const [vendorDomain, setVendorDomain] = useState("")
+  const [vendorLocation, setVendorLocation] = useState("");
+  const [vendorDomain, setVendorDomain] = useState("");
   // const [vendorDomainUUId, setVendorDomainUUId] = useState("")
-  const [vendorServices, setVendorSrvices] = useState([])
+  const [vendorServices, setVendorSrvices] = useState([]);
 
-  const [locations, setLocations] = useState([])
+  const [locations, setLocations] = useState([]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setCompanyDetails((prevDetails) => ({
       ...prevDetails,
       [name]: name === "vendorType" ? parseInt(value, 10) : value, // Convert to number for vendorType
-    }))
-  }
+    }));
+  };
 
   const handleDomainChange = (val) => {
-    setSelectedDomain(val)
-    console.log(val)
-  }
+    setSelectedDomain(val);
+    console.log(val);
+  };
 
   // Fetch business domain
   const getBusinessDomains = async (domainId) => {
     try {
-      const res = await CommonApi.getData(`Vendor/business-domain`, {}, {})
+      const res = await CommonApi.getData(`Vendor/business-domain`, {}, {});
       // console.log("Business Domains Response:", res.data)
 
       // Normalize to lowercase for comparison, handle undefined
-      const normalizedDomainId = domainId?.toLowerCase?.() || ""
+      const normalizedDomainId = domainId?.toLowerCase?.() || "";
       const domain = res.data.find(
         (dom) => dom.domainUUId?.toLowerCase() === normalizedDomainId
-      )
+      );
 
-      setVendorDomain(domain ? domain.vendorDomainName : "Invalid domain")
-      console.log
+      setVendorDomain(domain ? domain.vendorDomainName : "Invalid domain");
+      console.log;
 
       // If domain is valid, fetch services
       // if (domain) {
       //   getServices(domain.domainUUId)
       // }
     } catch (error) {
-      console.error("Error fetching business domains:", error)
+      console.error("Error fetching business domains:", error);
     }
-  }
+  };
 
   // Fetch business segments
   const getBusinessSegment = async () => {
     try {
       const res = await CommonApi.getData(
-        `Vendor/business-segments`, // Use vendorMasterUUId here
+        `Vendor/business-segments`,
         {},
-        { vendorMasterUUId: vendorDetails.vendorMasterUUId }
-      )
-      // console.log("Business Segment Response:", res.data[0].segmentDetails)
-      
-      setBusinessSegment(res.data[0].segmentDetails)
+        { vendorMasterUUId: vendorDetails.vendorMasterUUId } // Replace vendorDetails.vendorMasterUUId with actual logic
+      );
+      setBusinessSegment(res.data[0]?.segmentDetails || []);
     } catch (error) {
-      console.error("Error fetching business segments:", error)
+      console.error("Error fetching business segments:", error);
     }
-  }
+  };
+
+  // Handle selection toggle
+  const handleSegmentClick = (segmentName) => {
+    setSelectedSegments(
+      (prevSelected) =>
+        prevSelected.includes(segmentName)
+          ? prevSelected.filter((name) => name !== segmentName) // Remove if already selected
+          : [...prevSelected, segmentName] // Add to selected if not already
+    );
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    getBusinessSegment();
+  }, []);
+
+  // Log or use the selected segments for other purposes
+  useEffect(() => {
+    console.log("Selected Segments:", selectedSegments);
+    // You can send the selectedSegments state to an API or use it in your application logic
+  }, [selectedSegments]); // Runs whenever selectedSegments is updated
 
   // Fetch products based on the selected segment
   const getProducts = async () => {
@@ -113,27 +133,27 @@ const NetworkProfile = () => {
         `Vendor/vendor-products`,
         {}, // Additional payload if necessary
         {}
-      )
+      );
 
-      const productsData = res.data
-      console.log(res.data)
+      const productsData = res.data;
+      console.log(res.data);
       // setProducts(productsData)
     } catch (error) {
-      console.error("Error fetching products:", error)
+      console.error("Error fetching products:", error);
     }
-  }
+  };
 
   // Fetch products on component mount
   useEffect(() => {
     if (vendorDetails && vendorDetails.vendorMasterUUId) {
-      getProducts()
+      getProducts();
     }
-  }, [vendorDetails])
+  }, [vendorDetails]);
 
   // Toggles the visibility of the dropdown
   const handleToggleDropdown = () => {
-    setIsDropdownOpen((prevState) => !prevState)
-  }
+    setIsDropdownOpen((prevState) => !prevState);
+  };
 
   // Handles checkbox selection
   const handleCheckboxChange = (productId) => {
@@ -141,8 +161,8 @@ const NetworkProfile = () => {
       prevSelected.includes(productId)
         ? prevSelected.filter((id) => id !== productId)
         : [...prevSelected, productId]
-    )
-  }
+    );
+  };
 
   // get vendor details api
   const getVendorDetails = async () => {
@@ -151,36 +171,36 @@ const NetworkProfile = () => {
         `Vendor/${vendorDetails.vendorMasterUUId}/details`,
         {},
         {}
-      )
+      );
 
-      console.log("vendordetails", res.data)
+      console.log("vendordetails", res.data);
 
       setCompanyDetails((prev) => {
-        return { ...prev, ...res.data }
-      })
+        return { ...prev, ...res.data };
+      });
 
-      getLocations(res.data.locationId)
-      getBusinessDomains(res.data.vendorDomainUUId)
+      getLocations(res.data.locationId);
+      getBusinessDomains(res.data.vendorDomainUUId);
 
-      console.log("companydetails", companyDetails)
+      console.log("companydetails", companyDetails);
     } catch (error) {
-      console.error("Error fetching products:", error)
+      console.error("Error fetching products:", error);
     }
-  }
+  };
 
   const getLocations = async (locationId) => {
     try {
-      const res = await CommonApi.getData("Vendor/locations", {}, {})
+      const res = await CommonApi.getData("Vendor/locations", {}, {});
 
-      setLocations(res.data)
+      setLocations(res.data);
 
       // Find the location based on the given locationId
-      const location = res.data.find((loc) => loc.locationId === locationId)
-      setVendorLocation(location ? location.location : "Location not found")
+      const location = res.data.find((loc) => loc.locationId === locationId);
+      setVendorLocation(location ? location.location : "Location not found");
     } catch (error) {
-      console.error("Error fetching locations:", error)
+      console.error("Error fetching locations:", error);
     }
-  }
+  };
 
   //services//
   const getServices = async () => {
@@ -189,44 +209,44 @@ const NetworkProfile = () => {
         `Vendor/vendor-services`,
         {}, // Additional payload if necessary
         {}
-      )
+      );
 
-      const serviceData = res.data
-      console.log(serviceData)
+      const serviceData = res.data;
+      console.log(serviceData);
       // setServices(serviceData)
     } catch (error) {
-      console.error("Error fetching products:", error)
+      console.error("Error fetching products:", error);
     }
-  }
+  };
   useEffect(() => {
     if (vendorDetails && vendorDetails.vendorMasterUUId) {
-      getServices()
-      getVendorDetails()
+      getServices();
+      getVendorDetails();
     }
-  }, [vendorDetails])
+  }, [vendorDetails]);
 
   const handleToggleDropdownServices = () => {
-    setIsDropdownOpenService((prevState) => !prevState)
-  }
+    setIsDropdownOpenService((prevState) => !prevState);
+  };
   const handleCheckboxChangeServices = (servicesId) => {
     setSelectedServices((prevSelected) =>
       prevSelected.includes(servicesId)
         ? prevSelected.filter((id) => id !== servicesId)
         : [...prevSelected, servicesId]
-    )
-  }
+    );
+  };
   //end//
   useEffect(() => {
     if (vendorDetails && vendorDetails.vendorMasterUUId) {
-      getBusinessSegment()
-      let data = handleSegment()
+      getBusinessSegment();
+      let data = handleSegment();
       // setPreviousData(data);
-      setSelectedDomain(data.domain)
-      setSelectedSegment(data.segments)
-      setProducts(data.productsData)
-      setServices(data.productsData)
+      setSelectedDomain(data.domain);
+      setSelectedSegment(data.segments);
+      setProducts(data.productsData);
+      setServices(data.productsData);
     }
-  }, [vendorDetails])
+  }, [vendorDetails]);
   //submit//
 
   const handleSegment = async () => {
@@ -254,37 +274,37 @@ const NetworkProfile = () => {
             },
           ],
         }
-      )
+      );
 
       if (response) {
-        console.log("Vendor Master UUID:", response.vendorMasterUUId)
-        console.log("Domain UUID:", response.domainUUId)
+        console.log("Vendor Master UUID:", response.vendorMasterUUId);
+        console.log("Domain UUID:", response.domainUUId);
 
         if (response.vendorSegmentsDetail) {
           response.vendorSegmentsDetail.forEach((segment) => {
-            console.log("Vendor Domain UUID:", segment.vendorDomainUUId)
-            console.log("Segment UUID:", segment.segmentUUId)
-          })
+            console.log("Vendor Domain UUID:", segment.vendorDomainUUId);
+            console.log("Segment UUID:", segment.segmentUUId);
+          });
         }
 
         if (response.vendorProductDetail) {
           response.vendorProductDetail.forEach((product) => {
-            console.log("Product UUID:", product.productUUId)
-          })
+            console.log("Product UUID:", product.productUUId);
+          });
         }
 
         if (response.vendorServiceDetail) {
           response.vendorServiceDetail.forEach((service) => {
-            console.log("Service UUID:", service.serviceUUId)
-          })
+            console.log("Service UUID:", service.serviceUUId);
+          });
         }
       } else {
-        console.log("No response data received.")
+        console.log("No response data received.");
       }
     } catch (error) {
-      console.error("Error while updating preferences:", error)
+      console.error("Error while updating preferences:", error);
     }
-  }
+  };
 
   const handleCompanyDetails = async () => {
     try {
@@ -307,125 +327,125 @@ const NetworkProfile = () => {
           password: "string",
           vendorERPStockAPIUrl: "string",
         }
-      )
+      );
 
-      console.log("Response:", res)
+      console.log("Response:", res);
     } catch (error) {
-      console.error("Error:", error)
+      console.error("Error:", error);
     }
-  }
+  };
 
   return (
     <>
       {/* form actions */}
-      <section className='py-4 px-8 rounded-2xl flex items-start justify-end gap-x-6 mb-8'>
+      <section className="py-4 px-8 rounded-2xl flex items-start justify-end gap-x-6 mb-8">
         {/* save button */}
         <button
-          className='text-[14px] w-[150px] bg-gray-950 px-4 py-4 text-white rounded-md hover:bg-black'
+          className="text-[14px] w-[150px] bg-orange-500  px-4 py-4 text-white rounded-md hover:bg-orange-500 "
           onClick={() => handleCompanyDetails()}
         >
           Save
         </button>
 
         {/* cancel button */}
-        <button className='px-4 py-4 text-[14px] w-[150px] text-gray-950 rounded-md hover:bg-gray-300 border border-gray-950'>
+        <button className="px-4 py-4 text-[14px] w-[150px] text-gray-950 rounded-md hover:bg-gray-300 border border-gray-950">
           Cancel
         </button>
       </section>
 
       {/* section 1 */}
-      <section className='pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8'>
-        <div className='w-1/3'>
-          <h2 className='text-2xl font-bold'>Company Details</h2>
+      <section className="pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
+        <div className="w-1/3">
+          <h2 className="text-2xl font-bold">Company Details</h2>
         </div>
-        <div className='w-2/3'>
-          <div className='w-full flex items-start justify-center gap-x-6'>
+        <div className="w-2/3">
+          <div className="w-full flex items-start justify-center gap-x-6">
             {/* company name */}
-            <div className='mb-8 w-1/2'>
+            <div className="mb-8 w-1/2">
               <label
-                htmlFor='businessDomain'
-                className='block text-[14px] text-xl font-medium text-black mb-2'
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
               >
                 Company Name
               </label>
               <input
-                type='text'
-                name='companyName'
-                className='mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
+                type="text"
+                name="companyName"
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
                 value={companyDetails.companyName}
                 onChange={handleInputChange}
               />
             </div>
 
             {/* gst no. */}
-            <div className='mb-8 w-1/2'>
+            <div className="mb-8 w-1/2">
               <label
-                htmlFor='businessDomain'
-                className='block text-[14px] text-xl font-medium text-black mb-2'
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
               >
                 GST No.
               </label>
               <input
-                type='                                                                                          text'
-                name='gstNo'
-                className='mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
+                type="                                                                                          text"
+                name="gstNo"
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
                 value={companyDetails.gstNo}
                 onChange={handleInputChange}
               />
             </div>
           </div>
 
-          <div className='w-full flex items-start justify-start gap-x-6 mt-6'>
-            <div className='mb-8 w-1/2'>
-              <p className='block text-[14px] text-xl font-medium text-black mb-10'>
+          <div className="w-full flex items-start justify-start gap-x-6 mt-6">
+            <div className="mb-8 w-1/2">
+              <p className="block text-[14px] text-xl font-medium text-black mb-10">
                 Are you a seller or buyer?
               </p>
-              <div className='flex items-center justify-start gap-x-4'>
+              <div className="flex items-center justify-start gap-x-4">
                 <input
-                  type='radio'
-                  id='buyer'
-                  name='vendorType'
+                  type="radio"
+                  id="buyer"
+                  name="vendorType"
                   value={2}
                   checked={companyDetails.vendorType === 2}
                   onChange={handleInputChange}
                 />
                 <label
-                  htmlFor='buyer'
-                  className='block text-[14px] text-xl font-medium text-black'
+                  htmlFor="buyer"
+                  className="block text-[14px] text-xl font-medium text-black"
                 >
                   Buyer
                 </label>
 
                 <input
-                  type='radio'
-                  id='seller'
-                  name='vendorType'
+                  type="radio"
+                  id="seller"
+                  name="vendorType"
                   value={1}
                   checked={companyDetails.vendorType === 1}
                   onChange={handleInputChange}
                 />
                 <label
-                  htmlFor='seller'
-                  className='block text-[14px] text-xl font-medium text-black'
+                  htmlFor="seller"
+                  className="block text-[14px] text-xl font-medium text-black"
                 >
                   Seller
                 </label>
               </div>
             </div>
-            <div className='mb-8 w-1/2'>
+            <div className="mb-8 w-1/2">
               <label
-                htmlFor='businessDomain'
-                className='block text-[14px] text-xl font-medium text-black mb-2'
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
               >
                 Business Domain
               </label>
               <select
-                id='businessDomain'
+                id="businessDomain"
                 value={vendorDomain}
                 onChange={(e) => handleDomainChange(e.target.value)}
-                className='mt-1 w-full px-3 py-4 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
+                className="mt-1 w-full px-3 py-4 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
               >
-                <option value='' disabled>
+                <option value="" disabled>
                   Select a business domain
                 </option>
                 {businessDomain.length > 0 ? (
@@ -435,7 +455,7 @@ const NetworkProfile = () => {
                     </option>
                   ))
                 ) : (
-                  <option value='' disabled>
+                  <option value="" disabled>
                     Loading...
                   </option>
                 )}
@@ -446,79 +466,79 @@ const NetworkProfile = () => {
       </section>
 
       {/* section 2 */}
-      <section className='pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8'>
-        <div className='w-1/3'>
-          <h2 className='text-2xl font-bold'>Contact Details</h2>
+      <section className="pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
+        <div className="w-1/3">
+          <h2 className="text-2xl font-bold">Contact Details</h2>
         </div>
-        <div className='w-2/3'>
-          <div className='w-full flex items-start justify-center gap-x-6'>
+        <div className="w-2/3">
+          <div className="w-full flex items-start justify-center gap-x-6">
             {/* contact person */}
-            <div className='mb-8 w-full'>
+            <div className="mb-8 w-full">
               <label
-                htmlFor='businessDomain'
-                className='block text-[14px] text-xl font-medium text-black mb-2'
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
               >
                 Contact Person
               </label>
               <input
-                type='text'
-                name='contactPerson'
-                className='mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
+                type="text"
+                name="contactPerson"
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
                 value={companyDetails.contactPerson}
                 onChange={handleInputChange}
               />
             </div>
 
             {/* contact number */}
-            <div className='mb-8 w-full'>
+            <div className="mb-8 w-full">
               <label
-                htmlFor='businessDomain'
-                className='block text-[14px] text-xl font-medium text-black mb-2'
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
               >
                 Contact Number
               </label>
               <input
-                type='text'
-                name='contactNumber'
-                className='mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
+                type="text"
+                name="contactNumber"
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
                 value={companyDetails.contactNumber}
                 onChange={handleInputChange}
               />
             </div>
           </div>
 
-          <div className='w-full flex items-start justify-center gap-x-6'>
+          <div className="w-full flex items-start justify-center gap-x-6">
             {/* email */}
-            <div className='mb-8 w-1/2'>
+            <div className="mb-8 w-1/2">
               <label
-                htmlFor='businessDomain'
-                className='block text-[14px] text-xl font-medium text-black mb-2'
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
               >
                 Email
               </label>
               <input
-                type='text'
-                name='email'
-                className='mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
+                type="text"
+                name="email"
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
                 value={companyDetails.email}
                 onChange={handleInputChange}
               />
             </div>
 
-            <div className='mb-8 w-1/2'>
+            <div className="mb-8 w-1/2">
               <label
-                htmlFor='businessDomain'
-                className='block text-[14px] text-xl font-medium text-black mb-2'
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
               >
                 Location
               </label>
               <select
-                id='businessDomain'
+                id="businessDomain"
                 value={vendorLocation}
                 onChange={(e) => handleDomainChange(e.target.value)}
-                className='mt-1 w-full px-3 py-4 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
+                className="mt-1 w-full px-3 py-4 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
               >
-                <option value='' disabled>
+                <option value="" disabled>
                   Select your location
                 </option>
                 {locations.length > 0 ? (
@@ -528,7 +548,7 @@ const NetworkProfile = () => {
                     </option>
                   ))
                 ) : (
-                  <option value='' disabled>
+                  <option value="" disabled>
                     Loading...
                   </option>
                 )}
@@ -536,12 +556,12 @@ const NetworkProfile = () => {
             </div>
           </div>
 
-          <div className='w-full flex items-start justify-center gap-x-6'>
+          <div className="w-full flex items-start justify-center gap-x-6">
             {/* address */}
-            <div className='mb-8 w-full'>
+            <div className="mb-8 w-full">
               <label
-                htmlFor='businessDomain'
-                className='block text-[14px] text-xl font-medium text-black mb-2'
+                htmlFor="businessDomain"
+                className="block text-[14px] text-xl font-medium text-black mb-2"
               >
                 Address
               </label>
@@ -550,7 +570,7 @@ const NetworkProfile = () => {
                 onChange={handleInputChange}
                 rows={4}
                 value={companyDetails.address}
-                className='mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100'
+                className="mt-1 w-full px-3 py-3 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
               ></textarea>
             </div>
           </div>
@@ -558,21 +578,26 @@ const NetworkProfile = () => {
       </section>
 
       {/* section 3 */}
-      <section className='pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8'>
-        <div className='w-1/3'>
-          <h2 className='text-2xl font-bold'>Company Details</h2>
+      <section className="pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
+        <div className="w-1/3">
+          <h2 className="text-2xl font-bold">Company Details</h2>
         </div>
-        <div className='w-2/3'>
-          <div className='w-full flex items-start justify-center gap-x-6'>
-            <div className='mb-8 w-full'>
-              <h2 className='text-3xl font-medium mb-8'>Business Segments</h2>
-              <div className='flex flex-wrap gap-6'>
+        <div className="w-2/3">
+          <div className="w-full flex items-start justify-center gap-x-6">
+            <div className="mb-8 w-full">
+              <h2 className="text-3xl font-medium mb-8">Business Segments</h2>
+              <div className="flex flex-wrap gap-6">
                 {businessSegment.map((segment, index) => (
                   <div
                     key={index}
-                    className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
+                    className={`p-4 border rounded-lg shadow-sm flex flex-col items-start cursor-pointer ${
+                      selectedSegments.includes(segment.segmentName)
+                        ? "bg-blue-200" // Highlight for selected items
+                        : "bg-gray-50"
+                    }`}
+                    onClick={() => handleSegmentClick(segment.segmentName)}
                   >
-                    <h3 className='text-xl font-semibold'>
+                    <h3 className="text-xl font-semibold">
                       {segment.segmentName}
                     </h3>
                   </div>
@@ -580,16 +605,17 @@ const NetworkProfile = () => {
               </div>
             </div>
           </div>
-          <div className='w-full flex items-start justify-center gap-x-6'>
-            <div className='mb-8 w-full'>
-              <h2 className='text-3xl font-medium mb-8'>Products</h2>
-              <div className='flex flex-wrap gap-6'></div>
+
+          <div className="w-full flex items-start justify-center gap-x-6">
+            <div className="mb-8 w-full">
+              <h2 className="text-3xl font-medium mb-8">Products</h2>
+              <div className="flex flex-wrap gap-6"></div>
             </div>
           </div>
-          <div className='w-full flex items-start justify-center gap-x-6'>
-            <div className='mb-8 w-full'>
-              <h2 className='text-3xl font-medium mb-8'>Services</h2>
-              <div className='flex flex-wrap gap-6'></div>
+          <div className="w-full flex items-start justify-center gap-x-6">
+            <div className="mb-8 w-full">
+              <h2 className="text-3xl font-medium mb-8">Services</h2>
+              <div className="flex flex-wrap gap-6"></div>
             </div>
           </div>
         </div>
@@ -605,7 +631,7 @@ const NetworkProfile = () => {
             Cancel
           </button> */}
     </>
-  )
-}
+  );
+};
 
-export default NetworkProfile
+export default NetworkProfile;

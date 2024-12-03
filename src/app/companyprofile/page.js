@@ -165,7 +165,7 @@ const Page = () => {
       </div>
       <div className='w-full mt-6'>
         <section className='py-16 px-16 rounded-2xl bg-white flex items-start justify-between mb-8'>
-          <div className='w-1/2 flex'>
+          <div className='w-1/3 flex'>
             <div className='w-1/4 mr-10'>
               <img
                 src='/assests/avatar.png'
@@ -181,21 +181,21 @@ const Page = () => {
                 <p className='pt-2 text-2xl mb-8'>{companyDetails.gstNo}</p>
               </div>
               <div>
-                {/* <a
+                 <a
                   href='companyprofile/editprofile'
                   className='text-2xl font-semibold bg-orange-500  px-6 py-4 text-white rounded-md hover:bg-orange-500'
                 >
                   Edit Profile
-                </a> */}
-                <button className='text-2xl font-semibold bg-orange-500  px-6 py-4 text-white rounded-md hover:bg-orange-500'>
+                </a> 
+              {/*   <button className='text-2xl font-semibold bg-orange-500  px-6 py-4 text-white rounded-md hover:bg-orange-500'>
                   Edit Profile
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
 
           <div className='w-1/2 flex items-start justify-between gap-x-6'>
-            <div className='w-1/2'>
+            <div className='w-2/3'>
               <div className=' text-2xl text-black'>
                 <div className='flex mb-4'>
                   <div style={{ flex: 1 }} className='font-medium '>
@@ -236,7 +236,7 @@ const Page = () => {
               </div>
             </div>
 
-            <div className='w-1/2'>
+      {/*       <div className='w-1/2'>
               <h2 className='text-3xl font-medium mb-8'>Business Segments</h2>
               <div className='flex flex-wrap gap-6'>
                 {businessSegment.length === 0 ? (
@@ -254,8 +254,32 @@ const Page = () => {
                   ))
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
+        </section>
+
+         <section className='py-16 px-16 rounded-2xl bg-white flex items-start justify-between mb-8'>
+         <div className='  rounded-2xl bg-white mb-8'>
+         <h2 className='text-3xl font-medium mb-8'>Business Segments</h2>
+         <div className='flex flex-wrap gap-6'>
+         {businessSegment.length === 0 ? (
+                  <p className='text-2xl font-semibold'>No Segments selected</p>
+                ) : (
+                  businessSegment.map((segment, index) => (
+                    <div
+                      key={index}
+                      className='p-4 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-start '
+                    >
+                      <h3 className='text-xl font-semibold'>
+                        {segment.segmentName}
+                      </h3>
+                    </div>
+                  ))
+                )}
+          </div>
+
+         </div>
+
         </section>
 
         <section className='py-16 px-16 rounded-2xl bg-white flex items-start justify-between mb-8'>
