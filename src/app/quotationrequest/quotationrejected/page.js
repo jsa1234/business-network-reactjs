@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Pagenavigation from "@/components/Pagenavigation";
-import Quotationreject from "./quotationreject";
+import Quotationreject from "./Quotationreject";
 import CommonApi from "@/api/CommonApi";
 import { format } from "date-fns";
 import { useSelector } from "react-redux";
