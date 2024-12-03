@@ -4,26 +4,8 @@ import CommonApi from "@/api/CommonApi";
 import { useSelector } from "react-redux";
 
 const NetworkProfile = () => {
-  const [businessDomain, setBusinessDomain] = useState([]);
   const [businessSegment, setBusinessSegment] = useState([]);
-  const [selectedDomain, setSelectedDomain] = useState("");
-  const [selectedSegment, setSelectedSegment] = useState("");
-  const [products, setProducts] = useState([]);
-  const [services, setServices] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [selectedServices, setSelectedServices] = useState([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [previousData, setPreviousData] = useState({});
-  const [isDropdownOpenService, setIsDropdownOpenService] = useState(false);
-
-  const [expanded, setExpanded] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState([]);
   const [selectedSegments, setSelectedSegments] = useState([]);
-
-  // const VendorMasterUUID = useSelector(
-  //   (state) => state.vendor.VendorMasterUUID
-  // );
-
   const [vendorDetails, setVendorDetails] = useState({});
 
   useEffect(() => {
@@ -34,6 +16,10 @@ const NetworkProfile = () => {
     }
   }, []);
 
+  const [vendorLocation, setVendorLocation] = useState("");
+  const [vendorDomain, setVendorDomain] = useState("");
+  const [locations, setLocations] = useState([]);
+  const [domains, setDomains] = useState([]);
   const [companyDetails, setCompanyDetails] = useState({
     companyName: "",
     contactPerson: "",
@@ -43,126 +29,15 @@ const NetworkProfile = () => {
     address: "",
     vendorType: "",
     locationId: "",
-    domainUUId: "",
     logo: "",
   });
 
-  const [vendorLocation, setVendorLocation] = useState("");
-  const [vendorDomain, setVendorDomain] = useState("");
-  // const [vendorDomainUUId, setVendorDomainUUId] = useState("")
-  const [vendorServices, setVendorSrvices] = useState([]);
-
-  const [locations, setLocations] = useState([]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCompanyDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: name === "vendorType" ? parseInt(value, 10) : value, // Convert to number for vendorType
-    }));
-  };
-
-  const handleDomainChange = (val) => {
-    setSelectedDomain(val);
-    console.log(val);
-  };
-
-  // Fetch business domain
-  const getBusinessDomains = async (domainId) => {
-    try {
-      const res = await CommonApi.getData(`Vendor/business-domain`, {}, {});
-      // console.log("Business Domains Response:", res.data)
-
-      // Normalize to lowercase for comparison, handle undefined
-      const normalizedDomainId = domainId?.toLowerCase?.() || "";
-      const domain = res.data.find(
-        (dom) => dom.domainUUId?.toLowerCase() === normalizedDomainId
-      );
-
-      setVendorDomain(domain ? domain.vendorDomainName : "Invalid domain");
-      console.log;
-
-      // If domain is valid, fetch services
-      // if (domain) {
-      //   getServices(domain.domainUUId)
-      // }
-    } catch (error) {
-      console.error("Error fetching business domains:", error);
-    }
-  };
-
-  // Fetch business segments
-  const getBusinessSegment = async () => {
-    try {
-      const res = await CommonApi.getData(
-        `Vendor/business-segments`,
-        {},
-        { vendorMasterUUId: vendorDetails.vendorMasterUUId } // Replace vendorDetails.vendorMasterUUId with actual logic
-      );
-      setBusinessSegment(res.data[0]?.segmentDetails || []);
-    } catch (error) {
-      console.error("Error fetching business segments:", error);
-    }
-  };
-
-  // Handle selection toggle
-  const handleSegmentClick = (segmentName) => {
-    setSelectedSegments(
-      (prevSelected) =>
-        prevSelected.includes(segmentName)
-          ? prevSelected.filter((name) => name !== segmentName) // Remove if already selected
-          : [...prevSelected, segmentName] // Add to selected if not already
-    );
-  };
-
-  // Fetch data on component mount
-  useEffect(() => {
-    getBusinessSegment();
-  }, []);
-
-  // Log or use the selected segments for other purposes
-  useEffect(() => {
-    console.log("Selected Segments:", selectedSegments);
-    // You can send the selectedSegments state to an API or use it in your application logic
-  }, [selectedSegments]); // Runs whenever selectedSegments is updated
-
-  // Fetch products based on the selected segment
-  const getProducts = async () => {
-    try {
-      const res = await CommonApi.getData(
-        `Vendor/vendor-products`,
-        {}, // Additional payload if necessary
-        {}
-      );
-
-      const productsData = res.data;
-      console.log(res.data);
-      // setProducts(productsData)
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-
-  // Fetch products on component mount
   useEffect(() => {
     if (vendorDetails && vendorDetails.vendorMasterUUId) {
-      getProducts();
+      getVendorDetails();
     }
   }, [vendorDetails]);
-
-  // Toggles the visibility of the dropdown
-  const handleToggleDropdown = () => {
-    setIsDropdownOpen((prevState) => !prevState);
-  };
-
-  // Handles checkbox selection
-  const handleCheckboxChange = (productId) => {
-    setSelectedProducts((prevSelected) =>
-      prevSelected.includes(productId)
-        ? prevSelected.filter((id) => id !== productId)
-        : [...prevSelected, productId]
-    );
-  };
+  //end//
 
   // get vendor details api
   const getVendorDetails = async () => {
@@ -173,16 +48,12 @@ const NetworkProfile = () => {
         {}
       );
 
-      console.log("vendordetails", res.data);
-
       setCompanyDetails((prev) => {
         return { ...prev, ...res.data };
       });
 
       getLocations(res.data.locationId);
       getBusinessDomains(res.data.vendorDomainUUId);
-
-      console.log("companydetails", companyDetails);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -196,142 +67,98 @@ const NetworkProfile = () => {
 
       // Find the location based on the given locationId
       const location = res.data.find((loc) => loc.locationId === locationId);
-      setVendorLocation(location ? location.location : "Location not found");
+      setVendorLocation(location ? location.locationId : "");
     } catch (error) {
       console.error("Error fetching locations:", error);
     }
   };
 
-  //services//
-  const getServices = async () => {
+  // Fetch business domain
+  const getBusinessDomains = async (domainId) => {
     try {
-      const res = await CommonApi.getData(
-        `Vendor/vendor-services`,
-        {}, // Additional payload if necessary
-        {}
-      );
+      const res = await CommonApi.getData(`Vendor/business-domain`, {}, {});
 
-      const serviceData = res.data;
-      console.log(serviceData);
-      // setServices(serviceData)
+      const domain = res.data.find((dom) => dom.domainUUId === domainId);
+
+      setVendorDomain(domain ? domain.domainUUId : "");
+      setDomains(res.data);
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.error("Error fetching business domains:", error);
     }
   };
-  useEffect(() => {
-    if (vendorDetails && vendorDetails.vendorMasterUUId) {
-      getServices();
-      getVendorDetails();
-    }
-  }, [vendorDetails]);
 
-  const handleToggleDropdownServices = () => {
-    setIsDropdownOpenService((prevState) => !prevState);
-  };
-  const handleCheckboxChangeServices = (servicesId) => {
-    setSelectedServices((prevSelected) =>
-      prevSelected.includes(servicesId)
-        ? prevSelected.filter((id) => id !== servicesId)
-        : [...prevSelected, servicesId]
+  // Handle selection toggle
+  const handleSegmentClick = (segmentName) => {
+    setSelectedSegments(
+      (prevSelected) =>
+        prevSelected.includes(segmentName)
+          ? prevSelected.filter((name) => name !== segmentName) // Remove if already selected
+          : [...prevSelected, segmentName] // Add to selected if not already
     );
   };
-  //end//
-  useEffect(() => {
-    if (vendorDetails && vendorDetails.vendorMasterUUId) {
-      getBusinessSegment();
-      let data = handleSegment();
-      // setPreviousData(data);
-      setSelectedDomain(data.domain);
-      setSelectedSegment(data.segments);
-      setProducts(data.productsData);
-      setServices(data.productsData);
-    }
-  }, [vendorDetails]);
-  //submit//
 
-  const handleSegment = async () => {
-    try {
-      const response = await CommonApi.putData(
-        "Vendor/preferences",
-        {},
-        {
-          vendorMasterUUId: vendorDetails.vendorMasterUUId,
-          domainUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          vendorSegmentsDetail: [
-            {
-              vendorDomainUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-              segmentUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            },
-          ],
-          vendorProductDetail: [
-            {
-              productUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            },
-          ],
-          vendorServiceDetail: [
-            {
-              serviceUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            },
-          ],
-        }
-      );
-
-      if (response) {
-        console.log("Vendor Master UUID:", response.vendorMasterUUId);
-        console.log("Domain UUID:", response.domainUUId);
-
-        if (response.vendorSegmentsDetail) {
-          response.vendorSegmentsDetail.forEach((segment) => {
-            console.log("Vendor Domain UUID:", segment.vendorDomainUUId);
-            console.log("Segment UUID:", segment.segmentUUId);
-          });
-        }
-
-        if (response.vendorProductDetail) {
-          response.vendorProductDetail.forEach((product) => {
-            console.log("Product UUID:", product.productUUId);
-          });
-        }
-
-        if (response.vendorServiceDetail) {
-          response.vendorServiceDetail.forEach((service) => {
-            console.log("Service UUID:", service.serviceUUId);
-          });
-        }
-      } else {
-        console.log("No response data received.");
-      }
-    } catch (error) {
-      console.error("Error while updating preferences:", error);
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCompanyDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: name === "vendorType" ? parseInt(value, 10) : value, // Convert to number for vendorType
+    }));
   };
 
-  const handleCompanyDetails = async () => {
+  const handleDomainChange = (val) => {
+    setVendorDomain(val);
+    setCompanyDetails((prevState) => {
+      return { ...prevState, vendorDomainUUId: val };
+    });
+  };
+
+  const handleLocationChange = (val) => {
+    setVendorLocation(val);
+    setCompanyDetails((prevState) => {
+      return { ...prevState, locationId: val };
+    });
+  };
+
+  const saveDetails = async () => {
+    // Extract only the necessary fields
+    const {
+      vendorMasterUUId,
+      companyName,
+      contactPerson,
+      gstNo,
+      contactNumber,
+      email,
+      address,
+      vendorType,
+      locationId,
+    } = companyDetails;
+
+    // Create a FormData object
+    const formData = new FormData();
+    formData.append("VendorMasterUUId", vendorMasterUUId);
+    formData.append("CompanyName", companyName);
+    formData.append("ContactPerson", contactPerson);
+    formData.append("GstNo", gstNo);
+    formData.append("ContactNumber", contactNumber);
+    formData.append("Email", email);
+    formData.append("Address", address);
+    formData.append("VendorType", vendorType);
+    formData.append("LocationId", locationId);
+
     try {
-      const res = await CommonApi.postData(
-        "Vendor/register",
-        {},
-        {
-          vendorUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          vendorType: 2,
-          branchUUId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          businessType: 0,
-          isOlopoUser: 0,
-          companyName: companyDetails.companyName,
-          contactPerson: companyDetails.contactPerson,
-          gstNo: companyDetails.gstNo,
-          contactNumber: companyDetails.contactNumber,
-          email: "string",
-          address: companyDetails.address,
-          rating: 0,
-          password: "string",
-          vendorERPStockAPIUrl: "string",
-        }
+      // Set the headers for form-data
+      const headers = { "Content-Type": "multipart/form-data" };
+
+      // Send the request using the FormData object
+      const res = await CommonApi.putData(
+        `Vendor/company-details`,
+        { headers },
+        formData
       );
 
-      console.log("Response:", res);
+      console.log("Response from saveDetails:", res);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error saving company details:", error);
     }
   };
 
@@ -342,7 +169,7 @@ const NetworkProfile = () => {
         {/* save button */}
         <button
           className="text-[14px] w-[150px] bg-orange-500  px-4 py-4 text-white rounded-md hover:bg-orange-500 "
-          onClick={() => handleCompanyDetails()}
+          onClick={() => saveDetails()}
         >
           Save
         </button>
@@ -448,8 +275,8 @@ const NetworkProfile = () => {
                 <option value="" disabled>
                   Select a business domain
                 </option>
-                {businessDomain.length > 0 ? (
-                  businessDomain.map((domain, index) => (
+                {domains.length > 0 ? (
+                  domains.map((domain, index) => (
                     <option key={index} value={domain.domainUUId}>
                       {domain.domainName}
                     </option>
@@ -535,7 +362,7 @@ const NetworkProfile = () => {
               <select
                 id="businessDomain"
                 value={vendorLocation}
-                onChange={(e) => handleDomainChange(e.target.value)}
+                onChange={(e) => handleLocationChange(e.target.value)}
                 className="mt-1 w-full px-3 py-4 text-[14px]  border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 bg-gray-100"
               >
                 <option value="" disabled>
@@ -543,7 +370,7 @@ const NetworkProfile = () => {
                 </option>
                 {locations.length > 0 ? (
                   locations.map((loc, index) => (
-                    <option key={index} value={loc.locationUUId}>
+                    <option key={index} value={loc.locationId}>
                       {loc.location}
                     </option>
                   ))
