@@ -2,11 +2,21 @@
 import axios from "axios";
 
 class CommonAPI {
+  
   defaultHeaders = {
     "Content-Type": "application/json",
     // You can add other common headers here
-    Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    Authorization: ``,
   };
+  constructor() {
+    // Set the Authorization header if the token is available in localStorage (on the client-side only)
+    if (typeof window !== "undefined") {
+      const token = sessionStorage.getItem("token");
+      if (token) {
+        this.defaultHeaders.Authorization = `Bearer ${token}`;
+      }
+    }
+  }
   getData(url, headers = {},params = {}) {
     // console.log(process.env.NEXT_PUBLIC_API_URL);
     const combinedHeaders = { ...this.defaultHeaders, ...headers };

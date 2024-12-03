@@ -40,7 +40,7 @@ const Networkcard = ({ vendorMstrUID,name, gst, contact, address, vender }) => {
   };
 
   return (
-    <div className="netcard col-span-4 mt-4 mb-4">
+    <div className="netcard col-span-4 mt-4 mb-4 cursor-pointer" onClick={handleClick}>
       <div className="bncard__header mb-4">
         <div className="qrcard__img">
           <Image
@@ -57,7 +57,7 @@ const Networkcard = ({ vendorMstrUID,name, gst, contact, address, vender }) => {
           <div className="qrcard__details_2">
             <button
               // href={VendorType==1 ? `/managenetwork/trading?uuid=${vendorMstrUID}` : `/managenetwork/stock-details-buyer?uuid=${vendorMstrUID}`}
-              onClick={handleClick}
+              
             >
               <ChevronIcon />
             </button>

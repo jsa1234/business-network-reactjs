@@ -14,7 +14,7 @@ import {
   Legend,
   Filler,
 } from "chart.js"
-import { useSelector } from "react-redux"
+import { useSelector } from "react-redux";
 import CommonApi from "@/api/CommonApi"
 
 // Registering the chart elements
@@ -106,7 +106,6 @@ const DashBoardChart = () => {
   const [saleByProductData, setSaleByProductData] = useState([])
   const [saleByBuyersData, setSaleByBuyersData] = useState([])
 
-  const VendorMasterUUID = useSelector((state) => state.vendor.VendorMasterUUID)
   const [products, setProducts] = useState([])
   const [suppliers, setSuppliers] = useState([])
 
@@ -133,9 +132,9 @@ const DashBoardChart = () => {
             {},
             {}
           )
-          setSuppliers(supplierRes.data)
-          if (supplierRes.data.length > 0) {
-            setSupplierUUID(supplierRes.data[0].supplierUUId)
+          if (supplierRes?.data.length > 0) {
+            setSuppliers(supplierRes.data);
+            setSupplierUUID(supplierRes.data[0].supplierUUId);
           }
   
           // Fetch products and set the first one as the default
@@ -144,7 +143,9 @@ const DashBoardChart = () => {
             {},
             {}
           )
-          setProducts(productRes.data)
+          if(productRes?.data.length>0){            
+            setProducts(productRes.data)
+          }
           if (productRes.data.length > 0) {
             setProductUUID(productRes.data[0].productUUId)
           }
@@ -234,7 +235,9 @@ const DashBoardChart = () => {
         {},
         {}
       )
-      setSuppliers(res.data)
+      if (res?.data.length > 0) {
+        setSuppliers(res.data);
+      }
     } catch (error) {
       console.error("Error fetching suppliers:", error)
     }
@@ -247,7 +250,9 @@ const DashBoardChart = () => {
         {},
         {}
       )
-      setProducts(res.data)
+      if(res?.data.length){
+        setProducts(res.data)
+      }
     } catch (error) {
       console.error("Error fetching products:", error)
     }

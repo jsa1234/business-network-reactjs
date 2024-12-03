@@ -35,6 +35,7 @@ function DetailsBuyer({ activeTab }) {
   useEffect(() => {
     if (myNetwork) {
       setnetworkDetails(myNetwork);
+      console.log(myNetwork);
     }
   }, [myNetwork]);
   useEffect(() => {
@@ -153,13 +154,17 @@ function DetailsBuyer({ activeTab }) {
         };
         if (checkList.includes(element.productUUId)) {
           mData.status = 2;
-        } else {
-          mData.status = 1;
+          inputData.push(mData);
         }
-        inputData.push(mData);
+      }
+      let url;
+      if(networkDetails.type=="open"){
+        url="Quotation/vendor/open-quotation"
+      }else{
+        url="Quotation/vendor/quotation"
       }
       const res = await CommonApi.postData(
-        "Quotation/vendor/quotation",
+        url,
         {},
         {
           requestFromVendorUUId: vendorDetails.vendorMasterUUId,

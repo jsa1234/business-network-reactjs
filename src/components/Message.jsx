@@ -1,34 +1,39 @@
-import React from 'react'
-import Delete from "../../public/assests/icons/delete.svg"
-import Replay from "../../public/assests/icons/replay.svg"
-const Message = () => {
-    return (
-        <>
-         <div className="">
-              <div className="flex items-center">
-                <h2 className="text-3xl m-4 font-bold flex-1">
-                  Looking for High-Quality Organic Apples
-                </h2>
-                <button className="flex items-center gap-2 text-3xl  text-gray-500 ">
-                  <Delete /> Delete
-                </button>
-              </div>
+import React from "react";
+import Delete from "../../public/assests/icons/delete.svg";
+import Replay from "../../public/assests/icons/replay.svg";
+const Message = ({heading,description,name,date,replayDelete}) => {
+  return (
+    <>
+      <div className=" ">
+        <div className="flex items-center">
+          <h2 className="text-3xl mt-8  ml-8 font-bold flex-1">
+           
+            {heading}
+            
+          </h2>
+          <h2 className="flex items-center gap-2 text-2xl  text-gray-500 mr-8 ">
+            {replayDelete}
+          
+            {/* <Delete /> Delete */}
+          </h2>
+        </div>
 
-              <p className="m-4 text-xl ">
-                I am in search of fresh, organic apples for bulk purchase.
-                Preferred quantity is 500 kg per month, and I'm looking for
-                suppliers who can provide consistent quality at a competitive
-                price.
-              </p>
-              <p className="m-4 text-2xl  font-bold pt-4 ">GreenLeaf Distributors<span className="ml-2 font-normal text-gray-500">23 Nov 2025, 10:30 AM</span></p>
-              <button className='flex ml-2 text-xl gap-x-2' >
-                <Replay/> 12 Replays
-
-              </button>
-
-            </div>
-        </>
-    );
+        <p className="m-8 text-xl ">
+         
+          {description}
+        </p>
+        <p className="m-8 text-2xl  font-bold pt-4 ">
+        
+          {name}
+          <span className="ml-2 font-normal text-gray-500">
+            {date}
+          
+          </span>
+        </p>
+       
+      </div>
+    </>
+  );
 };
 
 export default Message;
