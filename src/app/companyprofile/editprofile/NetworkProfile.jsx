@@ -4,8 +4,8 @@ import CommonApi from "@/api/CommonApi";
 import { useSelector } from "react-redux";
 
 const NetworkProfile = () => {
-  const [businessSegment, setBusinessSegment] = useState([]);
-  const [selectedSegments, setSelectedSegments] = useState([]);
+  const [businessSegments, setBusinessSegments] = useState([]);
+  const [vendorSegments, setVendorSegments] = useState([]);
   const [vendorDetails, setVendorDetails] = useState({});
 
   useEffect(() => {
@@ -48,14 +48,32 @@ const NetworkProfile = () => {
         {}
       );
 
+      console.log(res.data);
+
       setCompanyDetails((prev) => {
         return { ...prev, ...res.data };
       });
 
       getLocations(res.data.locationId);
       getBusinessDomains(res.data.vendorDomainUUId);
+      getBusinessSegments(res.data.vendorDomainUUId);
     } catch (error) {
       console.error("Error fetching products:", error);
+    }
+  };
+
+  const getBusinessSegments = async (domainId) => {
+    try {
+      const res = await CommonApi.getData(
+        `Vendor/${domainId}/master-business-segments`,
+        {},
+        {}
+      );
+
+      setBusinessSegments(res.data);
+      console.group(res.data);
+    } catch (error) {
+      console.error("Error fetching locations:", error);
     }
   };
 
@@ -89,7 +107,7 @@ const NetworkProfile = () => {
 
   // Handle selection toggle
   const handleSegmentClick = (segmentName) => {
-    setSelectedSegments(
+    setVendorSegments(
       (prevSelected) =>
         prevSelected.includes(segmentName)
           ? prevSelected.filter((name) => name !== segmentName) // Remove if already selected
@@ -120,37 +138,38 @@ const NetworkProfile = () => {
   };
 
   const saveDetails = async () => {
-    console.log(companyDetails);
-    // return
-    // Extract only the necessary fields
-    const {
-      vendorMasterUUId,
-      companyName,
-      contactPerson,
-      gstNo,
-      contactNumber,
-      email,
-      address,
-      vendorType,
-      locationId,
-      vendorERPStockAPIUrl,
-    } = companyDetails;
-
-    // Create a FormData object
-    const formData = new FormData();
-    formData.append("VendorMasterUUId", vendorMasterUUId);
-    formData.append("CompanyName", companyName);
-    formData.append("ContactPerson", contactPerson);
-    formData.append("GstNo", gstNo);
-    formData.append("ContactNumber", contactNumber);
-    formData.append("Email", email);
-    formData.append("Address", address);
-    formData.append("VendorType", vendorType);
-    formData.append("LocationId", locationId);
-    formData.append("VendorERPStockAPIUrl", vendorERPStockAPIUrl);
-
     try {
-      // Set the headers for form-data
+      // Create a FormData object
+      const {
+        vendorMasterUUId,
+        companyName,
+        contactPerson,
+        gstNo,
+        contactNumber,
+        email,
+        address,
+        vendorType,
+        locationId,
+        vendorERPStockAPIUrl,
+        logo,
+      } = companyDetails;
+
+      console.log(logo);
+
+      const formData = new FormData();
+      formData.append("VendorMasterUUId", vendorMasterUUId);
+      formData.append("CompanyName", companyName);
+      formData.append("ContactPerson", contactPerson);
+      formData.append("GstNo", gstNo);
+      formData.append("ContactNumber", contactNumber);
+      formData.append("Email", email);
+      formData.append("Address", address);
+      formData.append("VendorType", vendorType);
+      formData.append("LocationId", locationId);
+      formData.append("VendorERPStockAPIUrl", vendorERPStockAPIUrl);
+      formData.append("Logo", logo);
+
+      // Set headers for form data
       const headers = { "Content-Type": "multipart/form-data" };
 
       // Send the request using the FormData object
@@ -162,7 +181,19 @@ const NetworkProfile = () => {
 
       console.log("Response from saveDetails:", res);
     } catch (error) {
-      console.error("Error saving company details:", error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Error response:", error.response);
+        console.error("Error status:", error.response.status);
+        console.error("Error data:", error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("Error request:", error.request);
+      } else {
+        // Something happened in setting up the request that triggered an error
+        console.error("Error message:", error.message);
+      }
     }
   };
 
@@ -408,22 +439,22 @@ const NetworkProfile = () => {
         </div>
       </section>
 
-      {/* section 3 */}
+      {/* section 3 */} 
       <section className="pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
         <div className="w-1/3">
-          <h2 className="text-2xl font-bold">Company Details</h2>
+          <h2 className="text-2xl font-bold">Preferences</h2>
         </div>
         <div className="w-2/3">
           <div className="w-full flex items-start justify-center gap-x-6">
             <div className="mb-8 w-full">
               <h2 className="text-3xl font-medium mb-8">Business Segments</h2>
               <div className="flex flex-wrap gap-6">
-                {businessSegment.map((segment, index) => (
+                {businessSegments.map((segment) => (
                   <div
-                    key={index}
+                    key={segment.segmentUUId}
                     className={`p-4 border rounded-lg shadow-sm flex flex-col items-start cursor-pointer ${
-                      selectedSegments.includes(segment.segmentName)
-                        ? "bg-blue-200" // Highlight for selected items
+                      vendorSegments.includes(segment.segmentName)
+                        ? "bg-orange-200 opacity-75" // Highlight for selected items
                         : "bg-gray-50"
                     }`}
                     onClick={() => handleSegmentClick(segment.segmentName)}
