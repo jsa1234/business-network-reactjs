@@ -37,7 +37,6 @@ const QrRecieved = (props) => {
   const [open, setOpen] = useState(false);
   const [qrMode, setQrMode] = useState("");
   const [headData, setHeadData] = useState({});
-  const [toastMsg, setToastMsg] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
   const [selectRow, setSelectedRow] = useState({});
   const [totalGSTAmount, setTotalGSTAmount] = useState(0);
@@ -45,6 +44,7 @@ const QrRecieved = (props) => {
   const [vendorDetails,setVendorDetails]=useState({});
   const [quotationDetails,setQuotationDetails]=useState({});
   const Quotation = useSelector((state) => state.quotation.Quotation);
+  const [toastMsg,setToastMsg]=useState({open:false,severity:'',message:''});
   useEffect(() => {
     // Load vendorDetails from sessionStorage when the component mounts
     const storedVendorDetails = sessionStorage.getItem("vendorDetails");
@@ -69,7 +69,7 @@ const QrRecieved = (props) => {
   }, [vendorDetails,quotationDetails]); 
   
   const handleClose = () => {
-    setOpen(false);
+    setToastMsg({open:false,severity:'',message:''});
   };
   const fetchData = async () => {
     try {
@@ -80,9 +80,10 @@ const QrRecieved = (props) => {
         {}
       );
       if (data.data.length > 0) {
+        console.log(data.data);
         let tData = data.data;
         for (let i = 0; i < tData.length; i++) {
-          tData[i].totalPrice = tData[i].quantity * tData[i].unitPrice;
+          tData[i].totalPrice = tData[i].quantity * tData[i].offerPrice;
         }
         setData(data.data);
       }
@@ -114,9 +115,21 @@ const QrRecieved = (props) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  const handleEmptyCheck=(prodUID)=>{
+    for(const index in data){
+      let element=data[index];
+      if(element.productUUId==prodUID){
+        if(element?.unitPrice<=0||element?.offerPrice<=0){
+          return true;
+        }
+      }
+    }
+  }
   const handleRowclick = (value) => {
-    // alert(value);
-    console.log(checkList);
+    if(handleEmptyCheck(value)){
+      setToastMsg({open:true,severity:'warning',message:'Enter Both Original Price and Offer Price'});
+      return;
+    }
     setCheckList((checkList) => {
       if (checkList.includes(value)) {
         return checkList.filter((item) => item !== value);
@@ -127,7 +140,7 @@ const QrRecieved = (props) => {
   };
   const handleSubmitClick = (value) => {
     if (value == "accept" && checkList.length == 0) {
-      alert("No Products Selected");
+      setToastMsg({open:true,severity:'warning',message:'No Products Selected'});
       return;
     }
     handleModal(value);
@@ -136,11 +149,6 @@ const QrRecieved = (props) => {
     setDiscount(value);
   };
   const handleRowEdit = (row, index, key, value) => {
-    setData((prevData) =>
-      prevData.map((item, i) =>
-        i === index ? { ...item, [key]: value } : item
-      )
-    );
     setCheckList([]);
     setTotalAmount(0);
     setTotalGSTAmount(0);
@@ -148,24 +156,35 @@ const QrRecieved = (props) => {
     for (const element of tData) {
       if (row.productUUId == element.productUUId) {
         if (key == "unitPrice") {
-          element.totalPrice = Number(element.quantity) * value;
+          // element.totalPrice = Number(element.quantity) * value;
           element.unitPrice = value;
+        }
+        if (key == "quantity") {
+          element.totalPrice = Number(value) * element.offerPrice;
+          element.quantity = value;
+        }
+        if (key == "offerPrice") {
+          element.totalPrice = Number(element.quantity) * value;
+          element.offerPrice = value;
         }
         if (key == "gst") element.gst = value;
       }
     }
-    if (key == "unitPrice") setData(tData);
+    if (key == "unitPrice"||key == "offerPrice") setData(tData);
   };
   const calculateTotal = () => {
     let total = 0;
     let totalGST = 0;
     let tData = data;
+    let totalUnitPrice=0;
     for (const element of tData) {
       if (checkList.includes(element.productUUId)) {
         total += element.totalPrice;
         totalGST += (Number(element.gst) / 100) * Number(element.totalPrice);
+        totalUnitPrice+=(Number(element.quantity)*Number(element.unitPrice));
       }
     }
+    setDiscount(totalUnitPrice-total);
     console.log(total);
     console.log(totalGST);
     setTotalAmount(total);
@@ -295,7 +314,6 @@ const QrRecieved = (props) => {
         );
       }
       if (response?.success||response?.status=="success") {
-        // alert("success");
         if (value == "send") {
           setToastMsg("Quotation Request Submitted SuccessFully!");
           setOpen(true);
@@ -365,6 +383,7 @@ const QrRecieved = (props) => {
               <TableCell align="left">Req Qty</TableCell>
               <TableCell align="left">GST %</TableCell>
               <TableCell align="left">Unit Price</TableCell>
+              <TableCell align="left">Offer Price</TableCell>
               <TableCell align="left">Total Price</TableCell>
               <TableCell align="left">Action</TableCell>
               <TableCell />
@@ -379,7 +398,16 @@ const QrRecieved = (props) => {
                 <TableCell component="td" scope="row">
                   {row.productName}
                 </TableCell>
-                <TableCell align="left">{row.quantity}</TableCell>
+                <TableCell align="left">
+                  <input
+                      disabled={vendorDetails.vendorType == 1}
+                      className="table__input"
+                      value={row.quantity}
+                      onChange={(e) =>
+                        handleRowEdit(row, index, "quantity", e.target.value)
+                      }
+                    ></input>
+                </TableCell>
 
                 <TableCell align="left">
                   <select
@@ -390,6 +418,7 @@ const QrRecieved = (props) => {
                       handleRowEdit(row, index, "gst", e.target.value)
                     }
                   >
+                    <option value="0" disabled={true}>0 %</option>
                     <option value="5">5 %</option>
                     <option value="12">12 %</option>
                     <option value="18">18 %</option>
@@ -400,15 +429,27 @@ const QrRecieved = (props) => {
                   <input
                     disabled={vendorDetails.vendorType == 2}
                     className="table__input"
+                    type="number"
                     value={row.unitPrice}
                     onChange={(e) =>
                       handleRowEdit(row, index, "unitPrice", e.target.value)
                     }
                   ></input>
                 </TableCell>
+                <TableCell align="left">
+                  <input
+                    disabled={vendorDetails.vendorType == 2}
+                    className="table__input"
+                    type="number"
+                    value={row.offerPrice}
+                    onChange={(e) =>
+                      handleRowEdit(row, index, "offerPrice", e.target.value)
+                    }
+                  ></input>
+                </TableCell>
                 <TableCell align="left">{row.totalPrice}</TableCell>
                 <TableCell align="left flex border-b-0">
-                  <button
+                  <button 
                     className={
                       checkList.includes(row.productUUId)
                         ? "secondary__btn__light"
@@ -435,11 +476,11 @@ const QrRecieved = (props) => {
         </Table>
       </TableContainer>
       <TotalRate
-        subTotal={totalAmount}
+        subTotal={totalAmount + discount}
         totalGst={totalGSTAmount}
-        total={totalAmount + totalGSTAmount - discount}
+        total={totalAmount + totalGSTAmount}
         submitClick={handleSubmitClick}
-        discountChange={handleDiscountChange}
+        discount={discount}
         selectedCount={checkList.length}
       />
       <QrPopup
@@ -453,13 +494,13 @@ const QrRecieved = (props) => {
       <Snackbar
         autoHideDuration={5000}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        open={open}
+        open={toastMsg.open}
         onClose={handleClose}
         message="I love snacks"
       >
         <Alert
           onClose={handleClose}
-          severity="success"
+          severity={toastMsg.severity}
           variant="filled"
           sx={{
             width: "100%",
@@ -467,7 +508,7 @@ const QrRecieved = (props) => {
             fontSize: "1.4rem",
           }}
         >
-          {toastMsg}
+          {toastMsg.message}
         </Alert>
       </Snackbar>
     </>
