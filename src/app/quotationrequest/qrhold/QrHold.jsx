@@ -219,7 +219,7 @@ const QrHold = () => {
             "requestFromVendorUUId": vendorDetails.vendorMasterUUId,
             "requestedToVendorUUId": quotationDetails.vendorMasterUUId,
             "expectedDeliveryDate": deliveryDate,
-            "comments": "",
+            "comments": comments,
             "quotationDetails": [mData]
           }
         );

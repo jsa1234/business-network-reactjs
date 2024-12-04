@@ -111,6 +111,7 @@ const OpenQuotation = () => {
               qrId={row.quotationRequestId}
               cardClick={handleCardClick}
               qrUUID={row.quotationRequestUUId}
+              vMstrid={row.vendorMasterUUId}
             />
           ))}
           {data.length==0?

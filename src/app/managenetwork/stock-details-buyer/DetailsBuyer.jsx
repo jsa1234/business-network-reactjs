@@ -11,6 +11,7 @@ import Contactperson from "../../../../public/assests/icons/contactperson.svg";
 import Email from "../../../../public/assests/icons/email.svg";
 import TickIcon from "../../../../public/assests/icons/tick-double.svg";
 import { useSelector } from "react-redux";
+import { Alert, Snackbar } from "@mui/material";
 
 function DetailsBuyer({ activeTab }) {
   const [stock, setStock] = useState([]);
@@ -26,6 +27,10 @@ function DetailsBuyer({ activeTab }) {
   const myNetwork = useSelector((state) => state.managenetwork.myNetwork);
   const [networkDetails,setnetworkDetails]=useState({});
   const [vendorDetails,setVendorDetails]=useState({});
+  const [toastMsg,setToastMsg]=useState({open:false,severity:'',message:''});
+  const handleClose = () => {
+    setToastMsg({open:false,severity:'',message:''});
+  };
   // useEffect(() => {
   //   const myProp = searchParams.get("uuid");
   //   setVendorMstrUID(myProp);
@@ -82,7 +87,7 @@ function DetailsBuyer({ activeTab }) {
       !row.rqQty ||
       row.rqQty == ""
     ) {
-      alert("Enter the Required Quantity!");
+      setToastMsg({open:true,severity:'warning',message:'Enter the Required Quantity!'});
       return;
     }
     setCheckList((checkList) => {
@@ -134,13 +139,17 @@ function DetailsBuyer({ activeTab }) {
   };
   const handleSubmitClick = () => {
     if (checkList.length == 0) {
-      alert("Select Products to submit");
+      setToastMsg({open:true,severity:'warning',message:'Select Products to submit'});
       return;
     }
     handleModal();
   };
   const submitQuotation = async () => {
     try {
+      if(deliveryDate==''){
+        setToastMsg({open:true,severity:'warning',message:'Choose Expected Delivery Date'});
+        return;
+      }
       setLoading(true);
 
       let inputData = [];
@@ -153,7 +162,7 @@ function DetailsBuyer({ activeTab }) {
           
         };
         if (checkList.includes(element.productUUId)) {
-          mData.status = 2;
+          mData.status = 0;
           inputData.push(mData);
         }
       }
@@ -171,11 +180,15 @@ function DetailsBuyer({ activeTab }) {
           requestedToVendorUUId: networkDetails.vendorMstrUID,
           status: 1,
           expectedDeliveryDate: deliveryDate||null,
+          comments:comments,
           quotationDetails: [...inputData],
         }
       );
       if(res.success){
-        alert("Quotation Updated");
+        setToastMsg({open:true,severity:'success',message:'Quotation Updated Successfully!'});
+      }else{
+        console.log(res);
+        setToastMsg({open:true,severity:'error',message:'Something Went Wrong!'});
       }
       handleModal();
     } catch (e) {
@@ -270,6 +283,26 @@ function DetailsBuyer({ activeTab }) {
           dateChange={handleDateChange}
           commentsChange={handleCommentsChange}
         />
+        <Snackbar
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={toastMsg.open}
+        onClose={handleClose}
+        message="I love snacks"
+      >
+        <Alert
+          onClose={handleClose}
+          severity={toastMsg.severity}
+          variant="filled"
+          sx={{
+            width: "100%",
+            // Increase font size here
+            fontSize: "1.2rem",
+          }}
+        >
+          {toastMsg.message}
+        </Alert>
+      </Snackbar>
       </>
     );
   };
