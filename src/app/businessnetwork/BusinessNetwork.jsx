@@ -67,9 +67,8 @@ const handleGlobalSearch=async ()=>{
       {
         VendorMasterUUId: vendorDetails.vendorMasterUUId,
         SearchKey: globalSearch,
-        SearchFilter: globalMatch==""?null:globalMatch,
         VendorType: vendorDetails.vendorType,
-        FilterType: productCategory,
+        FilterType: globalMatch==""?null:globalMatch,
         PageSize :10,
         PageNumber :1,
       }
