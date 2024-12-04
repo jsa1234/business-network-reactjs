@@ -11,6 +11,7 @@ import Contactperson from "../../../../public/assests/icons/contactperson.svg";
 import Email from "../../../../public/assests/icons/email.svg";
 import TickIcon from "../../../../public/assests/icons/tick-double.svg";
 import { useSelector } from "react-redux";
+import { Alert, Snackbar } from "@mui/material";
 
 function Trading({ activeTab }) {
   const [stock, setStock] = useState([]);
@@ -26,6 +27,10 @@ function Trading({ activeTab }) {
   const myNetwork = useSelector((state) => state.managenetwork.myNetwork);
   const [networkDetails,setnetworkDetails]=useState({});
   const [vendorDetails,setVendorDetails]=useState({});
+  const [toastMsg,setToastMsg]=useState({open:false,severity:'',message:''});
+  const handleClose = () => {
+    setToastMsg({open:false,severity:'',message:''});
+  };
 
   useEffect(() => {
     if (myNetwork) {
@@ -76,7 +81,7 @@ function Trading({ activeTab }) {
       row.ofPrice == "" ||
       row.ogPrice == ""
     ) {
-      alert("Enter the both Original Price and Offer Price");
+      setToastMsg({open:true,severity:'warning',message:'Enter the both Original Price and Offer Price'});
       return;
     }
     setCheckList((checkList) => {
@@ -120,13 +125,17 @@ function Trading({ activeTab }) {
   };
   const handleSubmitClick = () => {
     if (checkList.length == 0) {
-      alert("Select Products to submit");
+      setToastMsg({open:true,severity:'warning',message:'Select Products to submit'});
       return;
     }
     handleModal();
   };
   const submitQuotation = async () => {
     try {
+      if(deliveryDate==''){
+        setToastMsg({open:true,severity:'warning',message:'Choose Expected Delivery Date'});
+        return;
+      }
       setLoading(true);
 
       let inputData = [];
@@ -139,11 +148,9 @@ function Trading({ activeTab }) {
           offerPrice: element.ofPrice,
         };
         if (checkList.includes(element.productUUId)) {
-          mData.status = 2;
-        } else {
-          mData.status = 1;
-        }
-        inputData.push(mData);
+          mData.status = 0;
+          inputData.push(mData);
+        } 
       }
       const res = await CommonApi.postData(
         "Quotation/vendor/quotation",
@@ -151,7 +158,8 @@ function Trading({ activeTab }) {
         {
           requestFromVendorUUId: vendorDetails.vendorMasterUUId,
           requestedToVendorUUId: networkDetails.vendorMstrUID,
-          status: 1,
+          status: 0,
+          comments:comments,
           expectedDeliveryDate: deliveryDate,
           quotationDetails: [...inputData],
         }
@@ -339,6 +347,26 @@ function Trading({ activeTab }) {
           dateChange={handleDateChange}
           commentsChange={handleCommentsChange}
         />
+        <Snackbar
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={toastMsg.open}
+        onClose={handleClose}
+        message="I love snacks"
+      >
+        <Alert
+          onClose={handleClose}
+          severity={toastMsg.severity}
+          variant="filled"
+          sx={{
+            width: "100%",
+            // Increase font size here
+            fontSize: "1.2rem",
+          }}
+        >
+          {toastMsg.message}
+        </Alert>
+      </Snackbar>
       </>
     );
   };

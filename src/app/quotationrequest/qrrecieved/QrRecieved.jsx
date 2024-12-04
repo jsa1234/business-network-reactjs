@@ -190,50 +190,51 @@ const QrRecieved = (props) => {
   const submitQuotation = async (value) => {
     try {
       setModalShow(!modalShow);
-      if (Object.keys(selectRow).length > 0) {
-        let mData = {};
-        mData = {
-          ...selectRow,
-        };
-        let response;
-        if (vendorDetails.vendorType == 2) {
-          response = await CommonApi.postData(
-            `Purchase/vendor/request`,
-            {},
-            {
-              quotationRequestUUId: qrUuid,
-              requestFromVendorUUId:vendorDetails.vendorMasterUUId,//buyer who is logged in
-              requestedToVendorUUId: quotationDetails.vendorMasterUUId,//seller
-              expectedDeliveryDate: deliveryDate,
-              comments: comments,
-              purchaseDetails: [mData],
-            }
-          );
-        } else {
-          response = await CommonApi.putData(
-            `Quotation/vendor/quotation`,
-            {},
-            {
-              quotationRequestId: qrUuid,
-              requestFromVendorUUId: vendorDetails.vendorMasterUUId, //needs to be dynamic
-              requestedToVendorUUId: quotationDetails.vendorMasterUUId, //needs to be dynamic
-              status: constants.quotationStatus[value],
-              expectedDeliveryDate: deliveryDate,
-              comments: comments,
-              quotationDetails: [mData],
-            }
-          );
-        }
-        if (response.status == "success") {
-          setToastMsg("Quotation Hold Submitted SuccessFully!");
-          setOpen(true);
-        } else {
-          setToastMsg("Quotation Request Failed!");
-          setOpen(true);
-        }
-        setSelectedRow({});
-        return;
-      }
+      //below commented code is for holding the individual products selectRow will contain the selcted row data
+      // if (Object.keys(selectRow).length > 0) {
+      //   let mData = {};
+      //   mData = {
+      //     ...selectRow,
+      //   };
+      //   let response;
+      //   if (vendorDetails.vendorType == 2) {
+      //     response = await CommonApi.postData(
+      //       `Purchase/vendor/request`,
+      //       {},
+      //       {
+      //         quotationRequestUUId: qrUuid,
+      //         requestFromVendorUUId:vendorDetails.vendorMasterUUId,//buyer who is logged in
+      //         requestedToVendorUUId: quotationDetails.vendorMasterUUId,//seller
+      //         expectedDeliveryDate: deliveryDate,
+      //         comments: comments,
+      //         purchaseDetails: [mData],
+      //       }
+      //     );
+      //   } else {
+      //     response = await CommonApi.putData(
+      //       `Quotation/vendor/quotation`,
+      //       {},
+      //       {
+      //         quotationRequestId: qrUuid,
+      //         requestFromVendorUUId: vendorDetails.vendorMasterUUId, //needs to be dynamic
+      //         requestedToVendorUUId: quotationDetails.vendorMasterUUId, //needs to be dynamic
+      //         status: constants.quotationStatus[value],
+      //         expectedDeliveryDate: deliveryDate,
+      //         comments: comments,
+      //         quotationDetails: [mData],
+      //       }
+      //     );
+      //   }
+      //   if (response.status == "success") {
+      //     setToastMsg("Quotation Hold Submitted SuccessFully!");
+      //     setOpen(true);
+      //   } else {
+      //     setToastMsg("Quotation Request Failed!");
+      //     setOpen(true);
+      //   }
+      //   setSelectedRow({});
+      //   return;
+      // }
       let inputData = [];
       for (const element of data) {
         let mData = {};
