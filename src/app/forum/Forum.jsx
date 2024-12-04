@@ -1,83 +1,188 @@
-"use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Loader from "@/components/Loader";
-
 import Message from "@/components/Message";
-import Replay from "../../../public/assests/icons/replay.svg";
+import ReplayIcon from "../../../public/assests/icons/replay.svg";
 import Delete from "../../../public/assests/icons/delete.svg";
+import CommonApi from "@/api/CommonApi";
+
 const Forum = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("All Queries");
+  const [queries, setQueries] = useState([]);
+  const [myQueries, setMyQueries] = useState([]);
+  const [vendorDetails, setVendorDetails] = useState({});
+  const [replyForm, setReplyForm] = useState(false);
+  const [selectedForumId, setSelectedForumId] = useState(null); // State to track selected forum ID
+  const [comment, setComment] = useState(""); // State for textarea input
+
+  useEffect(() => {
+    const storedVendorDetails = sessionStorage.getItem("vendorDetails");
+    if (storedVendorDetails) {
+      setVendorDetails(JSON.parse(storedVendorDetails));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (vendorDetails && vendorDetails.vendorMasterUUId) {
+      fetchMyQueries();
+      fetchQueries();
+    }
+  }, [vendorDetails]);
+
+  const fetchQueries = async () => {
+    try {
+      setLoading(true);
+      const response = await CommonApi.getData(
+        `Forum/vendor/get-all-forum-topics-by-domain/${vendorDetails.vendorMasterUUId}`,
+        {},
+        { VendorMasterUUId: vendorDetails.vendorMasterUUId }
+      );
+      setQueries(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMyQueries = async () => {
+    try {
+      setLoading(true);
+      const response = await CommonApi.getData(
+        `Forum/vendor/get-all-forum-topics-by-UUId/${vendorDetails.vendorMasterUUId}`,
+        {},
+        { VendorMasterUUId: vendorDetails.vendorMasterUUId }
+      );
+      setMyQueries(response.data);
+    } catch (error) {
+      console.error("Error fetching my queries:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const Replay = async (forumTopicUUId, comment) => {
+    try {
+      if (!comment.trim()) {
+        console.error("Comment is required.");
+        return;
+      }
+
+      const response = await CommonApi.postData(
+        "Forum/vendor/replay",
+        {},
+        {
+          forumTopicUUId: forumTopicUUId,
+          vendorMasterUUId: vendorDetails.vendorMasterUUId,
+          comment: comment,
+        }
+      );
+
+      if (response?.status === 200) {
+        console.log("Replay added successfully:", response.data);
+        // Refresh the queries or perform additional actions if needed
+      } else {
+        console.error("Failed to add replay:", response);
+      }
+    } catch (error) {
+      console.error("Error adding replay:", error);
+    }
+  };
+
+  const handleReplayClick = (forumTopicUUId) => {
+    setReplyForm(!replyForm);
+    setSelectedForumId(forumTopicUUId);
+  };
+
+  const handleReplaySubmit = async (forumTopicUUId) => {
+    await Replay(forumTopicUUId, comment);
+    setComment("");
+    setSelectedForumId(null);
+  };
+
+  //length//
 
   return (
-    <div >
-      {loading ? <Loader /> : ""}
+    <div>
+      {loading && <Loader />}
       <div className="flex mt-6 background">
+        {/* Tab buttons */}
         <button
-          className={`tab flex items-center justify-center gap-2 p-2 rounded-md relative ${
-            activeTab === "All Queries"
-              ? "bg-white text-orange-500 border-b-2 border-b-orange-500 active"
-              : ""
-          }`}
-          onClick={() => setActiveTab("All Queries")} // Added onClick handler for this tab
+          className={`tab ${activeTab === "All Queries" ? "active" : ""}`}
+          onClick={() => setActiveTab("All Queries")}
         >
-          <span className="relative">All Queries</span>
+          All Queries
         </button>
-
         <button
-          className={`tab flex items-center justify-center p-2 rounded-md gap-2 relative ${
-            activeTab === "My Queries"
-              ? "bg-white text-orange-500 border-b-2 border-b-orange-500 active"
-              : ""
-          }`}
+          className={`tab ${activeTab === "My Queries" ? "active" : ""}`}
           onClick={() => setActiveTab("My Queries")}
         >
-          <span className="relative">My Queries</span>
+          My Queries
         </button>
       </div>
 
-      {/* Content based on the active tab */}
-
-      <div className=" table-container2">
-        {activeTab === "All Queries" && (
-          <>
-            <Message
-              heading="Looking for High-Quality Organic Apples"
-              description="I am in search of fresh, organic apples for bulk purchase. Preferred quantity is 500 kg per month, and I'm looking for suppliers who can provide consistent quality at a competitive price."
-              name="GreenLeaf Distributors"
-              date="23 Nov 2025, 10:30 AM"
-            />
-            <div className="bg-[#f5f5f5] p-4 flex justify-between mb-4 ml-4 mr-4">
-              <a href='forum/forumdetails'>
-              <button className="flex items-center ml-2 text-xl gap-x-2 border p-2 bg-[white]">
-                <Replay /> 12 Replays
-              </button>
-              </a>
-              <button className="flex items-center justify-end gap-2 pl-8 pr-8 bg-[#5C5956] text-[white] rounded-[5px]">
-                Replay Now
-              </button>
+      {/* Display queries */}
+      <div className="table-container2">
+        {activeTab === "All Queries" &&
+          queries.map((query) => (
+            <div key={query.forumTopicUUId}>
+              <Message
+                heading={query.topic}
+                description={query.description}
+                name={query.companyName}
+                date={new Date(query.createdAt).toLocaleString()}
+              />
+              <div className="bg-[#F5F5F5] p-4 flex justify-between mb-4 ml-4 mr-4">
+                <a href={`forum/forumdetails?forumId=${query.forumTopicUUId}`}>
+                  <button className="flex items-center ml-2 text-xl gap-x-2 border p-2 bg-[white]">
+                    <ReplayIcon /> {query.totalComments} Replays
+                  </button>
+                </a>
+                <button
+                  className="flex items-center justify-end gap-2 pl-8 pr-8 bg-[#5C5956] text-[white] rounded-[5px]"
+                  onClick={() => handleReplayClick(query.forumTopicUUId)}
+                >
+                  Reply Now
+                </button>
+              </div>
+              {replyForm && selectedForumId === query.forumTopicUUId && (
+                <div className="m-8">
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows="5"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    className="w-full p-3 bg-[#F9F9FC] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Your answer here!..."
+                  ></textarea>
+                  <button
+                    onClick={() => handleReplaySubmit(query.forumTopicUUId)}
+                    className="self-start px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-blue-700 mt-8"
+                  >
+                    Reply Now
+                  </button>
+                </div>
+              )}
             </div>
-          </>
-        )}
+          ))}
 
-        {activeTab === "My Queries" && (
-          
-          <Message
-            heading=" Looking for High-Quality Organic Apples"
-            description=" I am in search of fresh, organic apples for bulk purchase. Preferred
-          quantity is 500 kg per month, and I'm looking for suppliers who can
-          provide consistent quality at a competitive price."
-            name=" GreenLeaf Distributors"
-            date="  23 Nov 2025, 10:30 AM"
-            replayDelete={
-              <>
-            <Delete /> Delete
-            </>
-
-            }
-           
-          />
-        )}
+        {activeTab === "My Queries" &&
+          myQueries.map((myQuery) => (
+            <div key={myQuery.forumTopicUUId}>
+              <Message
+                heading={myQuery.topic}
+                description={myQuery.description}
+                name={myQuery.companyName}
+                date={new Date(myQuery.createdAt).toLocaleString()}
+                replayDelete={
+                  <button className="flex items-center gap-2 text-gray-500">
+                    <Delete /> Delete
+                  </button>
+                }
+              />
+            </div>
+          ))}
       </div>
     </div>
   );
