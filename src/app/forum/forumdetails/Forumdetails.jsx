@@ -17,7 +17,6 @@ const Forumdetails = () => {
 
   useEffect(() => {
     console.log(forumId);
-
     const storedVendorDetails = sessionStorage.getItem("vendorDetails");
     if (storedVendorDetails) {
       setVendorDetails(JSON.parse(storedVendorDetails));
