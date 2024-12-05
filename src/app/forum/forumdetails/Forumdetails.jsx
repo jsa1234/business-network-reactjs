@@ -1,7 +1,7 @@
 "use client";
 import Loader from "@/components/Loader";
 import Message from "@/components/Message";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import CommonApi from "@/api/CommonApi";
 
 import { useSearchParams } from "next/navigation";
@@ -79,6 +79,7 @@ const Forumdetails = () => {
   };
 
   return (
+    <Suspense fallback={<h1>Loading....</h1>}>
     <div className="table-container">
       {loading && <Loader />}
       <div  className="mb-8">
@@ -130,6 +131,7 @@ const Forumdetails = () => {
         );
       })}
     </div>
+    </Suspense>
   );
 };
 
