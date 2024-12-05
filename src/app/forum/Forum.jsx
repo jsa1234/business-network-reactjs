@@ -4,6 +4,7 @@ import Message from "@/components/Message";
 import ReplayIcon from "../../../public/assests/icons/replay.svg";
 import Delete from "../../../public/assests/icons/delete.svg";
 import CommonApi from "@/api/CommonApi";
+import DeleteModal from "@/components/DeleteModal";
 
 const Forum = () => {
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,7 @@ const Forum = () => {
   const [replyForm, setReplyForm] = useState(false);
   const [selectedForumId, setSelectedForumId] = useState(null); // State to track selected forum ID
   const [comment, setComment] = useState(""); // State for textarea input
+  const [deleteModal, setDeleteModal] = useState(false);
 
   useEffect(() => {
     const storedVendorDetails = sessionStorage.getItem("vendorDetails");
@@ -100,7 +102,10 @@ const Forum = () => {
     setSelectedForumId(null);
   };
 
-  //length//
+  const handleDelete = (forum = null) => {
+    setDeleteModal((prevState) => !prevState);
+    setSelectedForumId(forum);
+  };
 
   return (
     <div>
@@ -176,13 +181,20 @@ const Forum = () => {
                 name={myQuery.companyName}
                 date={new Date(myQuery.createdAt).toLocaleString()}
                 replayDelete={
-                  <button className="flex items-center gap-2 text-gray-500">
+                  <button
+                    onClick={() => handleDelete(myQuery.forumTopicUUId)}
+                    className="flex items-center gap-2 text-gray-500"
+                  >
                     <Delete /> Delete
                   </button>
                 }
               />
             </div>
           ))}
+
+        {deleteModal && (
+          <DeleteModal delFn={handleDelete} forum={selectedForumId} updateMyqueries={fetchMyQueries} />
+        )}
       </div>
     </div>
   );

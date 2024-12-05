@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import CommonApi from "@/api/CommonApi";
-import { useSelector } from "react-redux";
 
 const NetworkProfile = () => {
   const [businessSegments, setBusinessSegments] = useState([]);
@@ -435,7 +434,7 @@ const NetworkProfile = () => {
               </label>
 
               <textarea
-              name="address"
+                name="address"
                 onChange={handleInputChange}
                 rows={4}
                 value={companyDetails.address}
