@@ -74,6 +74,25 @@ class CommonAPI {
         return { error: "An unexpected error occurred." };
       });
   }
+
+  deleteData(url, headers = {}, data) {
+    // Combine default and custom headers
+    const combinedHeaders = { ...this.defaultHeaders, ...headers };
+
+    return axios
+      .delete(`${process.env.NEXT_PUBLIC_API_URL}/${url}`, {
+        headers: combinedHeaders,
+        data, // Include data in the request body if provided
+      })
+      .then((response) => response.data)
+      .catch((error) => {
+        console.error("DELETE error:", error);
+        if (error.response) {
+          return { data: error.response.data };
+        }
+        return { error: "An unexpected error occurred." };
+      });
+  }
 }
 
 export default new CommonAPI();
