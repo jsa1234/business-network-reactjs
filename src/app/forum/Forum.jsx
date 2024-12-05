@@ -193,7 +193,7 @@ const Forum = () => {
           ))}
 
         {deleteModal && (
-          <DeleteModal delFn={handleDelete} forum={selectedForumId} />
+          <DeleteModal delFn={handleDelete} forum={selectedForumId} updateMyqueries={fetchMyQueries} />
         )}
       </div>
     </div>

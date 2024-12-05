@@ -2,7 +2,7 @@ import React from "react";
 import CommonApi from "@/api/CommonApi";
 
 const DeleteModal = (props) => {
-  const { delFn, forum } = props;
+  const { delFn, forum, updateMyqueries } = props;
 
   const deleteForum = async () => {
     try {
@@ -13,6 +13,7 @@ const DeleteModal = (props) => {
       );
 
       console.log(res);
+      updateMyqueries();
 
       delFn();
     } catch (error) {
