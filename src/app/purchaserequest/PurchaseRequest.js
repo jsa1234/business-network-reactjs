@@ -13,7 +13,7 @@ const PurchaseRequest = () => {
   const dispatch = useDispatch();
   const [purchaseRequest, setPurchaseRequest] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy,setSortBy]=useState(0)
+  const [sortBy,setSortBy]=useState('')
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [vendorDetails,setVendorDetails]=useState({});
