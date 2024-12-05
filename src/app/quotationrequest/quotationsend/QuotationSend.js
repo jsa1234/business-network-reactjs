@@ -64,7 +64,7 @@ function QuotationSend() {
       if(response.success){
         let tData = response.data;
         for (let i = 0; i < tData.length; i++) {
-          tData[i].totalPrice = tData[i].quantity * tData[i].unitPrice;
+          tData[i].totalPrice = tData[i].quantity * tData[i].offerPrice;
         }
         setSubmittedQuotation(response.data || []);
       } 
@@ -104,6 +104,7 @@ function QuotationSend() {
               <TableCell align="left">Req Qty</TableCell>
               <TableCell align="right">GST %</TableCell>
               <TableCell align="right">Unit Price</TableCell>
+              <TableCell align="right">Offer Price</TableCell>
               <TableCell align="right">Total Price</TableCell>
             </TableRow>
           </TableHead>
@@ -117,6 +118,7 @@ function QuotationSend() {
                   <TableCell align="left">{row.quantity || "--"}</TableCell>
                   <TableCell align="right">{row.gst || "--"}</TableCell>
                   <TableCell align="right">{row.unitPrice || "--"}</TableCell>
+                  <TableCell align="right">{row.offerPrice || "--"}</TableCell>
                   <TableCell align="right">{row.totalPrice || "--"}</TableCell>
                 </TableRow>
               ))

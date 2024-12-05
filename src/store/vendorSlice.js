@@ -8,16 +8,16 @@ const vendorSlice = createSlice({
   name: "vendor",
   initialState,
   reducers: {
-    setVendorMasterUUID: (state, action) => {
-      state.VendorMasterUUID = action.payload;
+    setVendorData: (state, action) => {
+      state.VendorDetails = action.payload;
     },
-    resetVendorMasterUUID: (state) => {
-      state.VendorMasterUUID = "";
+    resetVendorData: (state) => {
+      state.VendorDetails = {};
     },
   },
 });
 
-export const { setVendorMasterUUID, resetVendorMasterUUID } =
+export const { setVendorData, resetVendorData } =
   vendorSlice.actions;
 
 export default vendorSlice.reducer;

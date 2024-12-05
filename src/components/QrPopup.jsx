@@ -1,11 +1,40 @@
-import React from "react";
+"use client"
+import React, { useEffect, useState } from "react";
 import Cancel from "../../public/assests/icons/cancel.svg";
 import Navigation from "../../public/assests/icons/navigation.svg";
 import HoldIcon from "../../public/assests/icons/hold.svg";
+import CommonApi from "@/api/CommonApi";
 const QrPopup = ({mode, showModal, handleModalClose,handleSubmit,dateChange,commentsChange }) => {
+  const [reasonList,setReasonList]=useState([]);
   const sendValue = () => {
     handleModalClose(false); // Call the parent's function
   };
+  let modeList={
+    reject:2,
+    hold:3
+  }
+  useEffect(()=>{
+    if(mode!==""){
+      getReasonData();
+    }
+  },[mode]);
+  async function getReasonData(){
+    try {
+      const res = await CommonApi.getData(
+        `ManageNetwork/reject/${modeList[mode]}/reason`,
+        {},
+        {}
+      );
+      console.log(res);
+      if(res?.data.length>0){
+        setReasonList(res.data);
+      }
+      // setReason((prevState) => [...prevState, ...res.data]);
+    } catch (error) {
+      console.error("Error fetching network data:", error);
+      // getApprovalPending();
+    }
+  }
   return showModal ? (
     <div className="qr-modal">
       <div className="modal-content">
@@ -37,14 +66,18 @@ const QrPopup = ({mode, showModal, handleModalClose,handleSubmit,dateChange,comm
           <input type="date" id="BusinessInpt" onChange={(e)=>dateChange(e.target.value)}/>:
           mode=='hold'?
           <select onChange={(e)=>{commentsChange(e.target.value)}}>
-            <option>Choose</option>
-            <option>Price to High</option>
-            <option>Stock Not Acceptable</option>
+            <option value="1" disabled={true}>Choose</option>
+            {reasonList.map((row) => (
+              <option value={row.reasonId}key={row.reasonId}>{row.reason}</option>
+            ))}
+            {/* <option>Price to High</option>
+            <option>Stock Not Acceptable</option> */}
           </select>:
           <select onChange={(e)=>{commentsChange(e.target.value)}}>
-            <option>Choose</option>
-            <option>Price to High</option>
-            <option>Stock Not Acceptable</option>
+            <option value="1" disabled={true}>Choose</option>
+            {reasonList.map((row) => (
+              <option value={row.reasonId} key={row.reasonId}>{row.reason}</option>
+            ))}
           </select>
           }
         </div>

@@ -35,7 +35,7 @@ const QrHold = () => {
   const [open, setOpen] = React.useState(false);
   const [qrMode, setQrMode] = React.useState("");
   const [headData, setHeadData] = React.useState({});
-  const [toastMsg, setToastMsg] = React.useState("");
+  const [toastMsg,setToastMsg]=React.useState({open:false,severity:'',message:''});
   const [totalAmount, setTotalAmount] = React.useState(0);
   const [selectRow, setSelectedRow] = React.useState({});
   const [totalGSTAmount, setTotalGSTAmount] = React.useState(0);
@@ -74,7 +74,7 @@ const QrHold = () => {
     }
   }, [vendorDetails,quotationDetails]); 
   const handleClose = () => {
-    setOpen(false);
+    setToastMsg({open:false,severity:'',message:''});
   };
   const fetchData = async () => {
     try {
@@ -137,9 +137,23 @@ const QrHold = () => {
     setTotalAmount(total);
     setTotalGSTAmount(totalGST);
   }
+  const handleEmptyCheck=(prodUID)=>{
+    for(const index in data){
+      let element=data[index];
+      if(element.productUUId==prodUID){
+        if(element?.unitPrice<=0||element?.offerPrice<=0){
+          return true;
+        }
+      }
+    }
+  }
   const handleRowclick = (value) => {
-    // alert(value);
-    console.log(checkList);
+    
+    if(handleEmptyCheck(value)){
+      setToastMsg({open:true,severity:'warning',message:'Enter Both Original Price and Offer Price'});
+      return;
+    }
+
     setCheckList((checkList) => {
       if (checkList.includes(value)) {
         return checkList.filter((item) => item !== value);
@@ -162,11 +176,11 @@ const QrHold = () => {
     setDiscount(value);
   };
   const handleRowEdit = (row, index, key, value) => {
-    setData((prevData) =>
-      prevData.map((item, i) =>
-        i === index ? { ...item, [key]: value } : item
-      )
-    );
+    // setData((prevData) =>
+    //   prevData.map((item, i) =>
+    //     i === index ? { ...item, [key]: value } : item
+    //   )
+    // );
     setCheckList([]);
     setTotalAmount(0);
     setTotalGSTAmount(0);
@@ -174,8 +188,16 @@ const QrHold = () => {
     for (const element of tData) {
       if (row.productUUId == element.productUUId) {
         if (key == "unitPrice") {
-          element.totalPrice = Number(element.quantity) * value;
+          // element.totalPrice = Number(element.quantity) * value;
           element.unitPrice = value;
+        }
+        if (key == "quantity") {
+          element.totalPrice = Number(value) * element.offerPrice;
+          element.quantity = value;
+        }
+        if (key == "offerPrice") {
+          element.totalPrice = Number(element.quantity) * value;
+          element.offerPrice = value;
         }
         if (key == "gst") element.gst = value;
       }
@@ -374,6 +396,7 @@ const QrHold = () => {
               <TableCell align="left">Req Qty</TableCell>
               <TableCell align="left">GST %</TableCell>
               <TableCell align="left">Unit Price</TableCell>
+              <TableCell align="left">Offer Price</TableCell>
               <TableCell align="left">Total Price</TableCell>
               <TableCell align="left">Action</TableCell>
               <TableCell />
@@ -387,10 +410,18 @@ const QrHold = () => {
             <TableCell component="td" scope="row">
               {row.productName}
             </TableCell>
-            <TableCell align="left">{row.quantity}</TableCell>
+            <TableCell align="left">
+            <input
+            disabled={vendorDetails.vendorType === 1}
+                    className="table__input"
+                    value={row.quantity}
+                    onChange={(e) =>
+                      handleRowEdit(row, index, "quantity", e.target.value)
+                    }
+                  ></input>
+            </TableCell>
             <TableCell align="left"><select
-            disabled={vendorDetails.vendorType
- === 2}
+            disabled={vendorDetails.vendorType === 2}
                     className="table__input"
                     value={row.gst}
                     onChange={(e) =>
@@ -403,12 +434,19 @@ const QrHold = () => {
                     <option value="28">28 %</option>
                   </select></TableCell>
             <TableCell align="left"><input
-            disabled={vendorDetails.vendorType
- === 2}
+            disabled={vendorDetails.vendorType === 2}
                     className="table__input"
                     value={row.unitPrice}
                     onChange={(e) =>
                       handleRowEdit(row, index, "unitPrice", e.target.value)
+                    }
+                  ></input></TableCell>
+                  <TableCell align="left"><input
+            disabled={vendorDetails.vendorType === 2}
+                    className="table__input"
+                    value={row.offerPrice}
+                    onChange={(e) =>
+                      handleRowEdit(row, index, "offerPrice", e.target.value)
                     }
                   ></input></TableCell>
             <TableCell align="left">{row.totalPrice}</TableCell>
@@ -463,13 +501,13 @@ const QrHold = () => {
       <Snackbar
         autoHideDuration={5000}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        open={open}
+        open={toastMsg.open}
         onClose={handleClose}
         message="I love snacks"
       >
         <Alert
           onClose={handleClose}
-          severity="success"
+          severity={toastMsg.severity}
           variant="filled"
           sx={{
             width: "100%",
@@ -477,7 +515,7 @@ const QrHold = () => {
             fontSize: "1.4rem",
           }}
         >
-          {toastMsg}
+          {toastMsg.message}
         </Alert>
       </Snackbar>
     </>
