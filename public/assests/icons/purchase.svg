@@ -1,0 +1,54 @@
+<svg
+              width="34"
+              height="34"
+              viewBox="0 0 36 36"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="17" cy="17" r="16.5" stroke="$color-text" />
+              <rect
+                x="1"
+                y="1"
+                width="10"
+                height="10"
+                rx="5"
+                fill="#1FB789"
+                stroke="white"
+                strokeWidth="2"
+              />
+              <path
+                d="M18 27C17.1818 27 16.4002 26.6588 14.8369 25.9764C13.0123 25.18 11.6155 24.5703 10.6465 24H7M18 27C18.8182 27 19.5998 26.6588 21.1631 25.9764C25.0544 24.2779 27 23.4286 27 22V11.5M18 27V16M9 11.5V14.5"
+                stroke="$color-text"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M14.3259 14.6914L11.4047 13.2779C9.80157 12.5021 9 12.1142 9 11.5C9 10.8858 9.80157 10.4979 11.4047 9.72215L14.3259 8.30862C16.1288 7.43621 17.0303 7 18 7C18.9697 7 19.8712 7.4362 21.6741 8.30862L24.5953 9.72215C26.1984 10.4979 27 10.8858 27 11.5C27 12.1142 26.1984 12.5021 24.5953 13.2779L21.6741 14.6914C19.8712 15.5638 18.9697 16 18 16C17.0303 16 16.1288 15.5638 14.3259 14.6914Z"
+                stroke="$color-text"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M23.1366 9.01562L12.8672 13.9848"
+                stroke="$color-text"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M7 18H10"
+                stroke="$color-text"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M7 21H10"
+                stroke="$color-text"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>

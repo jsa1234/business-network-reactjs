@@ -1,0 +1,33 @@
+{
+  "name": "businessnetwork",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.5",
+    "@mui/material": "^6.0.0-rc.0",
+    "@reduxjs/toolkit": "^2.3.0",
+    "axios": "^1.7.7",
+    "chart.js": "^4.4.6",
+    "date-fns": "^4.1.0",
+    "next": "15.0.1",
+    "react": "19.0.0-rc-69d4b800-20241021",
+    "react-chartjs-2": "^5.2.0",
+    "react-date-range": "^2.0.1",
+    "react-dom": "19.0.0-rc-69d4b800-20241021",
+    "react-redux": "^9.1.2",
+    "sass": "^1.80.4"
+  },
+  "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1"
+  }
+}

@@ -1,0 +1,232 @@
+.table-container {
+  width: 100%;
+  background-color: white;
+  border-top-left-radius: 2rem;
+  border-top-right-radius: 2rem;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  overflow: hidden;
+}
+.table-container2 {
+  width: 100%;
+  background-color: white;
+
+  border-top-right-radius: 2rem;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  overflow: hidden;
+}
+.table {
+  font-family: Inter;
+  text-align: left;
+  thead {
+    background-color: rgba(248, 249, 253, 1);
+    tr th {
+      font-size: 1.4rem;
+      padding: 2rem;
+      font-weight: 600;
+      font-family: Inter;
+      // text-align: center;
+    }
+  }
+  tr td {
+    font-size: 1.4rem;
+    // text-align: center;
+    padding: 1.7rem;
+    font-weight: 400;
+    font-family: Inter;
+  }
+  tr.highlight__row {
+    border-left: 4px solid rgba(253, 179, 116, 1);
+    background-color: rgba(245, 247, 250, 1);
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+    font-size: 1.4rem;
+  }
+  p {
+    font-size: 1.4rem;
+  }
+  tr {
+    border-bottom: 1px solid rgba(222, 223, 227, 1);
+    &:hover {
+      background-color: rgba(245, 247, 250, 1);
+    }
+  }
+}
+
+.dropdown-list {
+  position: relative;
+  display: inline-block;
+  list-style: none;
+  font-size: 14px !important;
+  color: #778294;
+
+  // Button styling
+}
+.dropdownSelect {
+  width: 234px;
+  padding: 10px;
+  border-radius: 5px;
+  background: #eceff5;
+  color: #4a4a4a;
+  font-family: "DM Sans";
+  font-size: 14px;
+  height: 35px;
+  border-radius: 6px;
+}
+.background {
+  min-width: 500px;
+  height: 60px;
+  max-width: 90rem;
+  border-radius: 20px 20px 0px 0px;
+  background: #dedfe3;
+  box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.05);
+  font-size: 1.4rem;
+  font-weight: 600;
+
+  button {
+    width: 50%;
+    border-radius: 20px 20px 0px 0px;
+    border-right: 2px solid white;
+    svg {
+      stroke: $color-text;
+    }
+    &.active {
+      color: $color-primary;
+      svg {
+        stroke: $color-icons;
+      }
+    }
+  }
+}
+.filter-group {
+  height: 60px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  font-size: 14px;
+  label {
+    margin: 0 20px;
+    margin-right: 10px;
+  }
+
+  .form {
+    min-width: 35rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .form input {
+    background-color: #eceff5;
+    width: 30rem;
+  }
+  .form .fa-search {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    color: #9ca3af;
+  }
+
+  .form span {
+    position: absolute;
+    right: 17px;
+    top: 8px;
+    padding: 0px;
+    border-left: 1px solid #d1d5db;
+  }
+
+  .form-input {
+    border: none;
+    height: 35px;
+    text-indent: 33px;
+    border-radius: 6px;
+  }
+
+  .form-input:focus {
+    box-shadow: none;
+    border: none;
+  }
+}
+.filter-group-secondary{
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  font-weight: 400;
+  h1 span{
+    font-weight: 600;
+    color: #BD6112;
+  }
+  .btn_grp{
+    display: inherit;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+}
+.status-approvel{
+  padding: 0.7rem 1.5rem;
+  border-radius: 1.2rem;
+  height: 3.8rem;
+  color: white;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--p-b1, #bd6112);
+  background: #fdf1e8;
+}
+.trading-box {
+  margin-top: 20px;
+  width: 150px;
+  height: 40px;
+  padding: 10px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid #c5c6c9;
+  background: var(--Neutral-Gray-Gray-25, #f9f9fc);
+}
+
+.info-container {
+  display: flex;
+  gap: 4rem;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.info-details{
+  color: #BD6612;
+  font-weight: 600;
+}
+.reason{
+ display: flex !important;
+align-items: center;
+height: 68px;
+background: var(--f5, #F8F9FD);
+padding: 20px;
+font-size: 12px;
+text-align: justify;
+gap:4rem;
+
+
+span{
+  font-weight: 600;
+
+}
+ 
+}
+.table__input{
+  width: 15rem;
+height: 4rem;
+padding: 1rem 1.2rem;
+gap: 8px;
+border-radius: 8px;
+border: 1px solid rgba(197, 198, 201, 1);
+}

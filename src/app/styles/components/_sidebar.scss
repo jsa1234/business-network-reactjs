@@ -1,0 +1,137 @@
+.left__navbar {
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px -4px;
+  min-width: 255px;
+  max-width: 255px;
+  max-height: calc(100vh - 70px);
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  background-color: white;
+  overflow-y: scroll;
+  ul li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-left: 4px solid white;
+    &:hover:not(:last-child) {
+      border-left: 4px solid $color-primary;
+      color: $color-primary;
+      h2 {
+        color: $color-primary;
+      }
+      svg {
+        stroke: $color-primary;
+      }
+    }
+    a {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 1.5rem;
+      cursor: pointer;
+      color: rgba(74, 74, 74, 1);
+      padding: 1rem;
+      svg {
+        stroke: $color-text;
+      }
+      h2 {
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+    }
+    &.active {
+      border-left: 4px solid $color-primary;
+      color: $color-primary;
+      h2 {
+        color: $color-primary;
+      }
+      svg {
+        stroke: $color-primary;
+      }
+    }
+  }
+  .sub-head {
+    margin: 1.6rem 0.5rem;
+    padding: 1rem;
+    font-size: 1.4rem;
+    color: rgba(181, 173, 171, 1);
+    font-family: "DM Sans", sans-serif;
+    font-weight: 700;
+    text-align: left;
+  }
+  &__card {
+    margin-top: 5rem;
+    margin-bottom: 2.5rem;
+    padding-top: 5rem;
+    padding-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.5rem;
+    align-items: center;
+    position: relative;
+    background: radial-gradient(
+        99.17% 99.17% at 49.01% 0.83%,
+        #ffe9d7 41.03%,
+        #fdb374 100%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+    height: 32.6rem;
+    width: 20.2rem;
+    border-radius: 1.9rem;
+    border: 1px solid rgba(253, 179, 116, 1);
+    .ellipse {
+      position: absolute;
+      top: -3rem;
+      left: 10.1rem;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #ffffff 24.5%, #fee8d5 100%);
+      height: 6.8rem;
+      width: 6.8rem;
+      border-radius: 3.4rem;
+      border: 1px solid rgba(253, 179, 116, 1);
+    }
+    hr {
+      width: 178px;
+      border: none; /* Remove default border */
+      height: 1px; /* Set height */
+      background: linear-gradient(90deg, #ffe9d7 0%, #fd9a46 49%, #ffe9d7 100%);
+    }
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    p {
+      font-size: 1.2rem;
+      font-weight: 500;
+      font-family: Inter, sans-serif;
+      color: rgba(74, 74, 74, 1);
+    }
+    h2,
+    p {
+      width: 80%;
+      text-align: center;
+    }
+    input {
+      width: 18rem;
+      height: 4rem;
+      padding: 10px 12px 10px 12px;
+      gap: 8px;
+      border-radius: 8px;
+      
+    }
+    .primary__btn {
+      border-radius: 1.2rem;
+      border: 1px solid rgba(254, 205, 163, 1);
+      &:not(:hover) {
+        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.075);
+      }
+    }
+  }
+}

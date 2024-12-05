@@ -1,0 +1,11 @@
+<svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="17" cy="17" r="16.5" stroke="$color-text"/>
+<rect x="1" y="1" width="10" height="10" rx="5" fill="#1FB789" stroke="white" strokeWidth="2"/>
+<path d="M9.0625 16.625V23.0125C9.0625 25.34 10.34 25.8913 11.8888 24.2288L11.8975 24.22C12.615 23.4588 13.7087 23.52 14.33 24.3512L15.2137 25.5325" stroke="$color-text" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M23.9375 16.8875V13.16C23.9375 9.63376 23.115 8.75 19.8075 8.75H13.1925C9.885 8.75 9.0625 9.63376 9.0625 13.16" stroke="$color-text" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M13 13.125H16.9375" stroke="$color-text" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M19.125 13.125H20.875" stroke="$color-text" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M13.875 16.625H19.125" stroke="$color-text" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M21.9327 19.9237L18.8352 23.0212C18.7127 23.1437 18.5989 23.3712 18.5727 23.5375L18.4064 24.7187C18.3452 25.1475 18.6427 25.445 19.0714 25.3838L20.2527 25.2175C20.4189 25.1912 20.6552 25.0775 20.7689 24.955L23.8664 21.8575C24.4002 21.3238 24.6539 20.7025 23.8664 19.915C23.0877 19.1363 22.4664 19.39 21.9327 19.9237Z" stroke="$color-text" strokeWidth="1.5" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M21.4863 20.3701C21.7488 21.3151 22.4838 22.0501 23.4288 22.3126" stroke="$color-text" strokeWidth="1.5" stroke-miterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+</svg>

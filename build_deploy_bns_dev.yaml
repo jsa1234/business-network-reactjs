@@ -1,0 +1,53 @@
+name: Build and Deploy Business Network UI
+trigger:
+  - release/v1/DEV
+  - devops
+
+variables:
+  S3_BUCKET: '$(BUCKET_NAME)'
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+    displayName: 'Install Node.js'
+
+  - script: |
+      npm cache clean --force
+      npm install --legacy-peer-deps
+    displayName: 'Clean, Install' 
+  - script: 
+      npm run build
+    displayName: 'Build'
+  - script: 
+      ls -al
+      pwd
+    displayName: 'List'
+
+    
+
+  # - task: PublishBuildArtifacts@1
+  #   inputs:
+  #     pathToPublish: '.out'
+  #     artifactName: 'drop'
+  #     publishLocation: 'Container'
+  
+  # - task: AWSCLI@1
+  #   inputs:
+  #     awsCredentials: 'AWS Connection'
+  #     regionName: 'ap-south-1'
+  #     awsCommand: 's3'
+  #     awsSubCommand: 'sync'
+  #     awsArguments: 'dist s3://$(S3_BUCKET) --delete'
+
+  # - task: AWSCLI@1
+  #   displayName: 'Invalidate CDN Cache'
+  #   inputs:
+  #     awsCredentials: 'AWS Connection'
+  #     regionName: 'ap-south-1'
+  #     awsCommand: 'cloudfront'
+  #     awsSubCommand: 'create-invalidation'
+  #     awsArguments: '--distribution-id $(DISTRIBUTION_ID) --paths "/*"'

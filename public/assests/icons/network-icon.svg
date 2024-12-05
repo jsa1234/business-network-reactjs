@@ -1,0 +1,10 @@
+<svg width="34" height="34" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="17" cy="17" r="16.5" stroke="$color-text"/>
+<path d="M16 10H23" stroke="$color-text" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M15 15L19.5 19.5" stroke="$color-text" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10 16V23" stroke="$color-text" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11.4444 15.8889C13.899 15.8889 15.8889 13.899 15.8889 11.4444C15.8889 8.98984 13.899 7 11.4444 7C8.98984 7 7 8.98984 7 11.4444C7 13.899 8.98984 15.8889 11.4444 15.8889Z" stroke="$color-text" stroke-width="1.125"/>
+<path d="M10 27C11.1046 27 12 26.1046 12 25C12 23.8954 11.1046 23 10 23C8.89543 23 8 23.8954 8 25C8 26.1046 8.89543 27 10 27Z" stroke="$color-text" stroke-width="1.125"/>
+<path d="M21 23C22.1046 23 23 22.1046 23 21C23 19.8954 22.1046 19 21 19C19.8954 19 19 19.8954 19 21C19 22.1046 19.8954 23 21 23Z" stroke="$color-text" stroke-width="1.125"/>
+<path d="M25 12C26.1046 12 27 11.1046 27 10C27 8.89543 26.1046 8 25 8C23.8954 8 23 8.89543 23 10C23 11.1046 23.8954 12 25 12Z" stroke="$color-text" stroke-width="1.125"/>
+</svg>

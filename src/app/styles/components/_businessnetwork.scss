@@ -1,0 +1,241 @@
+.advance__filter {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 2rem;
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    & > :last-child {
+      transform: rotate(90deg);
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      font-family: DM Sans, sans-serif;
+    }
+    .rotate{
+      transform: rotate(270deg);
+    }
+  }
+  hr {
+    margin: 1rem 0;
+  }
+  .advance__filter__body {
+    .input__group {
+      display: flex;
+      flex-direction: column;
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: rgba(77, 84, 100, 1);
+      gap: 2px;
+      input,
+      select {
+        height: 40px;
+        padding: 8px 12px 8px 12px;
+        gap: 4px;
+        border-radius: 8px;
+        border: 1px solid rgba(197, 198, 201, 1);
+        background-color: rgb(244, 251, 251);
+      }
+      select option {
+        padding: 10px;
+        background-color: #fff;
+        color: #333;
+        font-size: 14px;
+      }
+    }
+  }
+}
+.filter__results {
+  margin-top: 3%;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 2rem;
+  .filter__results__header {
+    display: flex;
+    flex-direction: row;
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      font-family: DM Sans, sans-serif;
+    }
+  }
+  hr {
+    margin: 1rem 0;
+  }
+}
+
+.bncard {
+  background: radial-gradient(
+      28.63% 113.79% at 8.85% -13.79%,
+      #ffffff 0%,
+      #fff7f0 100%
+    )
+    /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+  border: 1px solid rgba(254, 205, 163, 1);
+  border-radius: 2rem;
+  width: 100%;
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    font-family: DM Sans;
+  }
+  .bncard__header {
+    display: flex;
+  }
+  .bncard__img{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img{
+      margin-right: 0;
+    }
+  }
+  .vl {
+    border-left: 1px solid #dedfe3;
+    height: 7rem;
+    margin: 0 1rem;
+  }
+  hr {
+    border-left: 1px solid #dedfe3;
+  }
+  table {
+    tr td:last-child {
+      padding-left: 20px;
+      font-size: 1.1rem;
+      font-weight: 500;
+    } /* Adjust this value to set the space between columns */
+    .table__hdr {
+      font-family: DM Sans,sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: rgba(119, 119, 119, 1);
+    }
+  }
+}
+
+.netcard {
+  background: radial-gradient(
+    73.24% 117.34% at 8.85% -13.79%,
+    #fff 0%,
+    #f1fef8 100%
+  );
+  border: 1px solid #9df6cc;
+  border-radius: 2rem;
+  width: 100%;
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    font-family: DM Sans;
+  }
+  .bncard__header {
+    display: flex;
+  }
+  .vll {
+    border-left: 1px solid #dedfe3;
+    height: 4rem;
+    margin: 0 1rem;
+  }
+  hr {
+    border-left: 1px solid #dedfe3;
+  }
+  table {
+    tr td:last-child {
+      padding-left: 20px;
+      font-size: 1.1rem;
+      font-weight: 500;
+    } /* Adjust this value to set the space between columns */
+    .table__hdr {
+      font-family: DM Sans;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: rgba(119, 119, 119, 1);
+    }
+  }
+}
+.css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root.Mui-active {
+  color: #fc8118;
+}
+.css-1eqxcs7-MuiStep-root {
+  width: 300px;
+}
+.css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root {
+  color: #fc8118;
+ 
+
+}
+
+.css-12eb3rq-MuiStepLabel-label {
+  font-size: 14px;
+}
+.css-1g86afo-MuiStepIcon-text{
+  fill:none; 
+    font-size: 0.75rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+.css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root{
+  width: 20px !important;
+}
+
+.global__search{
+  margin: 2rem 0;
+  height: 5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 2rem;
+  &__input{
+    background-color: rgb(255, 255, 255);
+    display:inherit;
+    align-items: center;
+    // justify-content: ;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    select{
+      height: 100%;
+      width: 14rem;
+      font-size: 1.2rem;
+      padding-left: 1rem;
+      border-right: 1px solid rgb(213, 213, 213);
+      &:focus {
+        outline: none; 
+      }
+    }
+    input{
+      height: 5rem;
+      font-size: 1.5rem;
+      width: 100%;
+      &:focus {
+        outline: none; 
+      }
+    }
+    .input__group{
+      padding: 1rem;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items:center;
+      justify-content: space-between;
+    }
+  }
+
+  .outer__btn{
+    width: 16rem;
+    height: 5rem;
+    display: flex;
+    justify-content: center;
+    color: #fc8118;
+    background-color: white;
+    border-color:  #fc8118;;
+  }
+}
