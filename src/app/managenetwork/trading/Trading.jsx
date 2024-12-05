@@ -78,10 +78,12 @@ function Trading({ activeTab }) {
     if (
       !row.ofPrice ||
       !row.ogPrice ||
+      !row.reqQty ||
+      row.reqQty == ""||
       row.ofPrice == "" ||
       row.ogPrice == ""
     ) {
-      setToastMsg({open:true,severity:'warning',message:'Enter the both Original Price and Offer Price'});
+      setToastMsg({open:true,severity:'warning',message:'Enter the all fields :: Required Quantity,Original Price and Offer Price'});
       return;
     }
     setCheckList((checkList) => {
@@ -103,21 +105,27 @@ function Trading({ activeTab }) {
     let data = [...stock];
     data[index][key] = value;
     let total = 0;
+    let unitTotal=0;
     for (let i = 0; i < data.length; i++) {
       if (checkList.includes(data[i].productUUId)) {
-        data[i]?.ofPrice ? (total += Number(data[i]?.ofPrice)) : "";
+        data[i]?.ofPrice ? (total += Number(data[i]?.ofPrice)*Number(data[i]?.reqQty)) : "";
+        data[i]?.ogPrice?(unitTotal+=Number(data[i]?.ogPrice)*Number(data[i]?.reqQty)):"";
       }
     }
     setStock(data);
+    setDiscount(unitTotal-total);
     setTotalPrice(total);
   };
   useEffect(() => {
     let total = 0;
+    let unitTotal=0;
     for (let i = 0; i < stock.length; i++) {
       if (checkList.includes(stock[i].productUUId)) {
-        stock[i]?.ofPrice ? (total += Number(stock[i]?.ofPrice)) : "";
+        stock[i]?.ofPrice ? (total += Number(stock[i]?.ofPrice)*Number(stock[i]?.reqQty)) : "";
+        stock[i]?.ogPrice?(unitTotal+=Number(stock[i]?.ogPrice)*Number(stock[i]?.reqQty)):"";
       }
     }
+    setDiscount(unitTotal-total);
     setTotalPrice(total);
   }, [checkList]);
   const handleDiscountChange = (value) => {
@@ -146,6 +154,7 @@ function Trading({ activeTab }) {
           productName: element.productName,
           unitPrice: element.ogPrice,
           offerPrice: element.ofPrice,
+          quantity:element.reqQty
         };
         if (checkList.includes(element.productUUId)) {
           mData.status = 0;
@@ -158,7 +167,7 @@ function Trading({ activeTab }) {
         {
           requestFromVendorUUId: vendorDetails.vendorMasterUUId,
           requestedToVendorUUId: networkDetails.vendorMstrUID,
-          status: 0,
+          status: 1,
           comments:comments,
           expectedDeliveryDate: deliveryDate,
           quotationDetails: [...inputData],
@@ -264,6 +273,7 @@ function Trading({ activeTab }) {
             <tr>
               <th>Product Name</th>
               <th>Remaining Qty</th>
+              <th>Required Qty</th>
               <th>Original Price</th>
               <th>Offer Price</th>
               <th>Action</th>
@@ -275,6 +285,21 @@ function Trading({ activeTab }) {
                 <tr key={`approval_${index}`}>
                   <td>{stockDetails.productName || "--"}</td>
                   <td>{stockDetails.remainingQuantity || "--"}</td>
+                  <td>
+                    <input
+                      type="number"
+                      className="table__input"
+                      value={stockDetails?.reqQty || ""}
+                      onChange={(e) =>
+                        handleRowEdit(
+                          e.target.value,
+                          "reqQty",
+                          stockDetails,
+                          index
+                        )
+                      }
+                    ></input>
+                  </td>
                   <td>
                     <input
                       type="number"
@@ -333,10 +358,10 @@ function Trading({ activeTab }) {
         </table>
 
         <TotalRate
-          subTotal={totalPrice}
+          subTotal={totalPrice+discount}
           selectedCount={checkList.length}
-          total={totalPrice - discount}
-          discountChange={handleDiscountChange}
+          total={totalPrice}
+          discount={discount}
           submitClick={handleSubmitClick}
         />
         <QrPopup

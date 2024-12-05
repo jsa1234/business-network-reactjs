@@ -7,22 +7,20 @@ const TotalRate = ({
   totalGst,
   total,
   submitClick,
-  discountChange,
+  discount,
   selectedCount = 0,
 }) => {
   const VendorType = useSelector(
     (state) => state.vendor.VendorType
   );
-  const handleChange = (e) => {
-    discountChange(e.target.value);
-  };
+  
   return (
     <div className="total_container justify-between">
       <h1>
         Sub Total:<span>{subTotal}</span>
       </h1>
       {totalGst||VendorType==2?<h1>
-        Total GST:<span>{totalGst}</span>
+        Total GST:<span>{totalGst.toFixed(2)}</span>
       </h1>:''}
       {VendorType!=2?<div className="flex items-center gap-3">
         <label className="" htmlFor="inpDis">
@@ -33,7 +31,8 @@ const TotalRate = ({
           id="inpDis"
           placeholder="0000"
           type="number"
-          onChange={handleChange}
+          disabled={true}
+          value={discount}
         ></input>
       </div>:''}
       <h1>

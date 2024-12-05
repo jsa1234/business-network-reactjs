@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import CommonApi from "@/api/CommonApi";
-import { useSelector } from "react-redux";
 
 const NetworkProfile = () => {
   const [businessSegments, setBusinessSegments] = useState([]);
@@ -31,6 +30,12 @@ const NetworkProfile = () => {
     locationId: "",
     logo: "",
   });
+
+  const [products, setProducts] = useState([]);
+  const [vendorProducts, setVendorProducts] = useState([]);
+
+  const [services, setServices] = useState([]);
+  const [vendorServices, setVendorServices] = useState([]);
 
   useEffect(() => {
     if (vendorDetails && vendorDetails.vendorMasterUUId) {
@@ -429,6 +434,7 @@ const NetworkProfile = () => {
               </label>
 
               <textarea
+                name="address"
                 onChange={handleInputChange}
                 rows={4}
                 value={companyDetails.address}
@@ -439,7 +445,7 @@ const NetworkProfile = () => {
         </div>
       </section>
 
-      {/* section 3 */} 
+      {/* section 3 */}
       <section className="pt-16 pb-8 px-16 rounded-2xl bg-white flex items-start justify-between mb-8">
         <div className="w-1/3">
           <h2 className="text-2xl font-bold">Preferences</h2>
